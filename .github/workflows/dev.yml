@@ -1,0 +1,42 @@
+name: Deploy to DEV
+
+#on: [push]
+on:
+  push:
+    branches:
+      - dev
+
+env:
+  REGISTRY: "registry.digitalocean.com/resty-registry"
+  NEST_API: "nest-api"
+
+jobs:
+  deploy:
+    name: Build API image
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - name: executing git pull on server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: resty
+          key: ${{ secrets.SSHKEY }}
+          port: 22
+          command_timeout: 20m
+          envs: NEST_API,GITHUB_SHA,REGISTRY
+          script: |
+            cd /home/resty/api
+            git fetch
+            git checkout dev
+            git pull
+            docker system prune -f --volumes
+            docker build -f apps/nest/api/Dockerfile.dev -t $(echo $REGISTRY)/$(echo $NEST_API):latest .
+
+            doctl registry login
+            docker push $(echo $REGISTRY)/$(echo $NEST_API):latest
+
+            kubectl delete --all deployments,svc,pods,configmap
+            kubectl apply -f k8s/cloudflared.yaml 
+            kubectl apply -f k8s/nest-api.k8s.yaml

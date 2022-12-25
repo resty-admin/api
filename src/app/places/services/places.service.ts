@@ -6,6 +6,7 @@ import { CompanyEntity } from "../../companies/entities";
 import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { CreatePlaceDto, UpdatePlaceDto } from "../dtos";
+import type { CreatePlaceInput, UpdatePlaceInput } from "../dtos";
 import { PlaceEntity } from "../entities";
 
 @Injectable()
@@ -43,13 +44,13 @@ export class PlacesService {
 		};
 	}
 
-	async createPlace(place: CreatePlaceDto): Promise<PlaceEntity> {
+	async createPlace(place: CreatePlaceDto | CreatePlaceInput): Promise<PlaceEntity> {
 		const savedPlace = await this._placesRepository.save({ ...place, company: { id: place.company } });
 
 		return this._placesRepository.findOne({ where: { id: savedPlace.id } });
 	}
 
-	async updatePlace(id: string, place: UpdatePlaceDto): Promise<PlaceEntity> {
+	async updatePlace(id: string, place: UpdatePlaceDto | UpdatePlaceInput): Promise<PlaceEntity> {
 		return this._placesRepository.save({ id, ...place });
 	}
 

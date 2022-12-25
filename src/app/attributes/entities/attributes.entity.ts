@@ -1,4 +1,5 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
+import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity, OneToMany } from "typeorm";
 
 import { BaseEntity } from "../../shared";
@@ -7,19 +8,20 @@ import { ATTRIBUTES } from "../constant";
 import { AttributesGroupEntity } from "./attributes-group.entity";
 
 @ObjectType()
+@InputType("AttributesEntityInput")
 @Entity({ name: ATTRIBUTES })
 export class AttributesEntity extends BaseEntity {
 	@Column()
-	// @ApiProperty()
+	@ApiProperty()
 	@Field(() => String)
 	name: string;
 
-	// @ApiProperty()
+	@ApiProperty()
 	@Field(() => AttributesGroupEntity, { nullable: true })
 	@OneToMany(() => AttributesGroupEntity, (attrGroup) => attrGroup.attributes, { nullable: true })
 	attributesGroup?: AttributesGroupEntity;
 
-	// @ApiProperty()
+	@ApiProperty()
 	@Field(() => Int, { nullable: true })
 	@Column({ nullable: true })
 	price?: number;

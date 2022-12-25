@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, InputType, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, ManyToMany, ManyToOne } from "typeorm";
 
 import { PlaceEntity } from "../../places/entities";
@@ -9,6 +9,7 @@ import { ATTRIBUTE_GROUPS } from "../constant";
 import { AttributesEntity } from "./attributes.entity";
 
 @ObjectType()
+@InputType("AttributesGroupEntityInput")
 @Entity({ name: ATTRIBUTE_GROUPS })
 export class AttributesGroupEntity extends BaseEntity {
 	@Column()

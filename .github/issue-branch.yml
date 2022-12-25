@@ -1,0 +1,1 @@
+branchName: "i${issue.number}-${issue.title,}"

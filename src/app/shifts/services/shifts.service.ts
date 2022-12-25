@@ -4,6 +4,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { CreateShiftDto, UpdateShiftDto } from "../dtos";
+import type { CreateShitInput, UpdateShitInput } from "../dtos";
 import { ActiveShiftEntity } from "../entities";
 
 @Injectable()
@@ -38,7 +39,7 @@ export class ShiftsService {
 		};
 	}
 
-	async createShift(shift: CreateShiftDto): Promise<ActiveShiftEntity> {
+	async createShift(shift: CreateShiftDto | CreateShitInput): Promise<ActiveShiftEntity> {
 		const savedCategory = await this._shiftsRepository.save({ ...shift });
 
 		return this._shiftsRepository.findOne({
@@ -46,7 +47,7 @@ export class ShiftsService {
 		});
 	}
 
-	async updateShift(id: string, shift: UpdateShiftDto): Promise<ActiveShiftEntity> {
+	async updateShift(id: string, shift: UpdateShiftDto | UpdateShitInput): Promise<ActiveShiftEntity> {
 		return this._shiftsRepository.save({ id, ...shift });
 	}
 

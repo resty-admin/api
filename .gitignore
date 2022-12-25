@@ -34,10 +34,10 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# Environments
-/src/environments/environment.ts
-/src/environments/environment.prod.ts
-/src/environments/environment.dev.ts
+ca-certificate.crt
 
-# Documentation
-/documentation
+**/*/environments/environment.ts
+**/*/environments/environment.prod.ts
+**/*/environments/environment.dev.ts
+
+**/*/schema.gql

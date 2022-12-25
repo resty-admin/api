@@ -1,10 +1,12 @@
+import { Field, InputType } from "@nestjs/graphql";
 import { Type } from "class-transformer";
 import { isISO8601, ValidateNested } from "class-validator";
 import { IFile } from "src/app/shared/interfaces";
 
+import { FileEntity } from "../../files/entities";
 import { IsNotEmpty, IsObject, IsOptional, IsString } from "../../shared";
 import { IsMap } from "../../shared/validators/is-map.validator";
-import { WorkingHoursDto } from "./date-types.dto";
+import { WorkingHoursDto, WorkingHoursInput } from "./date-types.dto";
 
 export class CreatePlaceDto {
 	@IsString()
@@ -44,4 +46,47 @@ export class CreatePlaceDto {
 	@ValidateNested()
 	@Type(() => WorkingHoursDto)
 	holidayDays: Map<Date, WorkingHoursDto>;
+}
+
+@InputType()
+export class CreatePlaceInput {
+	@Field(() => String)
+	@IsNotEmpty()
+	@IsString()
+	name: string;
+
+	@Field(() => String)
+	@IsString()
+	@IsOptional()
+	address: string;
+
+	@Field(() => String)
+	@IsString()
+	@IsNotEmpty()
+	company: string;
+
+	@Field(() => FileEntity)
+	@IsOptional()
+	file: IFile;
+
+	@Field(() => WorkingHoursInput)
+	@IsObject()
+	@IsOptional()
+	@ValidateNested()
+	@Type(() => WorkingHoursInput)
+	weekDays: WorkingHoursDto;
+
+	@Field(() => WorkingHoursInput)
+	@IsObject()
+	@IsOptional()
+	@ValidateNested()
+	@Type(() => WorkingHoursInput)
+	weekendDays: WorkingHoursInput;
+
+	@Field(() => WorkingHoursInput)
+	@IsOptional()
+	@IsMap([isISO8601], [])
+	@ValidateNested()
+	@Type(() => WorkingHoursInput)
+	holidayDays: Map<Date, WorkingHoursInput>;
 }

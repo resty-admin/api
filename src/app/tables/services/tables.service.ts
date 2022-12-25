@@ -5,6 +5,7 @@ import { Repository } from "typeorm";
 import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { CreateTableDto, UpdateTableDto } from "../dtos";
+import type { CreateTableInput, UpdateTableInput } from "../dtos";
 import { TableEntity } from "../entities";
 
 @Injectable()
@@ -39,7 +40,7 @@ export class TablesService {
 		};
 	}
 
-	async createTable(table: CreateTableDto): Promise<TableEntity> {
+	async createTable(table: CreateTableDto | CreateTableInput): Promise<TableEntity> {
 		const savedTable = await this._tablesRepository.save({ ...table, hall: { id: table.hall } });
 
 		return this._tablesRepository.findOne({
@@ -47,7 +48,7 @@ export class TablesService {
 		});
 	}
 
-	async updateTable(id: string, table: UpdateTableDto): Promise<TableEntity> {
+	async updateTable(id: string, table: UpdateTableDto | UpdateTableInput): Promise<TableEntity> {
 		return this._tablesRepository.save({ id, ...table });
 	}
 

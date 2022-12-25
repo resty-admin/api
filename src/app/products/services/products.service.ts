@@ -4,6 +4,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { CreateProductDto, UpdateProductDto } from "../dtos";
+import type { CreateProductInput, UpdateProductInput } from "../dtos";
 import { ProductEntity } from "../entities";
 
 @Injectable()
@@ -38,7 +39,7 @@ export class ProductsService {
 		};
 	}
 
-	async createProduct(product: CreateProductDto): Promise<ProductEntity> {
+	async createProduct(product: CreateProductDto | CreateProductInput): Promise<ProductEntity> {
 		const savedProduct = await this._productsRepository.save({
 			...product,
 			category: { id: product.category },
@@ -50,7 +51,7 @@ export class ProductsService {
 		});
 	}
 
-	async updateProduct(id: string, user: UpdateProductDto): Promise<ProductEntity> {
+	async updateProduct(id: string, user: UpdateProductDto | UpdateProductInput): Promise<ProductEntity> {
 		return this._productsRepository.save({ id, ...user });
 	}
 

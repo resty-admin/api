@@ -1,9 +1,7 @@
-import { Body, Controller, Delete, Param, ParseUUIDPipe, Patch, Post } from "@nestjs/common";
-import { ApiCreatedResponse, ApiOperation } from "@nestjs/swagger";
+import { Body, Controller, Post } from "@nestjs/common";
 
 import { COMMANDS } from "../constant";
-import { CreateCommandDto, EmitCommandDto, UpdateCommandDto } from "../dtos";
-import { CommandEntity } from "../entities";
+import { EmitCommandDto } from "../dtos";
 import { CommandsService } from "../services";
 
 @Controller(COMMANDS)
@@ -15,29 +13,29 @@ export class CommandsController {
 		await this._commandsService.emitCommand(body);
 	}
 
-	@Post()
-	@ApiOperation({ summary: `Create command` })
-	@ApiCreatedResponse({
-		description: "The record has been successfully created.",
-		type: CommandEntity
-	})
-	async createCommand(@Body() command: CreateCommandDto): Promise<CommandEntity> {
-		return this._commandsService.createCommand(command);
-	}
-
-	@Patch("/:id")
-	@ApiOperation({ summary: `Update command` })
-	@ApiCreatedResponse({
-		description: "The record has been successfully updated.",
-		type: CommandEntity
-	})
-	async updateUser(@Param("id", ParseUUIDPipe) id: string, @Body() command: UpdateCommandDto): Promise<CommandEntity> {
-		return this._commandsService.updateCommand(id, command);
-	}
-
-	@Delete("/:id")
-	@ApiOperation({ summary: `Delete command` })
-	async deleteUser(@Param("id", ParseUUIDPipe) id: string): Promise<string> {
-		return this._commandsService.deleteCommand(id);
-	}
+	// @Post()
+	// @ApiOperation({ summary: `Create command` })
+	// @ApiCreatedResponse({
+	// 	description: "The record has been successfully created.",
+	// 	type: CommandEntity
+	// })
+	// async createCommand(@Body() command: CreateCommandDto): Promise<CommandEntity> {
+	// 	return this._commandsService.createCommand(command);
+	// }
+	//
+	// @Patch("/:id")
+	// @ApiOperation({ summary: `Update command` })
+	// @ApiCreatedResponse({
+	// 	description: "The record has been successfully updated.",
+	// 	type: CommandEntity
+	// })
+	// async updateUser(@Param("id", ParseUUIDPipe) id: string, @Body() command: UpdateCommandDto): Promise<CommandEntity> {
+	// 	return this._commandsService.updateCommand(id, command);
+	// }
+	//
+	// @Delete("/:id")
+	// @ApiOperation({ summary: `Delete command` })
+	// async deleteUser(@Param("id", ParseUUIDPipe) id: string): Promise<string> {
+	// 	return this._commandsService.deleteCommand(id);
+	// }
 }

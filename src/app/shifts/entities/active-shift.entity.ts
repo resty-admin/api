@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, InputType, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, JoinColumn, OneToMany, OneToOne } from "typeorm";
 
 import { ActiveOrderEntity } from "../../orders/entities";
@@ -10,6 +10,7 @@ import { UserEntity } from "../../users/entities";
 import { ACTIVE_SHIFTS } from "../constants";
 
 @ObjectType()
+@InputType("ActiveShiftEntityInput")
 @Entity({ name: ACTIVE_SHIFTS })
 export class ActiveShiftEntity extends BaseEntity {
 	// @ApiProperty()

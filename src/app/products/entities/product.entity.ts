@@ -1,5 +1,5 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
-import { IFile } from "src/app/shared/interfaces";
+import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
+import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToOne } from "typeorm";
 
 import { AttributesGroupEntity } from "../../attributes/entities";
@@ -7,9 +7,11 @@ import { CategoryEntity } from "../../categories/entities";
 import { FileEntity } from "../../files/entities";
 import { BaseEntity } from "../../shared";
 import { Pagination } from "../../shared/entities/pagination.type";
+import { IFile } from "../../shared/interfaces";
 import { PRODUCTS } from "../constant";
 
 @ObjectType()
+@InputType("ProductEntityInput")
 @Entity({ name: PRODUCTS })
 export class ProductEntity extends BaseEntity {
 	@Column()
@@ -43,13 +45,13 @@ export class ProductEntity extends BaseEntity {
 	@Column({ default: 0 })
 	price: number;
 
-	// @ApiProperty()
+	@ApiProperty()
 	@Field(() => FileEntity, { nullable: true })
 	@OneToOne(() => FileEntity, { cascade: true, eager: true, nullable: true })
 	@JoinColumn()
 	file?: IFile;
 
-	// @ApiProperty()
+	@ApiProperty()
 	@Field(() => [AttributesGroupEntity], { nullable: true })
 	@ManyToMany(() => AttributesGroupEntity, (attrGroup) => attrGroup.products, { nullable: true })
 	attrsGroups?: AttributesGroupEntity[];

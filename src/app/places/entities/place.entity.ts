@@ -1,7 +1,4 @@
-import { Field, ObjectType } from "@nestjs/graphql";
-import { ApiProperty } from "@nestjs/swagger";
-import { PlaceStatusEnum } from "src/app/shared/enums";
-import { IFile } from "src/app/shared/interfaces";
+import { Field, InputType, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 
 import { AttributesGroupEntity } from "../../attributes/entities";
@@ -12,10 +9,13 @@ import { HallEntity } from "../../halls/entities";
 import { ActiveOrderEntity } from "../../orders/entities";
 import { BaseEntity } from "../../shared/entities";
 import { Pagination } from "../../shared/entities/pagination.type";
+import { PlaceStatusEnum } from "../../shared/enums";
+import { IFile } from "../../shared/interfaces";
 import { PLACES } from "../constant";
 import { WorkingHoursDto } from "../dtos";
 
 @ObjectType()
+@InputType("PlaceEntityInput")
 @Entity({ name: PLACES })
 export class PlaceEntity extends BaseEntity {
 	// @ApiProperty()
@@ -54,7 +54,7 @@ export class PlaceEntity extends BaseEntity {
 	@JoinColumn()
 	file?: IFile;
 
-	@ApiProperty({ type: "json", default: { delivery: false, takeaway: true, booking: true, order: true } })
+	// @ApiProperty({ type: "json", default: { delivery: false, takeaway: true, booking: true, order: true } })
 	@Field(() => String)
 	@Column({
 		type: "json",
@@ -62,7 +62,7 @@ export class PlaceEntity extends BaseEntity {
 	})
 	a11y: any;
 
-	@ApiProperty({ type: "json", default: { start: null, end: null } })
+	// @ApiProperty({ type: "json", default: { start: null, end: null } })
 	@Field(() => String)
 	@Column({
 		type: "json",
@@ -70,7 +70,7 @@ export class PlaceEntity extends BaseEntity {
 	})
 	weekDays: WorkingHoursDto;
 
-	@ApiProperty({ type: "json", default: { start: null, end: null } })
+	// @ApiProperty({ type: "json", default: { start: null, end: null } })
 	@Field(() => String)
 	@Column({
 		type: "json",
@@ -78,7 +78,7 @@ export class PlaceEntity extends BaseEntity {
 	})
 	weekendDays: WorkingHoursDto;
 
-	@ApiProperty({ type: "json", default: {} })
+	// @ApiProperty({ type: "json", default: {} })
 	@Field(() => String)
 	@Column({
 		type: "json",

@@ -1,16 +1,17 @@
-import { Field, ObjectType } from "@nestjs/graphql";
-import { OrderStatusEnum, OrderTypeEnum } from "src/app/shared/enums";
+import { Field, InputType, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, Generated, ManyToMany, ManyToOne, OneToMany } from "typeorm";
 
 import { PlaceEntity } from "../../places/entities";
 import { BaseEntity } from "../../shared";
 import { Pagination } from "../../shared/entities/pagination.type";
+import { OrderStatusEnum, OrderTypeEnum } from "../../shared/enums";
 import { ActiveShiftEntity } from "../../shifts/entities";
 import { TableEntity } from "../../tables/entities";
 import { UserEntity } from "../../users/entities";
 import { ACTIVE_ORDERS } from "../constant";
 
 @ObjectType()
+@InputType("ActiveOrderEntityInput")
 @Entity({ name: ACTIVE_ORDERS })
 export class ActiveOrderEntity extends BaseEntity {
 	// @ApiProperty()

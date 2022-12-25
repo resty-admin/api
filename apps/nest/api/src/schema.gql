@@ -297,6 +297,143 @@ type PaginatedPaymentSystem {
 	totalCount: Int!
 }
 
+input FileEntityInput {
+	url: String!
+}
+
+input FondyEntityInput {
+	merchantId: String!
+	secretKey: String!
+	company: CompanyEntityInput!
+}
+
+input CategoryEntityInput {
+	name: String!
+	place: PlaceEntityInput!
+	products: [ProductEntityInput!]!
+	file: FileEntityInput
+}
+
+input ProductEntityInput {
+	name: String!
+	category: CategoryEntityInput!
+	description: String
+	price: Int!
+	file: FileEntityInput
+	attrsGroups: [AttributesGroupEntityInput!]
+}
+
+input AttributesGroupEntityInput {
+	name: String!
+	isUniq: Boolean = false
+	attributes: [AttributesEntityInput!]
+	products: [ProductEntityInput!]
+	place: PlaceEntityInput!
+}
+
+input AttributesEntityInput {
+	name: String!
+	attributesGroup: AttributesGroupEntityInput
+	price: Int
+}
+
+input ActiveShiftEntityInput {
+	waiter: UserEntityInput
+	table: TableEntityInput
+	place: PlaceEntityInput
+	orders: [ActiveOrderEntityInput!]
+	shiftDate: String!
+}
+
+input HistoryShiftEntityInput {
+	waiter: UserEntityInput
+	table: TableEntityInput
+	place: PlaceEntityInput
+	orders: [ActiveOrderEntityInput!]
+	shiftDate: String!
+}
+
+input ActiveOrderEntityInput {
+	orderCode: String!
+	table: TableEntityInput!
+	users: [UserEntityInput!]!
+	type: OrderTypeEnum!
+	status: OrderStatusEnum!
+	place: PlaceEntityInput!
+	shift: ActiveShiftEntityInput
+}
+
+input HistoryOrderEntityInput {
+	orderCode: String!
+	table: TableEntityInput!
+	users: [UserEntityInput!]!
+	type: OrderTypeEnum!
+	status: OrderStatusEnum!
+	place: PlaceEntityInput!
+	shift: ActiveShiftEntityInput
+}
+
+input TableEntityInput {
+	name: String!
+	code: Int!
+	hall: HallEntityInput!
+	orders: [ActiveOrderEntityInput!]
+	file: FileEntityInput!
+}
+
+input HallEntityInput {
+	name: String!
+	place: PlaceEntityInput!
+	file: FileEntityInput
+	tables: [TableEntityInput!]
+}
+
+input PlaceEntityInput {
+	name: String!
+	company: CompanyEntityInput!
+	address: String!
+	status: PlaceStatusEnum!
+	halls: [HallEntityInput!]!
+	categories: [CategoryEntityInput!]!
+	file: FileEntityInput
+	a11y: String!
+	weekDays: String!
+	weekendDays: String!
+	holidayDays: String!
+	attrGroups: [AttributesGroupEntityInput!]!
+	orders: [ActiveOrderEntityInput!]
+}
+
+input CompanyEntityInput {
+	name: String!
+	owner: UserEntityInput!
+	places: [PlaceEntityInput!]
+	employees: [UserEntityInput!]
+	status: CompanyStatusEnum!
+	logo: FileEntityInput
+	fondy: FondyEntityInput
+}
+
+input UserEntityInput {
+	name: String!
+	role: UserRoleEnum!
+	theme: ThemeEnum!
+	email: String
+	googleId: String
+	telegramId: Int
+	telegramToken: String
+	tel: String
+	verificationCode: Int
+	status: UserStatusEnum!
+	password: String
+	orders: [ActiveOrderEntityInput!]!
+	company: CompanyEntityInput
+}
+
+input PaymentSystemEntityInput {
+	name: String!
+}
+
 type Query {
 	attribute(id: String!): AttributesEntity!
 	attributes(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedAttributes!
@@ -328,4 +465,198 @@ type Query {
 	commands(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedCommand!
 	user(id: String!): UserEntity!
 	users(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedUser!
+}
+
+type Mutation {
+	createAttr(attr: CreateAttributeInput!): AttributesEntity!
+	updateAttr(attr: UpdateAttributeInput!): AttributesEntity!
+	deleteAttr(attrId: String!): String!
+	createAttrGroup(attr: CreateAttributeGroupInput!): AttributesGroupEntity!
+	updateAttrGroup(attrGroup: UpdateAttributeGroupInput!): AttributesGroupEntity!
+	deleteAttrGroup(attrGroupId: String!): String!
+	createAccountingSystem(accountingSystem: CreateAccountingSystemInput!): AccountingSystemEntity!
+	updateAccountingSystem(accountingSystem: UpdateAccountingSystemInput!): AccountingSystemEntity!
+	deleteAccountingSystem(accountingSystemId: String!): String!
+	createCompany(company: CreateCompanyInput!): CompanyEntity!
+	updateCompany(company: UpdateCompanyInput!): CompanyEntity!
+	deleteCompany(companyId: String!): String!
+	createShift(shift: CreateShitInput!): ActiveShiftEntity!
+	updateShift(shift: UpdateShitInput!): ActiveShiftEntity!
+	deleteShift(shiftId: String!): String!
+	createOrder(order: CreateOrderInput!): ActiveOrderEntity!
+	updateOrder(order: UpdateOrderInput!): ActiveOrderEntity!
+	deleteOrder(orderId: String!): String!
+	createProduct(product: CreateProductInput!): ProductEntity!
+	updateProduct(product: UpdateProductInput!): ProductEntity!
+	deleteProduct(productId: String!): String!
+	createHall(hall: CreateHallInput!): HallEntity!
+	updateHall(hall: UpdateHallInput!): HallEntity!
+	deleteHall(hallId: String!): String!
+	createPlace(place: CreatePlaceInput!): PlaceEntity!
+	updatePlace(place: UpdatePlaceInput!): PlaceEntity!
+	deletePlace(placeId: String!): String!
+	createCategory(category: CreateCategoryInput!): CategoryEntity!
+	updateCategory(category: UpdateCategoryInput!): CategoryEntity!
+	deleteCategory(categoryId: String!): String!
+	createTable(table: CreateTableInput!): TableEntity!
+	updateTable(table: UpdateTableInput!): TableEntity!
+	deleteTable(tableId: String!): String!
+	createCommand(command: CreateCommandInput!): CommandEntity!
+	updateCommand(command: String!): CommandEntity!
+	deleteCommand(commandId: String!): String!
+}
+
+input CreateAttributeInput {
+	name: String!
+	price: Int!
+}
+
+input UpdateAttributeInput {
+	id: String!
+	name: String!
+}
+
+input CreateAttributeGroupInput {
+	name: String!
+	isUniq: Boolean!
+	place: String!
+}
+
+input UpdateAttributeGroupInput {
+	id: String!
+	name: String!
+	isUniq: Boolean!
+}
+
+input CreateAccountingSystemInput {
+	name: String!
+}
+
+input UpdateAccountingSystemInput {
+	id: String!
+	name: String!
+}
+
+input CreateCompanyInput {
+	name: String!
+	logo: FileEntityInput
+}
+
+input UpdateCompanyInput {
+	id: String!
+	name: String!
+	logo: FileEntityInput
+	employees: [String!]
+}
+
+input CreateShitInput {
+	waiter: String!
+	table: String!
+	place: String!
+	orders: [String!]!
+	shiftDate: [String!]!
+}
+
+input UpdateShitInput {
+	id: String!
+	waiter: String!
+	table: String!
+	place: String!
+	orders: [String!]!
+	shiftDate: [String!]!
+}
+
+input CreateOrderInput {
+	type: OrderTypeEnum!
+	place: String!
+}
+
+input UpdateOrderInput {
+	id: String!
+	type: OrderTypeEnum!
+}
+
+input CreateProductInput {
+	name: String!
+	category: String!
+	description: String!
+	price: Float!
+	file: FileEntityInput
+	attrsGroups: [String!]
+}
+
+input UpdateProductInput {
+	id: String!
+	name: String!
+	category: String!
+	description: String!
+	price: Float!
+	file: FileEntityInput
+}
+
+input CreateHallInput {
+	name: String!
+	place: String!
+	file: FileEntityInput
+}
+
+input UpdateHallInput {
+	id: String!
+	name: String!
+	file: FileEntityInput
+}
+
+input CreatePlaceInput {
+	name: String!
+	address: String!
+	company: String!
+	file: FileEntityInput!
+	weekDays: WorkingHoursInput!
+	weekendDays: WorkingHoursInput!
+	holidayDays: WorkingHoursInput!
+}
+
+input WorkingHoursInput {
+	name: String!
+	start: Int!
+	end: Int!
+}
+
+input UpdatePlaceInput {
+	id: String!
+	name: String!
+	address: String!
+	file: FileEntityInput!
+	weekDays: WorkingHoursInput!
+	weekendDays: WorkingHoursInput!
+	holidayDays: WorkingHoursInput!
+}
+
+input CreateCategoryInput {
+	name: String!
+	place: String!
+	file: FileEntityInput
+}
+
+input UpdateCategoryInput {
+	id: String!
+	name: String
+	place: String
+	file: FileEntityInput
+}
+
+input CreateTableInput {
+	name: String!
+	hall: String!
+	file: FileEntityInput
+}
+
+input UpdateTableInput {
+	id: String!
+	name: String!
+	file: FileEntityInput
+}
+
+input CreateCommandInput {
+	name: String!
 }
