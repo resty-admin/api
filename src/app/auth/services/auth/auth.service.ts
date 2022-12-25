@@ -1,0 +1,206 @@
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { Random } from "random-js";
+import { CryptoService } from "src/app/shared/crypto";
+import { ErrorsEnum, UserStatusEnum } from "src/app/shared/enums";
+import type {
+	IAccessToken,
+	IForgotPassword,
+	IGoogleProfile,
+	IResetPassword,
+	ISignIn,
+	ISignUp,
+	ITelegramUser,
+	IUser,
+	IVerifyCode
+} from "src/app/shared/interfaces";
+import { JwtService } from "src/app/shared/jwt";
+import { MailsService } from "src/app/shared/mails";
+import { MessagesService } from "src/app/shared/messages";
+import { removeFirstSlash } from "src/app/shared/utils";
+
+import { UsersService } from "../../../users";
+
+@Injectable()
+export class AuthService {
+	private readonly _random = new Random();
+
+	constructor(
+		private readonly _usersService: UsersService,
+		private readonly _jwtService: JwtService,
+		private readonly _messagesService: MessagesService,
+		private readonly _cryptoService: CryptoService,
+		private readonly _mailsService: MailsService
+	) {}
+
+	async validate(user: IUser): Promise<IUser> {
+		return this._usersService.getUser({ id: user.id });
+	}
+
+	async getMe(user: IUser): Promise<IAccessToken> {
+		const me = await this._usersService.getUser({ id: user.id });
+
+		if (!me) {
+			throw new HttpException({ message: ErrorsEnum.UserNotExist }, HttpStatus.UNAUTHORIZED);
+		}
+
+		return this._jwtService.getAccessToken(me);
+	}
+
+	async verifyCode(user: IUser, body: IVerifyCode) {
+		const isVerified = Number(user?.verificationCode) === Number(body?.verificationCode);
+
+		if (!isVerified) {
+			throw new HttpException({ message: ErrorsEnum.InvalidVerificationCode }, HttpStatus.UNAUTHORIZED);
+		}
+
+		const verifiedUser = await this._usersService.updateUser(user.id, {
+			...user,
+			status: UserStatusEnum.VERIFIED,
+			verificationCode: 0o000
+		});
+
+		return this._jwtService.getAccessToken(verifiedUser);
+	}
+
+	async signUp(body: ISignUp) {
+		const existedUser = await this._usersService.getUser({
+			...("email" in body ? { email: body.email } : {}),
+			...("tel" in body ? { tel: body.tel } : {})
+		});
+
+		if (existedUser) {
+			throw new HttpException({ message: ErrorsEnum.UserAlreadyExist }, HttpStatus.UNAUTHORIZED);
+		}
+
+		const isPasswordEncrypted = this._cryptoService.check(body.password);
+
+		if (!isPasswordEncrypted) {
+			throw new HttpException({ message: ErrorsEnum.InvalidEncryption }, HttpStatus.UNAUTHORIZED);
+		}
+
+		const verificationCode = this._random.integer(1000, 9999);
+
+		const createdUser = await this._usersService.createUser({ ...body, verificationCode });
+
+		if ("email" in body) {
+			// await this._mailsService.send(body.email, verificationCode.toString());
+		}
+
+		if ("tel" in body) {
+			// await this._messagesService.send(body.tel, verificationCode.toString());
+		}
+
+		return this._jwtService.getAccessToken(createdUser);
+	}
+
+	async signIn(body: ISignIn): Promise<IAccessToken> {
+		const existedUser = await this._usersService.getUser({
+			...("email" in body ? { email: body.email } : {}),
+			...("tel" in body ? { tel: body.tel } : {})
+		});
+
+		if (!existedUser) {
+			throw new HttpException({ message: ErrorsEnum.UserNotExist }, HttpStatus.UNAUTHORIZED);
+		}
+
+		const isPasswordEncrypted = this._cryptoService.check(body.password);
+
+		if (!isPasswordEncrypted) {
+			throw new HttpException({ message: ErrorsEnum.InvalidEncryption }, HttpStatus.UNAUTHORIZED);
+		}
+
+		const isPasswordCompared = this._cryptoService.compare(body.password, existedUser.password);
+
+		if (!isPasswordCompared) {
+			throw new HttpException({ message: ErrorsEnum.InvalidPassword }, HttpStatus.UNAUTHORIZED);
+		}
+
+		const isUserVerified = existedUser.status === UserStatusEnum.NOT_VERIFIED;
+
+		if (isUserVerified) {
+			throw new HttpException({ message: ErrorsEnum.UserNotVerified }, HttpStatus.UNAUTHORIZED);
+		}
+
+		return this._jwtService.getAccessToken(existedUser);
+	}
+
+	async forgotPassword(body: IForgotPassword) {
+		const existedUser = await this._usersService.getUser({
+			...("email" in body ? { email: body.email } : {}),
+			...("tel" in body ? { tel: body.tel } : {})
+		});
+
+		if (!existedUser) {
+			throw new HttpException({ message: ErrorsEnum.UserNotExist }, HttpStatus.UNAUTHORIZED);
+		}
+
+		const token = this._jwtService.getAccessToken(existedUser);
+		const resetPasswordLink = `http://192.168.68.52:4200/auth/reset-password/${token}`;
+
+		if ("email" in body) {
+			await this._mailsService.send(body.email, resetPasswordLink);
+		} else if ("tel" in body) {
+			await this._messagesService.send(body.tel, resetPasswordLink);
+		}
+
+		return "success";
+	}
+
+	async resetPassword(user: IUser, body: IResetPassword) {
+		const isPasswordEncrypted = this._cryptoService.check(body.password);
+
+		if (!isPasswordEncrypted) {
+			throw new HttpException({ message: ErrorsEnum.InvalidEncryption }, HttpStatus.UNAUTHORIZED);
+		}
+
+		const updatedUser = await this._usersService.updateUser(user.id, body);
+
+		return this._jwtService.getAccessToken(updatedUser);
+	}
+
+	async google(profile: IGoogleProfile) {
+		const { id, displayName, emails } = profile;
+
+		const findedUser = await this._usersService.getUser({ googleId: id });
+
+		if (findedUser) {
+			return findedUser;
+		}
+
+		return this._usersService.updateUser(id, {
+			googleId: id,
+			name: displayName,
+			email: emails[0].value,
+			status: UserStatusEnum.VERIFIED
+		});
+	}
+
+	getGoogleRedirectUrl(user: IUser, domain: string) {
+		const { accessToken } = this._jwtService.getAccessToken(user);
+
+		return `${domain}${removeFirstSlash("ADMIN_ROUTES.GOOGLE.absolutePath")}/${accessToken}`;
+	}
+
+	async telegram({ id, first_name, last_name }: ITelegramUser) {
+		console.log("here?");
+		const existUser = await this._usersService.getUser({ telegramId: id });
+
+		if (existUser) {
+			return this._jwtService.getAccessToken(existUser);
+		}
+
+		const createdUser = await this._usersService.createUser({
+			telegramId: id,
+			name: `${first_name || ""} ${last_name || ""}`,
+			status: UserStatusEnum.VERIFIED
+		});
+
+		return this._jwtService.getAccessToken(createdUser);
+	}
+
+	async getTelegramRedirectUrl(telegramUser: ITelegramUser) {
+		const { accessToken } = await this.telegram(telegramUser);
+
+		return `${""}/${accessToken}`;
+	}
+}

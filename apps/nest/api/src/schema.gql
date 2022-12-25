@@ -1,0 +1,331 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type AccountingSystemEntity {
+	id: String!
+	name: String!
+}
+
+type PaginatedAccountingSystem {
+	data: [AccountingSystemEntity!]
+	page: Int!
+	totalCount: Int!
+}
+
+type FileEntity {
+	id: String!
+	url: String!
+}
+
+type FondyEntity {
+	id: String!
+	merchantId: String!
+	secretKey: String!
+	company: CompanyEntity!
+}
+
+type CategoryEntity {
+	id: String!
+	name: String!
+	place: PlaceEntity!
+	products: [ProductEntity!]!
+	file: FileEntity
+}
+
+type PaginatedCategory {
+	data: [CategoryEntity!]
+	page: Int!
+	totalCount: Int!
+}
+
+type ProductEntity {
+	id: String!
+	name: String!
+	category: CategoryEntity!
+	description: String
+	price: Int!
+	file: FileEntity
+	attrsGroups: [AttributesGroupEntity!]
+}
+
+type PaginatedProduct {
+	data: [ProductEntity!]
+	page: Int!
+	totalCount: Int!
+}
+
+type AttributesGroupEntity {
+	id: String!
+	name: String!
+	isUniq: Boolean
+	attributes: [AttributesEntity!]
+	products: [ProductEntity!]
+	place: PlaceEntity!
+}
+
+type PaginatedAttributeGroups {
+	data: [AttributesGroupEntity!]
+	page: Int!
+	totalCount: Int!
+}
+
+type AttributesEntity {
+	id: String!
+	name: String!
+	attributesGroup: AttributesGroupEntity
+	price: Int
+}
+
+type PaginatedAttributes {
+	data: [AttributesEntity!]
+	page: Int!
+	totalCount: Int!
+}
+
+type ActiveShiftEntity {
+	id: String!
+	waiter: UserEntity
+	table: TableEntity
+	place: PlaceEntity
+	orders: [ActiveOrderEntity!]
+	shiftDate: String!
+}
+
+type PaginatedActiveShift {
+	data: [ActiveShiftEntity!]
+	page: Int!
+	totalCount: Int!
+}
+
+type HistoryShiftEntity {
+	id: String!
+	waiter: UserEntity
+	table: TableEntity
+	place: PlaceEntity
+	orders: [ActiveOrderEntity!]
+	shiftDate: String!
+}
+
+type ActiveOrderEntity {
+	id: String!
+	orderCode: String!
+	table: TableEntity!
+	users: [UserEntity!]!
+	type: OrderTypeEnum!
+	status: OrderStatusEnum!
+	place: PlaceEntity!
+	shift: ActiveShiftEntity
+}
+
+enum OrderTypeEnum {
+	RESERVE
+	PICKUP
+	IN_PLACE
+	DELIVERY
+}
+
+enum OrderStatusEnum {
+	OPENED
+	CLOSED
+}
+
+type PaginatedActiveOrder {
+	data: [ActiveOrderEntity!]
+	page: Int!
+	totalCount: Int!
+}
+
+type HistoryOrderEntity {
+	id: String!
+	orderCode: String!
+	table: TableEntity!
+	users: [UserEntity!]!
+	type: OrderTypeEnum!
+	status: OrderStatusEnum!
+	place: PlaceEntity!
+	shift: ActiveShiftEntity
+}
+
+type TableEntity {
+	id: String!
+	name: String!
+	code: Int!
+	hall: HallEntity!
+	orders: [ActiveOrderEntity!]
+	file: FileEntity!
+}
+
+type PaginatedTable {
+	data: [TableEntity!]
+	page: Int!
+	totalCount: Int!
+}
+
+type HallEntity {
+	id: String!
+	name: String!
+	place: PlaceEntity!
+	file: FileEntity
+	tables: [TableEntity!]
+}
+
+type PaginatedHall {
+	data: [HallEntity!]
+	page: Int!
+	totalCount: Int!
+}
+
+type PlaceEntity {
+	id: String!
+	name: String!
+	company: CompanyEntity!
+	address: String!
+	status: PlaceStatusEnum!
+	halls: [HallEntity!]!
+	categories: [CategoryEntity!]!
+	file: FileEntity
+	a11y: String!
+	weekDays: String!
+	weekendDays: String!
+	holidayDays: String!
+	attrGroups: [AttributesGroupEntity!]!
+	orders: [ActiveOrderEntity!]
+}
+
+enum PlaceStatusEnum {
+	OPENED
+	CLOSED
+}
+
+type PaginatedPlace {
+	data: [PlaceEntity!]
+	page: Int!
+	totalCount: Int!
+}
+
+type CompanyEntity {
+	id: String!
+	name: String!
+	owner: UserEntity!
+	places: [PlaceEntity!]
+	employees: [UserEntity!]
+	status: CompanyStatusEnum!
+	logo: FileEntity
+	fondy: FondyEntity
+}
+
+enum CompanyStatusEnum {
+	APPROVED
+	REJECTED
+	PENDING
+}
+
+type PaginatedCompany {
+	data: [CompanyEntity!]
+	page: Int!
+	totalCount: Int!
+}
+
+type UserEntity {
+	id: String!
+	name: String!
+	role: UserRoleEnum!
+	theme: ThemeEnum!
+	email: String
+	googleId: String
+	telegramId: Int
+	telegramToken: String
+	tel: String
+	verificationCode: Int
+	status: UserStatusEnum!
+	password: String
+	orders: [ActiveOrderEntity!]!
+	company: CompanyEntity
+}
+
+enum UserRoleEnum {
+	ROOT
+	ADMIN
+	HOSTESS
+	WAITER
+	HOOKAH
+	CLIENT
+}
+
+enum ThemeEnum {
+	LIGHT
+	DARK
+}
+
+enum UserStatusEnum {
+	NOT_VERIFIED
+	VERIFIED
+}
+
+type PaginatedUser {
+	data: [UserEntity!]
+	page: Int!
+	totalCount: Int!
+}
+
+type CommandEntity {
+	id: String!
+	name: String!
+}
+
+type PaginatedCommand {
+	data: [CommandEntity!]
+	page: Int!
+	totalCount: Int!
+}
+
+type LanguageEntity {
+	id: String!
+	name: String!
+	file: FileEntity!
+}
+
+type PaymentSystemEntity {
+	id: String!
+	name: String!
+}
+
+type PaginatedPaymentSystem {
+	data: [PaymentSystemEntity!]
+	page: Int!
+	totalCount: Int!
+}
+
+type Query {
+	attribute(id: String!): AttributesEntity!
+	attributes(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedAttributes!
+	attributeGroup(id: String!): AttributesGroupEntity!
+	attributeGroups(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedAttributeGroups!
+	accountingSystem(id: String!): AccountingSystemEntity!
+	accountingSystems(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedAccountingSystem!
+	payment(id: String!): PaymentSystemEntity!
+	payments(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedPaymentSystem!
+	company(id: String!): CompanyEntity!
+	companies(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedCompany!
+	shift(id: String!): ActiveShiftEntity!
+	shifts(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedActiveShift!
+	language(id: String!): LanguageEntity!
+	languages(skip: Int! = 0, take: Int! = 25, filtersString: String): LanguageEntity!
+	order(id: String!): ActiveOrderEntity!
+	orders(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedActiveOrder!
+	product(id: String!): ProductEntity!
+	products(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedProduct!
+	hall(id: String!): HallEntity!
+	halls(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedHall!
+	place(id: String!): PlaceEntity!
+	places(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedPlace!
+	category(id: String!): CategoryEntity!
+	categories(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedCategory!
+	table(id: String!): TableEntity!
+	tables(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedTable!
+	command(id: String!): CommandEntity!
+	commands(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedCommand!
+	user(id: String!): UserEntity!
+	users(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedUser!
+}

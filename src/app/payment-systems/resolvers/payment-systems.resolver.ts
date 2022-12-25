@@ -1,0 +1,26 @@
+import { UseGuards } from "@nestjs/common";
+import { Args, Query, Resolver } from "@nestjs/graphql";
+import { UserRoleEnum } from "src/app/shared/enums";
+
+import { GqlJwtGuard } from "../../auth";
+import { RolesGuard } from "../../shared";
+import { PaginationArgsDto } from "../../shared/dtos";
+import { PaginatedPaymentSystem, PaymentSystemEntity } from "../entities";
+import { PaymentSystemsService } from "../services";
+
+@Resolver(() => PaymentSystemEntity)
+export class PaymentSystemsResolver {
+	constructor(private readonly _paymentSystemService: PaymentSystemsService) {}
+
+	@Query(() => PaymentSystemEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	async payment(@Args("id", { type: () => String }) id: string) {
+		return this._paymentSystemService.getPaymentSystem(id);
+	}
+
+	@Query(() => PaginatedPaymentSystem)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	async payments(@Args() args: PaginationArgsDto) {
+		return this._paymentSystemService.getPaymentSystems(args);
+	}
+}

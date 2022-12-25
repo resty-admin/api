@@ -1,0 +1,4 @@
+{
+	"*.{js,jsx,ts,tsx}": "yarn run lint:staged",
+	"*.{css,scss}": "yarn run slint:staged"
+}
