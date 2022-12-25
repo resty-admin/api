@@ -8,22 +8,22 @@ import { IFile } from "../../shared/interfaces";
 export class CreateProductDto {
 	@IsString()
 	@IsNotEmpty()
-		// @ApiProperty()
+	// @ApiProperty()
 	name: string;
 
 	@IsString()
 	@IsNotEmpty()
-		// @ApiProperty()
+	// @ApiProperty()
 	category: string;
 
 	@IsString()
 	@IsOptional()
-		// @ApiProperty()
+	// @ApiProperty()
 	description: string;
 
 	@IsNumber()
 	@IsOptional()
-		// @ApiProperty()
+	// @ApiProperty()
 	price: number;
 
 	// @ApiProperty()

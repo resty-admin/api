@@ -5,15 +5,14 @@ import { IsNotEmpty, IsString } from "../../shared";
 export class EmitCommandDto {
 	@IsString()
 	@IsNotEmpty()
-		// @ApiProperty()
+	// @ApiProperty()
 	command: string;
 
 	@IsString()
 	@IsNotEmpty()
-		// @ApiProperty()
+	// @ApiProperty()
 	table: string;
 }
-
 
 @InputType()
 export class EmitCommandInput {

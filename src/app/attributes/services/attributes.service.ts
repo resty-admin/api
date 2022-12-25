@@ -45,7 +45,10 @@ export class AttributesService {
 		});
 	}
 
-	async updateAttribute(id: string, attributeDto: UpdateAttributeDto | UpdateAttributeInput): Promise<AttributesEntity> {
+	async updateAttribute(
+		id: string,
+		attributeDto: UpdateAttributeDto | UpdateAttributeInput
+	): Promise<AttributesEntity> {
 		return this._attributesRepository.save({ id, ...attributeDto });
 	}
 

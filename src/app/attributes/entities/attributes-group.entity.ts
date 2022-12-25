@@ -34,7 +34,7 @@ export class AttributesGroupEntity extends BaseEntity {
 
 	@ManyToOne(() => PlaceEntity, (place) => place.attrGroups, { cascade: true })
 	@Field(() => PlaceEntity)
-		// @ApiProperty()
+	// @ApiProperty()
 	place: PlaceEntity;
 }
 

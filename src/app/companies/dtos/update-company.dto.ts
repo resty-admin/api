@@ -1,4 +1,3 @@
-
 import { Field, InputType } from "@nestjs/graphql";
 import { IsUUID } from "class-validator";
 
@@ -9,7 +8,7 @@ import { IFile } from "../../shared/interfaces";
 export class UpdateCompanyDto {
 	@IsString()
 	@IsNotEmpty()
-		// @ApiProperty()
+	// @ApiProperty()
 	name: string;
 
 	// @ApiProperty()
@@ -24,7 +23,6 @@ export class UpdateCompanyDto {
 
 @InputType()
 export class UpdateCompanyInput {
-
 	@Field(() => String)
 	@IsUUID()
 	id: string;
@@ -40,5 +38,4 @@ export class UpdateCompanyInput {
 	@Field(() => [String], { nullable: true })
 	@IsOptional()
 	employees: string[];
-
 }

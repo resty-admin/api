@@ -4,11 +4,11 @@ import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { GqlJwtGuard } from "../../auth";
 import { RolesGuard, UserGql } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
+import { UserRoleEnum } from "../../shared/enums";
+import { IUser } from "../../shared/interfaces";
 import { CreateCompanyInput, UpdateCompanyInput } from "../dtos";
 import { CompanyEntity, PaginatedCompany } from "../entities";
 import { CompaniesService } from "../services";
-import {UserRoleEnum} from "../../shared/enums";
-import {IUser} from "../../shared/interfaces";
 
 @Resolver(() => CompanyEntity)
 export class CompaniesResolver {
@@ -43,5 +43,4 @@ export class CompaniesResolver {
 	async deleteCompany(@Args("companyId") id: string) {
 		return this._companiesService.deleteCompany(id);
 	}
-
 }

@@ -8,14 +8,13 @@ import { IFile } from "../../shared/interfaces";
 export class UpdateTableDto {
 	@IsString()
 	@IsNotEmpty()
-		// @ApiProperty()
+	// @ApiProperty()
 	name: string;
 
 	// @ApiProperty()
 	@IsOptional()
 	file: IFile;
 }
-
 
 @InputType()
 export class UpdateTableInput {

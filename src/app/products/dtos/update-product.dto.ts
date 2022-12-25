@@ -9,23 +9,23 @@ export class UpdateProductDto {
 	@IsString()
 	@IsNotEmpty()
 	@IsOptional()
-		// @ApiProperty()
+	// @ApiProperty()
 	name: string;
 
 	@IsString()
 	@IsNotEmpty()
 	@IsOptional()
-		// @ApiProperty()
+	// @ApiProperty()
 	category: string;
 
 	@IsString()
 	@IsOptional()
-		// @ApiProperty()
+	// @ApiProperty()
 	description: string;
 
 	@IsNumber()
 	@IsOptional()
-		// @ApiProperty()
+	// @ApiProperty()
 	price: number;
 
 	// @ApiProperty()
@@ -64,5 +64,4 @@ export class UpdateProductInput {
 	@Field(() => FileEntity, { nullable: true })
 	@IsOptional()
 	file?: IFile;
-
 }

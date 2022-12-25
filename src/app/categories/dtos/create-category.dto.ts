@@ -3,7 +3,7 @@ import { ApiProperty } from "@nestjs/swagger";
 
 import { FileEntity } from "../../files/entities";
 import { IsNotEmpty, IsOptional, IsString } from "../../shared";
-import {IFile} from "../../shared/interfaces";
+import { IFile } from "../../shared/interfaces";
 
 export class CreateCategoryDto {
 	@IsString()

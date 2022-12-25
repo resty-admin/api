@@ -5,12 +5,12 @@ import { IsNotEmpty, IsNumber, IsOptional, IsString } from "../../shared";
 export class CreateAttributeDto {
 	@IsString()
 	@IsNotEmpty()
-		// @ApiProperty()
+	// @ApiProperty()
 	name: string;
 
 	@IsNumber()
 	@IsOptional()
-		// @ApiProperty()
+	// @ApiProperty()
 	price: number;
 }
 

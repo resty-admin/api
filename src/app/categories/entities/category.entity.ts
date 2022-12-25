@@ -1,4 +1,4 @@
-import {Field, InputType, ObjectType} from "@nestjs/graphql";
+import { Field, InputType, ObjectType } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 
@@ -7,8 +7,8 @@ import { PlaceEntity } from "../../places/entities";
 import { ProductEntity } from "../../products/entities";
 import { BaseEntity } from "../../shared";
 import { Pagination } from "../../shared/entities/pagination.type";
+import { IFile } from "../../shared/interfaces";
 import { CATEGORIES } from "../constants";
-import {IFile} from "../../shared/interfaces";
 
 @ObjectType()
 @InputType("CategoryEntityInput")

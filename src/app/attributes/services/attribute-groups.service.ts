@@ -38,7 +38,9 @@ export class AttributeGroupsService {
 		};
 	}
 
-	async createAttributeGroup(attributeGroupDto: CreateAttributeGroupDto | CreateAttributeGroupInput): Promise<AttributesGroupEntity> {
+	async createAttributeGroup(
+		attributeGroupDto: CreateAttributeGroupDto | CreateAttributeGroupInput
+	): Promise<AttributesGroupEntity> {
 		const savedAttributeGroup = await this._attributeGroupsRepository.save({
 			...attributeGroupDto,
 			place: { id: attributeGroupDto.place }
@@ -49,7 +51,10 @@ export class AttributeGroupsService {
 		});
 	}
 
-	async updateAttributeGroup(id: string, attributeGroupDto: UpdateAttributeGroupDto | UpdateAttributeGroupInput): Promise<AttributesGroupEntity> {
+	async updateAttributeGroup(
+		id: string,
+		attributeGroupDto: UpdateAttributeGroupDto | UpdateAttributeGroupInput
+	): Promise<AttributesGroupEntity> {
 		return this._attributeGroupsRepository.save({ id, ...attributeGroupDto });
 	}
 

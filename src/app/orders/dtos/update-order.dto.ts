@@ -8,7 +8,7 @@ export class UpdateOrderDto {
 	@IsEnum(OrderTypeEnum)
 	@IsNotEmpty()
 	@IsOptional()
-		// @ApiProperty()
+	// @ApiProperty()
 	type: OrderTypeEnum;
 }
 
@@ -22,5 +22,4 @@ export class UpdateOrderInput {
 	@IsEnum(OrderTypeEnum)
 	@IsOptional()
 	type: OrderTypeEnum;
-
 }

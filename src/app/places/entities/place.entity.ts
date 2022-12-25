@@ -88,7 +88,7 @@ export class PlaceEntity extends BaseEntity {
 
 	@OneToMany(() => AttributesGroupEntity, (attrGroups) => attrGroups.place, { nullable: true })
 	@Field(() => [AttributesGroupEntity])
-		// @ApiProperty()
+	// @ApiProperty()
 	attrGroups?: AttributesGroupEntity[];
 
 	// @ApiProperty()

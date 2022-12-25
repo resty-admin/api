@@ -20,7 +20,7 @@ export class HallEntity extends BaseEntity {
 
 	@ManyToOne(() => PlaceEntity, (place) => place.halls, { cascade: true })
 	@Field(() => PlaceEntity)
-		// @ApiProperty()
+	// @ApiProperty()
 	place: PlaceEntity;
 
 	// @ApiProperty()

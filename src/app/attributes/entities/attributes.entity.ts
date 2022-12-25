@@ -1,4 +1,4 @@
-import {Field, InputType, Int, ObjectType} from "@nestjs/graphql";
+import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity, OneToMany } from "typeorm";
 

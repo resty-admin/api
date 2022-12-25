@@ -4,8 +4,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { CreateCategoryDto, UpdateCategoryDto } from "../dtos";
+import type { CreateCategoryInput, UpdateCategoryInput } from "../dtos";
 import { CategoryEntity } from "../entities";
-import {CreateCategoryInput, UpdateCategoryInput} from "../dtos";
 
 @Injectable()
 export class CategoriesService {

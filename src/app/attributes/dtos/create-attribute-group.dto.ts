@@ -6,12 +6,12 @@ import { IsNotEmpty, IsOptional, IsString } from "../../shared";
 export class CreateAttributeGroupDto {
 	@IsString()
 	@IsNotEmpty()
-		// @ApiProperty()
+	// @ApiProperty()
 	name: string;
 
 	@IsBoolean()
 	@IsOptional()
-		// @ApiProperty()
+	// @ApiProperty()
 	isUniq: boolean;
 
 	@IsString()

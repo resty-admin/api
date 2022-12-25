@@ -1,8 +1,8 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
+import { IsUUID } from "class-validator";
 
 import { IsNotEmpty, IsOptional, IsString } from "../../shared";
-import {IsUUID} from "class-validator";
 
 export class UpdateAccountingSystemDto {
 	@IsNotEmpty()
@@ -11,7 +11,6 @@ export class UpdateAccountingSystemDto {
 	@IsOptional()
 	name: string;
 }
-
 
 @InputType()
 export class UpdateAccountingSystemInput {

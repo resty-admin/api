@@ -11,17 +11,17 @@ import { WorkingHoursDto, WorkingHoursInput } from "./date-types.dto";
 export class CreatePlaceDto {
 	@IsString()
 	@IsNotEmpty()
-		// @ApiProperty()
+	// @ApiProperty()
 	name: string;
 
 	@IsString()
 	@IsNotEmpty()
-		// @ApiProperty()
+	// @ApiProperty()
 	address: string;
 
 	@IsString()
 	@IsNotEmpty()
-		// @ApiProperty()
+	// @ApiProperty()
 	company: string;
 
 	// @ApiProperty()

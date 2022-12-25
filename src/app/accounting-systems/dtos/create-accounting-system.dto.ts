@@ -10,7 +10,6 @@ export class CreateAccountingSystemDto {
 	name: string;
 }
 
-
 @InputType()
 export class CreateAccountingSystemInput {
 	@Field(() => String)

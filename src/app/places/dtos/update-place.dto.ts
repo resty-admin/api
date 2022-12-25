@@ -29,12 +29,12 @@ export class UpdatePlaceDto {
 	status: PlaceStatusEnum;
 
 	@IsOptional()
-		// @ApiProperty()
+	// @ApiProperty()
 	file: IFile;
 
 	@IsOptional()
 	@IsString()
-		// @ApiProperty()
+	// @ApiProperty()
 	a11y: string;
 
 	@IsObject()

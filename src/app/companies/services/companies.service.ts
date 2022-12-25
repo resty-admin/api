@@ -4,10 +4,10 @@ import { Repository } from "typeorm";
 
 import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
+import type { IUser } from "../../shared/interfaces";
 import type { CreateCompanyDto, UpdateCompanyDto } from "../dtos";
 import type { CreateCompanyInput, UpdateCompanyInput } from "../dtos";
 import { CompanyEntity } from "../entities";
-import {IUser} from "../../shared/interfaces";
 
 @Injectable()
 export class CompaniesService {
@@ -42,7 +42,6 @@ export class CompaniesService {
 	}
 
 	async createCompany(company: CreateCompanyDto | CreateCompanyInput, user: IUser): Promise<CompanyEntity> {
-
 		const savedCompany = await this._companiesRepository.save({ ...company, owner: { id: user.id } });
 
 		return this._companiesRepository.findOne({
@@ -54,7 +53,7 @@ export class CompaniesService {
 		return this._companiesRepository.save({
 			...company,
 			id,
-			...(company.employees?.length > 0 && { employees: [...company.employees.map((el) => ({ id: el }))] }),
+			...(company.employees?.length > 0 && { employees: company.employees.map((el) => ({ id: el })) })
 			// employees: [...company.employees?.map((el) => ({ id: el }))]
 		});
 	}

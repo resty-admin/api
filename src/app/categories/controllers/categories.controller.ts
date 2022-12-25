@@ -1,15 +1,10 @@
-import { Body, Controller, Delete, Param, ParseUUIDPipe, Patch, Post } from "@nestjs/common";
-import { ApiCreatedResponse, ApiOperation } from "@nestjs/swagger";
+import { Controller } from "@nestjs/common";
 
 import { CATEGORIES } from "../constants";
-import { CreateCategoryDto, UpdateCategoryDto } from "../dtos";
-import { CategoryEntity } from "../entities";
-import { CategoriesService } from "../services";
 
 @Controller(CATEGORIES)
 export class CategoriesController {
 	// constructor(private readonly _categoriesService: CategoriesService) {}
-
 	// @Post()
 	// @ApiOperation({ summary: `Create category` })
 	// @ApiCreatedResponse({

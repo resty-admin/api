@@ -1,15 +1,10 @@
-import { Body, Controller, Delete, Param, ParseUUIDPipe, Patch, Post } from "@nestjs/common";
-import { ApiCreatedResponse, ApiOperation } from "@nestjs/swagger";
+import { Controller } from "@nestjs/common";
 
 import { ACCOUNTING_SYSTEMS } from "../constant";
-import { CreateAccountingSystemDto, UpdateAccountingSystemDto } from "../dtos";
-import { AccountingSystemEntity } from "../entities";
-import { AccountingSystemsService } from "../services";
 
 @Controller(ACCOUNTING_SYSTEMS)
 export class AccountingSystemsController {
 	// constructor(private readonly _accountingSystemsService: AccountingSystemsService) {}
-
 	// @Post()
 	// @ApiOperation({ summary: `Create accounting system` })
 	// @ApiCreatedResponse({

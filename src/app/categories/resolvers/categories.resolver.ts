@@ -4,10 +4,10 @@ import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { GqlJwtGuard } from "../../auth";
 import { RolesGuard } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
+import { UserRoleEnum } from "../../shared/enums";
 import { CreateCategoryInput, UpdateCategoryInput } from "../dtos";
 import { CategoryEntity, PaginatedCategory } from "../entities";
 import { CategoriesService } from "../services";
-import {UserRoleEnum} from "../../shared/enums";
 
 @Resolver(() => CategoryEntity)
 export class CategoriesResolver {

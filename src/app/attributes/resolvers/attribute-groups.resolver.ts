@@ -5,10 +5,7 @@ import { UserRoleEnum } from "src/app/shared/enums";
 import { GqlJwtGuard } from "../../auth";
 import { RolesGuard } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
-import {
-	CreateAttributeGroupInput,
-	UpdateAttributeGroupInput
-} from "../dtos";
+import { CreateAttributeGroupInput, UpdateAttributeGroupInput } from "../dtos";
 import { AttributesGroupEntity, PaginatedAttributeGroups } from "../entities";
 import { AttributeGroupsService } from "../services";
 

@@ -4,10 +4,10 @@ import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { GqlJwtGuard } from "../../auth";
 import { RolesGuard } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
+import { UserRoleEnum } from "../../shared/enums";
 import { CreateProductInput, UpdateProductInput } from "../dtos";
 import { PaginatedProduct, ProductEntity } from "../entities";
 import { ProductsService } from "../services";
-import {UserRoleEnum} from "../../shared/enums";
 
 @Resolver(() => ProductEntity)
 export class ProductsResolver {

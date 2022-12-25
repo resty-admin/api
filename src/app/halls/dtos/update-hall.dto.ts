@@ -14,7 +14,6 @@ export class UpdateHallDto {
 	file: IFile;
 }
 
-
 @InputType()
 export class UpdateHallInput {
 	@Field(() => String)

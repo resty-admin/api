@@ -6,10 +6,9 @@ import { IsNotEmpty, IsString } from "../../shared";
 export class UpdateAttributeDto {
 	@IsString()
 	@IsNotEmpty()
-		// @ApiProperty()
+	// @ApiProperty()
 	name: string;
 }
-
 
 @InputType()
 export class UpdateAttributeInput {

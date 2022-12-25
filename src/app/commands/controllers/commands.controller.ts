@@ -1,9 +1,7 @@
-import { Body, Controller, Delete, Param, ParseUUIDPipe, Patch, Post } from "@nestjs/common";
-import { ApiCreatedResponse, ApiOperation } from "@nestjs/swagger";
+import { Body, Controller, Post } from "@nestjs/common";
 
 import { COMMANDS } from "../constant";
-import { CreateCommandDto, EmitCommandDto, UpdateCommandDto } from "../dtos";
-import { CommandEntity } from "../entities";
+import { EmitCommandDto } from "../dtos";
 import { CommandsService } from "../services";
 
 @Controller(COMMANDS)

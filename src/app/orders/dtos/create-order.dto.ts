@@ -6,12 +6,12 @@ import { IsEnum, IsNotEmpty, IsString } from "../../shared";
 export class CreateOrderDto {
 	@IsEnum(OrderTypeEnum)
 	@IsNotEmpty()
-		// @ApiProperty()
+	// @ApiProperty()
 	type: OrderTypeEnum;
 
 	@IsString()
 	@IsNotEmpty()
-		// @ApiProperty()
+	// @ApiProperty()
 	place: string;
 }
 

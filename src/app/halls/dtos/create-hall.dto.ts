@@ -7,12 +7,12 @@ import { IsNotEmpty, IsOptional, IsString } from "../../shared";
 export class CreateHallDto {
 	@IsString()
 	@IsNotEmpty()
-		// @ApiProperty()
+	// @ApiProperty()
 	name: string;
 
 	@IsString()
 	@IsNotEmpty()
-		// @ApiProperty()
+	// @ApiProperty()
 	place: string;
 
 	// @ApiProperty()

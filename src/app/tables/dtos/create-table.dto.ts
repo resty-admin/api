@@ -7,12 +7,12 @@ import { IFile } from "../../shared/interfaces";
 export class CreateTableDto {
 	@IsString()
 	@IsNotEmpty()
-		// @ApiProperty()
+	// @ApiProperty()
 	name: string;
 
 	@IsString()
 	@IsOptional()
-		// @ApiProperty()
+	// @ApiProperty()
 	hall: string;
 
 	// @ApiProperty()

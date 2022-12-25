@@ -1,10 +1,10 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
+import { IsUUID } from "class-validator";
 
 import { FileEntity } from "../../files/entities";
 import { IsNotEmpty, IsOptional, IsString } from "../../shared";
-import {IsUUID} from "class-validator";
-import {IFile} from "../../shared/interfaces";
+import { IFile } from "../../shared/interfaces";
 
 export class UpdateCategoryDto {
 	@IsString()
@@ -23,7 +23,6 @@ export class UpdateCategoryDto {
 	@IsOptional()
 	file: IFile;
 }
-
 
 @InputType()
 export class UpdateCategoryInput {

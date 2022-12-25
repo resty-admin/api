@@ -4,10 +4,10 @@ import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { GqlJwtGuard } from "../../auth";
 import { RolesGuard } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
+import { UserRoleEnum } from "../../shared/enums";
 import { CreateAccountingSystemInput, UpdateAccountingSystemInput } from "../dtos";
 import { AccountingSystemEntity, PaginatedAccountingSystem } from "../entities";
 import { AccountingSystemsService } from "../services";
-import {UserRoleEnum} from "../../shared/enums";
 
 @Resolver(() => AccountingSystemEntity)
 export class AccountingSystemsResolver {

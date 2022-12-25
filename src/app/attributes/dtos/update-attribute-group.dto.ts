@@ -6,12 +6,12 @@ import { IsNotEmpty, IsOptional, IsString } from "../../shared";
 export class UpdateAttributeGroupDto {
 	@IsString()
 	@IsNotEmpty()
-		// @ApiProperty()
+	// @ApiProperty()
 	name: string;
 
 	@IsBoolean()
 	@IsOptional()
-		// @ApiProperty()
+	// @ApiProperty()
 	isUniq: boolean;
 }
 
@@ -30,5 +30,4 @@ export class UpdateAttributeGroupInput {
 	@IsBoolean()
 	@IsOptional()
 	isUniq: boolean;
-
 }

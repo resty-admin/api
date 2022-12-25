@@ -1,18 +1,10 @@
-import { Body, Controller, Delete, Param, ParseUUIDPipe, Patch, Post, UseGuards } from "@nestjs/common";
-import { ApiCreatedResponse, ApiOperation } from "@nestjs/swagger";
+import { Controller } from "@nestjs/common";
 
-import { JwtGuard } from "../../auth";
-import { User } from "../../shared";
-import { RolesGuard } from "../../shared";
 import { COMPANIES } from "../constant";
-import { CreateCompanyDto, UpdateCompanyDto } from "../dtos";
-import { CompanyEntity } from "../entities";
-import { CompaniesService } from "../services";
 
 @Controller(COMPANIES)
 export class CompaniesController {
 	// constructor(private readonly _companiesService: CompaniesService) {}
-
 	// @Post()
 	// @ApiOperation({ summary: `Create company` })
 	// @ApiCreatedResponse({

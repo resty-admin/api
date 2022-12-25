@@ -5,7 +5,7 @@ import { IsNotEmpty, IsString } from "../../shared";
 export class UpdateCommandDto {
 	@IsString()
 	@IsNotEmpty()
-		// @ApiProperty()
+	// @ApiProperty()
 	name: string;
 }
 

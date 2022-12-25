@@ -4,11 +4,11 @@ import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { GqlJwtGuard } from "../../auth";
 import { RolesGuard, UserGql } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
+import { UserRoleEnum } from "../../shared/enums";
+import { IUser } from "../../shared/interfaces";
 import { CreateCommandInput } from "../dtos";
 import { CommandEntity, PaginatedCommand } from "../entities";
 import { CommandsService } from "../services";
-import {UserRoleEnum} from "../../shared/enums";
-import {IUser} from "../../shared/interfaces";
 
 @Resolver(() => CommandEntity)
 export class CommandsResolver {

@@ -8,7 +8,7 @@ export class CreateCompanyDto {
 	@IsString()
 	@IsNotEmpty()
 	@MinLength(1)
-		// @ApiProperty()
+	// @ApiProperty()
 	name: string;
 
 	// @ApiProperty()
