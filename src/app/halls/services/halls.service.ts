@@ -5,6 +5,7 @@ import { Repository } from "typeorm";
 import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { CreateHallDto, UpdateHallDto } from "../dtos";
+import type { CreateHallInput, UpdateHallInput } from "../dtos";
 import { HallEntity } from "../entities";
 
 @Injectable()
@@ -39,7 +40,7 @@ export class HallsService {
 		};
 	}
 
-	async createHall(hall: CreateHallDto): Promise<HallEntity> {
+	async createHall(hall: CreateHallDto | CreateHallInput): Promise<HallEntity> {
 		const savedHall = await this._hallsRepository.save({ ...hall, place: { id: hall.place } });
 
 		return this._hallsRepository.findOne({
@@ -47,7 +48,7 @@ export class HallsService {
 		});
 	}
 
-	async updateHall(id: string, hall: UpdateHallDto): Promise<HallEntity> {
+	async updateHall(id: string, hall: UpdateHallDto | UpdateHallInput): Promise<HallEntity> {
 		return this._hallsRepository.save({ id, ...hall });
 	}
 

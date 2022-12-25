@@ -1,12 +1,13 @@
 import { UseGuards } from "@nestjs/common";
-import { Args, Query, Resolver } from "@nestjs/graphql";
-import { UserRoleEnum } from "src/app/shared/enums";
+import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 
 import { GqlJwtGuard } from "../../auth";
 import { RolesGuard } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
+import { CreateAccountingSystemInput, UpdateAccountingSystemInput } from "../dtos";
 import { AccountingSystemEntity, PaginatedAccountingSystem } from "../entities";
 import { AccountingSystemsService } from "../services";
+import {UserRoleEnum} from "../../shared/enums";
 
 @Resolver(() => AccountingSystemEntity)
 export class AccountingSystemsResolver {
@@ -22,5 +23,23 @@ export class AccountingSystemsResolver {
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
 	async accountingSystems(@Args() args: PaginationArgsDto) {
 		return this._accountingSystemService.getAccountingSystems(args);
+	}
+
+	@Mutation(() => AccountingSystemEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	async createAccountingSystem(@Args("accountingSystem") accountingSystem: CreateAccountingSystemInput) {
+		return this._accountingSystemService.creatAccountingSystem(accountingSystem);
+	}
+
+	@Mutation(() => AccountingSystemEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	async updateAccountingSystem(@Args("accountingSystem") accountingSystem: UpdateAccountingSystemInput) {
+		return this._accountingSystemService.updateAccountingSystem(accountingSystem.id, accountingSystem);
+	}
+
+	@Mutation(() => String)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	async deleteAccountingSystem(@Args("accountingSystemId") id: string) {
+		return this._accountingSystemService.deleteAccountingSystem(id);
 	}
 }

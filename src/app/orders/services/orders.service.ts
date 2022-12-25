@@ -4,6 +4,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { CreateOrderDto, UpdateOrderDto } from "../dtos";
+import type { CreateOrderInput, UpdateOrderInput } from "../dtos";
 import { ActiveOrderEntity } from "../entities";
 
 @Injectable()
@@ -33,7 +34,7 @@ export class OrdersService {
 		};
 	}
 
-	async creatOrder(order: CreateOrderDto): Promise<ActiveOrderEntity> {
+	async creatOrder(order: CreateOrderDto | CreateOrderInput): Promise<ActiveOrderEntity> {
 		const savedOrder = await this._ordersRepository.save(order);
 
 		return this._ordersRepository.findOne({
@@ -41,7 +42,7 @@ export class OrdersService {
 		});
 	}
 
-	async updateOrder(id: string, user: UpdateOrderDto): Promise<ActiveOrderEntity> {
+	async updateOrder(id: string, user: UpdateOrderDto | UpdateOrderInput): Promise<ActiveOrderEntity> {
 		return this._ordersRepository.save({ id, ...user });
 	}
 

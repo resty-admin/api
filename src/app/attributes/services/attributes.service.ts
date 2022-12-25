@@ -5,6 +5,7 @@ import { Repository } from "typeorm";
 import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { CreateAttributeDto, UpdateAttributeDto } from "../dtos";
+import type { CreateAttributeInput, UpdateAttributeInput } from "../dtos";
 import { AttributesEntity } from "../entities";
 
 @Injectable()
@@ -36,7 +37,7 @@ export class AttributesService {
 		};
 	}
 
-	async createAttribute(attributeDto: CreateAttributeDto): Promise<AttributesEntity> {
+	async createAttribute(attributeDto: CreateAttributeDto | CreateAttributeInput): Promise<AttributesEntity> {
 		const savedAttribute = await this._attributesRepository.save(attributeDto);
 
 		return this._attributesRepository.findOne({
@@ -44,7 +45,7 @@ export class AttributesService {
 		});
 	}
 
-	async updateAttribute(id: string, attributeDto: UpdateAttributeDto): Promise<AttributesEntity> {
+	async updateAttribute(id: string, attributeDto: UpdateAttributeDto | UpdateAttributeInput): Promise<AttributesEntity> {
 		return this._attributesRepository.save({ id, ...attributeDto });
 	}
 

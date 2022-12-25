@@ -5,6 +5,7 @@ import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { CreateCategoryDto, UpdateCategoryDto } from "../dtos";
 import { CategoryEntity } from "../entities";
+import {CreateCategoryInput, UpdateCategoryInput} from "../dtos";
 
 @Injectable()
 export class CategoriesService {
@@ -38,7 +39,7 @@ export class CategoriesService {
 		};
 	}
 
-	async createCategory(category: CreateCategoryDto): Promise<CategoryEntity> {
+	async createCategory(category: CreateCategoryDto | CreateCategoryInput): Promise<CategoryEntity> {
 		const savedCategory = await this._categoriesRepository.save({ ...category, place: { id: category.place } });
 
 		return this._categoriesRepository.findOne({
@@ -46,7 +47,7 @@ export class CategoriesService {
 		});
 	}
 
-	async updateCategory(id: string, category: UpdateCategoryDto): Promise<CategoryEntity> {
+	async updateCategory(id: string, category: UpdateCategoryDto | UpdateCategoryInput): Promise<CategoryEntity> {
 		return this._categoriesRepository.save({ id, ...category });
 	}
 

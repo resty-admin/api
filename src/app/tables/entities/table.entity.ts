@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, Generated, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 
 import { FileEntity } from "../../files/entities";
@@ -9,6 +9,7 @@ import { Pagination } from "../../shared/entities/pagination.type";
 import { TABLES } from "../constant";
 
 @ObjectType()
+@InputType("TableEntityInput")
 @Entity({ name: TABLES })
 export class TableEntity extends BaseEntity {
 	@Column()

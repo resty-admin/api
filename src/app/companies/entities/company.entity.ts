@@ -1,5 +1,4 @@
-import { Field, ObjectType } from "@nestjs/graphql";
-import { IFile } from "src/app/shared/interfaces";
+import { Field, InputType, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 
 import { FileEntity } from "../../files/entities";
@@ -7,11 +6,13 @@ import { FondyEntity } from "../../payment-systems/entities/fondy.entity";
 import { PlaceEntity } from "../../places/entities";
 import { BaseEntity } from "../../shared";
 import { Pagination } from "../../shared/entities/pagination.type";
+import { IFile } from "../../shared/interfaces";
 import { UserEntity } from "../../users/entities";
 import { COMPANIES } from "../constant";
 import { CompanyStatusEnum } from "../enums";
 
 @ObjectType()
+@InputType("CompanyEntityInput")
 @Entity({ name: COMPANIES })
 export class CompanyEntity extends BaseEntity {
 	// @ApiProperty()

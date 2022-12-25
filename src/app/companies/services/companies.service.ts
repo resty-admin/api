@@ -1,12 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import type { IUser } from "src/app/shared/interfaces";
 import { Repository } from "typeorm";
 
 import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { CreateCompanyDto, UpdateCompanyDto } from "../dtos";
+import type { CreateCompanyInput, UpdateCompanyInput } from "../dtos";
 import { CompanyEntity } from "../entities";
+import {IUser} from "../../shared/interfaces";
 
 @Injectable()
 export class CompaniesService {
@@ -40,7 +41,8 @@ export class CompaniesService {
 		};
 	}
 
-	async createCompany(company: CreateCompanyDto, user: IUser): Promise<CompanyEntity> {
+	async createCompany(company: CreateCompanyDto | CreateCompanyInput, user: IUser): Promise<CompanyEntity> {
+
 		const savedCompany = await this._companiesRepository.save({ ...company, owner: { id: user.id } });
 
 		return this._companiesRepository.findOne({
@@ -48,11 +50,12 @@ export class CompaniesService {
 		});
 	}
 
-	async updateCompany(id: string, company: UpdateCompanyDto): Promise<CompanyEntity> {
+	async updateCompany(id: string, company: UpdateCompanyDto | UpdateCompanyInput): Promise<CompanyEntity> {
 		return this._companiesRepository.save({
 			...company,
 			id,
-			employees: company.employees.map((el) => ({ id: el }))
+			...(company.employees?.length > 0 && { employees: [...company.employees.map((el) => ({ id: el }))] }),
+			// employees: [...company.employees?.map((el) => ({ id: el }))]
 		});
 	}
 

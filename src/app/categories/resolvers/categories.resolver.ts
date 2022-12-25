@@ -1,12 +1,13 @@
 import { UseGuards } from "@nestjs/common";
-import { Args, Query, Resolver } from "@nestjs/graphql";
-import { UserRoleEnum } from "src/app/shared/enums";
+import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 
 import { GqlJwtGuard } from "../../auth";
 import { RolesGuard } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
+import { CreateCategoryInput, UpdateCategoryInput } from "../dtos";
 import { CategoryEntity, PaginatedCategory } from "../entities";
 import { CategoriesService } from "../services";
+import {UserRoleEnum} from "../../shared/enums";
 
 @Resolver(() => CategoryEntity)
 export class CategoriesResolver {
@@ -22,5 +23,23 @@ export class CategoriesResolver {
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.CLIENT]))
 	async categories(@Args() args: PaginationArgsDto) {
 		return this._categoriesService.getCategories(args);
+	}
+
+	@Mutation(() => CategoryEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	async createCategory(@Args("category") category: CreateCategoryInput) {
+		return this._categoriesService.createCategory(category);
+	}
+
+	@Mutation(() => CategoryEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	async updateCategory(@Args("category") category: UpdateCategoryInput) {
+		return this._categoriesService.updateCategory(category.id, category);
+	}
+
+	@Mutation(() => String)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	async deleteCategory(@Args("categoryId") id: string) {
+		return this._categoriesService.deleteCategory(id);
 	}
 }

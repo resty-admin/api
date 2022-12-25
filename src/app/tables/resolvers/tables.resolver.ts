@@ -1,10 +1,11 @@
 import { UseGuards } from "@nestjs/common";
-import { Args, Query, Resolver } from "@nestjs/graphql";
-import { UserRoleEnum } from "src/app/shared/enums";
+import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 
 import { GqlJwtGuard } from "../../auth";
 import { RolesGuard } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
+import { UserRoleEnum } from "../../shared/enums";
+import { CreateTableInput, UpdateTableInput } from "../dtos";
 import { PaginatedTable, TableEntity } from "../entities";
 import { TablesService } from "../services";
 
@@ -22,5 +23,23 @@ export class TablesResolver {
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.CLIENT]))
 	async tables(@Args() args: PaginationArgsDto) {
 		return this._tablesService.getTables(args);
+	}
+
+	@Mutation(() => TableEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	async createTable(@Args("table") table: CreateTableInput) {
+		return this._tablesService.createTable(table);
+	}
+
+	@Mutation(() => TableEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	async updateTable(@Args("table") table: UpdateTableInput) {
+		return this._tablesService.updateTable(table.id, table);
+	}
+
+	@Mutation(() => String)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	async deleteTable(@Args("tableId") id: string) {
+		return this._tablesService.deleteTable(id);
 	}
 }

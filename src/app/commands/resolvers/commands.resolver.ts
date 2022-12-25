@@ -1,12 +1,14 @@
 import { UseGuards } from "@nestjs/common";
-import { Args, Query, Resolver } from "@nestjs/graphql";
-import { UserRoleEnum } from "src/app/shared/enums";
+import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 
 import { GqlJwtGuard } from "../../auth";
-import { RolesGuard } from "../../shared";
+import { RolesGuard, UserGql } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
+import { CreateCommandInput } from "../dtos";
 import { CommandEntity, PaginatedCommand } from "../entities";
 import { CommandsService } from "../services";
+import {UserRoleEnum} from "../../shared/enums";
+import {IUser} from "../../shared/interfaces";
 
 @Resolver(() => CommandEntity)
 export class CommandsResolver {
@@ -22,5 +24,23 @@ export class CommandsResolver {
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.CLIENT]))
 	async commands(@Args() args: PaginationArgsDto) {
 		return this._commandsService.getCommands(args);
+	}
+
+	@Mutation(() => CommandEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	async createCommand(@Args("command") command: CreateCommandInput) {
+		return this._commandsService.createCommand(command);
+	}
+
+	@Mutation(() => CommandEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	async updateCommand(@Args("command") command: string, @UserGql() user: IUser) {
+		return this._commandsService.updateCommand(command, user);
+	}
+
+	@Mutation(() => String)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	async deleteCommand(@Args("commandId") id: string) {
+		return this._commandsService.deleteCommand(id);
 	}
 }
