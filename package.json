@@ -17,6 +17,7 @@
 		"compodoc:serve": "compodoc -s",
 		"prebuild": "rimraf dist",
 		"build-dev": "NODE_ENV=dev nest build",
+		"build-test": "NODE_ENV=dev nest build",
 		"build-prod": "NODE_ENV=prod nest build",
 		"format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
 		"start": "nest start",
