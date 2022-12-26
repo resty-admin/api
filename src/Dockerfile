@@ -5,4 +5,4 @@ RUN yarn install
 COPY . .
 RUN yarn run build-prod
 EXPOSE 3000
-ENTRYPOINT ["node", "./dist/app/main.js"]
+ENTRYPOINT ["node", "./dist/main.js"]
