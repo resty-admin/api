@@ -32,7 +32,7 @@ jobs:
             git checkout dev
             git pull
             docker system prune -f --volumes
-            docker build -f --no-cache src/Dockerfile.dev -t $(echo $REGISTRY)/$(echo $NEST_API):latest .
+            docker build --no-cache -f src/Dockerfile.dev -t $(echo $REGISTRY)/$(echo $NEST_API):latest .
 
             doctl registry login
             docker push $(echo $REGISTRY)/$(echo $NEST_API):latest
