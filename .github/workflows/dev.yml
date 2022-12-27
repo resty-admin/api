@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: "registry.digitalocean.com/resty-registry"
-  API: "api"
+  API: "nest-api"
 
 jobs:
   deploy:
