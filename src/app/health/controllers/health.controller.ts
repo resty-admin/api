@@ -23,7 +23,7 @@ export class HealthController {
 
 	@Get("/check")
 	checkApi() {
-		return true;
+		return false;
 	}
 
 	@Get()
