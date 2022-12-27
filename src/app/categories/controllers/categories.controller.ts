@@ -6,7 +6,7 @@ import { CATEGORIES } from "../constants";
 export class CategoriesController {
 	// constructor(private readonly _categoriesService: CategoriesService) {}
 	// @Post()
-	// @ApiOperation({ summary: `Create category` })
+	// @ApiOperation({ summary: `Create c ategory` })
 	// @ApiCreatedResponse({
 	// 	description: "The record has been successfully created.",
 	// 	type: CategoryEntity
