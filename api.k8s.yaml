@@ -2,19 +2,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api-k8s-deployment
+  name: nest-api-k8s-deployment
 spec:
   selector:
     matchLabels:
-      app: api-k8s
+      app: nest-api-k8s
   replicas: 2
   template:
     metadata:
       labels:
-        app: api-k8s
+        app: nest-api-k8s
     spec:
       containers:
-        - name: api-k8s
+        - name: nest-api-k8s
           image: registry.digitalocean.com/resty-registry/nest-api:latest
           ports:
             - containerPort: 3000
@@ -22,10 +22,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: api-service
+  name: nest-api-service
 spec:
   selector:
-    app: api-k8s
+    app: nest-api-k8s
   ports:
     - protocol: TCP
       port: 8080
