@@ -37,6 +37,6 @@ jobs:
             doctl registry login
             docker push $(echo $REGISTRY)/$(echo $NEST_API):latest
 
-#            kubectl delete --all deployments,svc,pods,configmap
-#            kubectl apply -f k8s/cloudflared.yaml
-#            kubectl apply -f k8s/nest-api.k8s.yaml
+            kubectl delete --all deployments,svc,pods,configmap
+            kubectl apply -f k8s/cloudflared.yaml
+            kubectl apply -f k8s/nest-api.k8s.yaml
