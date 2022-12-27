@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: "registry.digitalocean.com/resty-registry"
-  API: "JOPA"
+  API: "jopa"
 
 jobs:
   deploy:
