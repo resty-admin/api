@@ -12,7 +12,7 @@ env:
 
 jobs:
   deploy:
-    name: Build API image
+    name: Build Api image
     runs-on: ubuntu-latest
     timeout-minutes: 40
 
@@ -32,7 +32,7 @@ jobs:
             git checkout dev
             git pull
             docker system prune -f --volumes
-            docker build --no-cache -f src/Dockerfile.dev -t $(echo $REGISTRY)/$(echo $NEST_API):latest .
+            docker build --no-cache -f Dockerfile.dev -t $(echo $REGISTRY)/$(echo $NEST_API):latest .
 
             doctl registry login
             docker push $(echo $REGISTRY)/$(echo $NEST_API):latest
@@ -40,5 +40,5 @@ jobs:
             cd /home/resty/k8s
             kubectl apply -f cloudflared.yaml
             cd /home/resty/api
-            kubectl delete -f k8s/nest-api.k8s.yaml
-            kubectl apply -f k8s/nest-api.k8s.yaml
+            kubectl delete -f nest-api.k8s.yaml
+            kubectl apply -f nest-api.k8s.yaml
