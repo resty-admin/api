@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: "registry.digitalocean.com/resty-registry"
-  API: "api"
+  API: "JOPA"
 
 jobs:
   deploy:
@@ -32,6 +32,7 @@ jobs:
             git checkout dev
             git pull
             docker system prune -f --volumes
+            echo TEST: $API
             docker build --no-cache -f Dockerfile.dev -t $(echo $REGISTRY)/$(echo $API):latest .
 
             doctl registry login
