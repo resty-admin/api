@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: "registry.digitalocean.com/resty-registry"
-  NEST_API: "nest-api"
+  API: "api"
 
 jobs:
   deploy:
@@ -25,20 +25,20 @@ jobs:
           key: ${{ secrets.SSHKEY }}
           port: 22
           command_timeout: 30m
-          envs: NEST_API,GITHUB_SHA,REGISTRY
+          envs: API,GITHUB_SHA,REGISTRY
           script: |
             cd /home/resty/api
             git fetch
             git checkout dev
             git pull
             docker system prune -f --volumes
-            docker build --no-cache -f Dockerfile.dev -t $(echo $REGISTRY)/$(echo $NEST_API):latest .
+            docker build --no-cache -f Dockerfile.dev -t $(echo $REGISTRY)/$(echo $API):latest .
 
             doctl registry login
-            docker push $(echo $REGISTRY)/$(echo $NEST_API):latest
+            docker push $(echo $REGISTRY)/$(echo $API):latest
 
             cd /home/resty/k8s
             kubectl apply -f cloudflared.yaml
             cd /home/resty/api
-            kubectl delete -f nest-api.k8s.yaml
-            kubectl apply -f nest-api.k8s.yaml
+            kubectl delete -f api.k8s.yaml
+            kubectl apply -f api.k8s.yaml
