@@ -38,5 +38,6 @@ jobs:
             docker push $(echo $REGISTRY)/$(echo $NEST_API):latest
 
             kubectl delete --f k8s/nest-api.k8s.yaml
-            kubectl apply -f k8s/cloudflared.yaml
+            kubectl delete --f k8s/cloudflared.api.yaml
+            kubectl apply -f k8s/cloudflared.api.yaml
             kubectl apply -f k8s/nest-api.k8s.yaml

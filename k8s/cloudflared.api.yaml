@@ -2,19 +2,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cloudflared
+  name: cloudflared-api
 spec:
   selector:
     matchLabels:
-      app: cloudflared
+      app: cloudflared-api
   replicas: 2 # You could also consider elastic scaling for this deployment
   template:
     metadata:
       labels:
-        app: cloudflared
+        app: cloudflared-api
     spec:
       containers:
-        - name: cloudflared
+        - name: cloudflared-api
           image: cloudflare/cloudflared:2022.3.0
           args:
             - tunnel
@@ -56,7 +56,7 @@ spec:
         # Create a config.yaml file from the ConfigMap below.
         - name: config
           configMap:
-            name: cloudflared
+            name: cloudflared-api
             items:
               - key: config.yaml
                 path: config.yaml
@@ -68,7 +68,7 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: cloudflared
+  name: cloudflared-api
 data:
   config.yaml: |
     tunnel: resty-cldf-tunnel
