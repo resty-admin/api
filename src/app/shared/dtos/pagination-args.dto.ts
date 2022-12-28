@@ -1,4 +1,4 @@
-import { ArgsType, Field, Int } from "@nestjs/graphql";
+import { ArgsType, Field, InputType, Int } from "@nestjs/graphql";
 
 import { IsOptional, IsString, Max, Min } from "../../shared";
 
@@ -13,14 +13,14 @@ export class PaginationArgsDto {
 	@Max(50)
 	take = 25;
 
-	@Field(() => String, { nullable: true })
+	@Field(() => FiltersArgsDto, { nullable: true })
 	@IsOptional()
 	@IsString()
 	// @ApiProperty()
 	filtersArgs?: FiltersArgsDto[];
 }
 
-@ArgsType()
+@InputType()
 export class FiltersArgsDto {
 	@Field(() => String)
 	@IsString()

@@ -1,4 +1,4 @@
-import { Field } from "@nestjs/graphql";
+import { Field, InputType } from "@nestjs/graphql";
 import { IsUUID } from "class-validator";
 
 import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from "../../shared";
@@ -41,6 +41,7 @@ export class UpdateStatusUserDto {
 	status: string;
 }
 
+@InputType()
 export class UpdateUserInput {
 	@Field(() => String)
 	@IsUUID()

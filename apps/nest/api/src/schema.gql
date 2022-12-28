@@ -436,35 +436,41 @@ input PaymentSystemEntityInput {
 
 type Query {
 	attribute(id: String!): AttributesEntity!
-	attributes(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedAttributes!
+	attributes(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedAttributes!
 	attributeGroup(id: String!): AttributesGroupEntity!
-	attributeGroups(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedAttributeGroups!
+	attributeGroups(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedAttributeGroups!
 	accountingSystem(id: String!): AccountingSystemEntity!
-	accountingSystems(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedAccountingSystem!
-	payment(id: String!): PaymentSystemEntity!
-	payments(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedPaymentSystem!
+	accountingSystems(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedAccountingSystem!
+	paymentSystem(id: String!): PaymentSystemEntity!
+	paymentSystems(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedPaymentSystem!
 	company(id: String!): CompanyEntity!
-	companies(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedCompany!
+	companies(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedCompany!
 	shift(id: String!): ActiveShiftEntity!
-	shifts(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedActiveShift!
+	shifts(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedActiveShift!
 	language(id: String!): LanguageEntity!
-	languages(skip: Int! = 0, take: Int! = 25, filtersArgs: String): LanguageEntity!
+	languages(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): LanguageEntity!
 	order(id: String!): ActiveOrderEntity!
-	orders(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedActiveOrder!
+	orders(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedActiveOrder!
 	product(id: String!): ProductEntity!
-	products(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedProduct!
+	products(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedProduct!
 	hall(id: String!): HallEntity!
-	halls(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedHall!
+	halls(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedHall!
 	place(id: String!): PlaceEntity!
-	places(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedPlace!
+	places(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedPlace!
 	category(id: String!): CategoryEntity!
-	categories(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedCategory!
+	categories(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedCategory!
 	table(id: String!): TableEntity!
-	tables(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedTable!
+	tables(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedTable!
 	command(id: String!): CommandEntity!
-	commands(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedCommand!
+	commands(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedCommand!
 	user(id: String!): UserEntity!
-	users(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedUser!
+	users(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedUser!
+}
+
+input FiltersArgsDto {
+	key: String!
+	operator: String!
+	value: String!
 }
 
 type Mutation {
@@ -477,6 +483,9 @@ type Mutation {
 	createAccountingSystem(accountingSystem: CreateAccountingSystemInput!): AccountingSystemEntity!
 	updateAccountingSystem(accountingSystem: UpdateAccountingSystemInput!): AccountingSystemEntity!
 	deleteAccountingSystem(accountingSystemId: String!): String!
+	createPaymentSystem(paymentSystem: CreatePaymentSystemInput!): PaymentSystemEntity!
+	updatePaymentSystem(paymentSystem: UpdatePaymentSystemInput!): PaymentSystemEntity!
+	deletePaymentSystem(paymentSystemId: String!): String!
 	createCompany(company: CreateCompanyInput!): CompanyEntity!
 	updateCompany(company: UpdateCompanyInput!): CompanyEntity!
 	deleteCompany(companyId: String!): String!
@@ -502,8 +511,11 @@ type Mutation {
 	updateTable(table: UpdateTableInput!): TableEntity!
 	deleteTable(tableId: String!): String!
 	createCommand(command: CreateCommandInput!): CommandEntity!
-	updateCommand(command: String!): CommandEntity!
+	updateCommand(command: UpdateCommandInput!): CommandEntity!
 	deleteCommand(commandId: String!): String!
+	createUser(user: CreateUserInput!): UserEntity!
+	updateUser(user: UpdateUserInput!): UserEntity!
+	deleteUser(userId: String!): String!
 }
 
 input CreateAttributeInput {
@@ -533,6 +545,15 @@ input CreateAccountingSystemInput {
 }
 
 input UpdateAccountingSystemInput {
+	id: String!
+	name: String!
+}
+
+input CreatePaymentSystemInput {
+	name: String!
+}
+
+input UpdatePaymentSystemInput {
 	id: String!
 	name: String!
 }
@@ -659,4 +680,23 @@ input UpdateTableInput {
 
 input CreateCommandInput {
 	name: String!
+}
+
+input UpdateCommandInput {
+	id: String!
+	name: String!
+}
+
+input CreateUserInput {
+	email: String!
+	password: String!
+	role: UserRoleEnum!
+	tel: String!
+}
+
+input UpdateUserInput {
+	id: String!
+	email: String!
+	password: String!
+	tel: String!
 }
