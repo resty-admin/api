@@ -3,8 +3,10 @@ import { InjectRepository } from "@nestjs/typeorm";
 import * as CloudIpsp from "cloudipsp-node-js-sdk";
 import { ApiService } from "src/app/shared/api";
 import { CryptoService } from "src/app/shared/crypto";
+import { Repository } from "typeorm";
 
 import { CompaniesService } from "../../companies/services";
+import { ActiveOrderEntity } from "../../orders/entities";
 import type { CreateFondyMerchantDto } from "../dtos";
 import type { CreatePaymentOrderLinkDto } from "../dtos";
 import { PaymentSystemEntity } from "../entities";
@@ -16,6 +18,7 @@ export class FondyService {
 
 	constructor(
 		@InjectRepository(PaymentSystemEntity) private readonly _paymentSystemRepository,
+		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository: Repository<ActiveOrderEntity>,
 		private readonly _apiService: ApiService,
 		private readonly _cryptoService: CryptoService,
 		@InjectRepository(FondyEntity) private readonly _fondyRepository,
@@ -28,23 +31,28 @@ export class FondyService {
 	}
 
 	async createPaymentOrderLink(createPaymentOrderLinkDto: CreatePaymentOrderLinkDto) {
+		const order = await this._ordersRepository.findOne({ where: { id: createPaymentOrderLinkDto.orderId } });
+		console.log("order", order);
 		const requestData = {
-			order_id: Math.random() * 1000,
-			order_desc: createPaymentOrderLinkDto.orderId,
+			order_id: order.id,
+			order_desc: `resty order ${order.id}`,
 			currency: "UAH",
-			amount: "144",
-			response_url: `http://192.168.68.52:4200/auth/test?order=${createPaymentOrderLinkDto.orderId}`
+			amount: order.totalPrice,
+			response_url: `http://192.168.68.52:4200/auth/test?order=${order.id}`
 			// server_callback_url: "http://localhost:3000/api/payment/fondy/success-response"
 		};
 
-		this.fondy
-			.Checkout(requestData)
-			.then((data) => {
-				console.log(data, requestData);
-			})
-			.catch((error) => {
-				console.log(error);
-			});
+		const result = await this.fondy.Checkout(requestData);
+
+		return result.checkout_url;
+		// this.fondy
+		// .Checkout(requestData)
+		// .then((data) => {
+		// 	console.log(data, requestData);
+		// })
+		// .catch((error) => {
+		// 	console.log(error);
+		// });
 	}
 
 	async verifyOrder(id: string) {

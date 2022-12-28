@@ -1,7 +1,7 @@
-import { Field, InputType } from "@nestjs/graphql";
+import { Field, InputType, Int } from "@nestjs/graphql";
 import { OrderTypeEnum } from "src/app/shared/enums";
 
-import { IsEnum, IsNotEmpty, IsString } from "../../shared";
+import { IsEnum, IsNotEmpty, IsNumber, IsString } from "../../shared";
 
 export class CreateOrderDto {
 	@IsEnum(OrderTypeEnum)
@@ -13,6 +13,10 @@ export class CreateOrderDto {
 	@IsNotEmpty()
 	// @ApiProperty()
 	place: string;
+
+	@IsNumber()
+	@IsNotEmpty()
+	totalPrice: number;
 }
 
 @InputType()
@@ -25,4 +29,9 @@ export class CreateOrderInput {
 	@Field(() => String)
 	@IsNotEmpty()
 	place: string;
+
+	@Field(() => Int)
+	@IsNumber()
+	@IsNotEmpty()
+	totalPrice: number;
 }
