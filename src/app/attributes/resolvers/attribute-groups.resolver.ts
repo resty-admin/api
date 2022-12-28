@@ -27,8 +27,8 @@ export class AttributeGroupsResolver {
 
 	@Mutation(() => AttributesGroupEntity)
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
-	async createAttrGroup(@Args("attr") attr: CreateAttributeGroupInput) {
-		return this._attributeGroupsService.createAttributeGroup(attr);
+	async createAttrGroup(@Args("attrGroup") attrGroup: CreateAttributeGroupInput) {
+		return this._attributeGroupsService.createAttributeGroup(attrGroup);
 	}
 
 	@Mutation(() => AttributesGroupEntity)
