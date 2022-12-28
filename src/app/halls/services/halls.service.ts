@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
-import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared/crud";
+import { getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { CreateHallDto, UpdateHallDto } from "../dtos";
 import type { CreateHallInput, UpdateHallInput } from "../dtos";
@@ -22,9 +22,8 @@ export class HallsService {
 		});
 	}
 
-	async getHalls({ take, skip, filtersString }: PaginationArgsDto) {
-		const filters = getFiltersByUrl(filtersString);
-		const findOptions = getFindOptionsByFilters(filters) as any;
+	async getHalls({ take, skip, filtersArgs }: PaginationArgsDto) {
+		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
 		const [data, count] = await this._hallsRepository.findAndCount({
 			where: findOptions.where,

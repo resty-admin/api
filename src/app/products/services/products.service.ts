@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
-import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared/crud";
+import { getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { CreateProductDto, UpdateProductDto } from "../dtos";
 import type { CreateProductInput, UpdateProductInput } from "../dtos";
@@ -21,9 +21,8 @@ export class ProductsService {
 		});
 	}
 
-	async getProducts({ take, skip, filtersString }: PaginationArgsDto) {
-		const filters = getFiltersByUrl(filtersString);
-		const findOptions = getFindOptionsByFilters(filters) as any;
+	async getProducts({ take, skip, filtersArgs }: PaginationArgsDto) {
+		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
 		const [data, count] = await this._productsRepository.findAndCount({
 			where: findOptions.where,

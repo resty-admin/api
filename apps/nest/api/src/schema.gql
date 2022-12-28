@@ -436,35 +436,35 @@ input PaymentSystemEntityInput {
 
 type Query {
 	attribute(id: String!): AttributesEntity!
-	attributes(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedAttributes!
+	attributes(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedAttributes!
 	attributeGroup(id: String!): AttributesGroupEntity!
-	attributeGroups(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedAttributeGroups!
+	attributeGroups(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedAttributeGroups!
 	accountingSystem(id: String!): AccountingSystemEntity!
-	accountingSystems(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedAccountingSystem!
+	accountingSystems(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedAccountingSystem!
 	payment(id: String!): PaymentSystemEntity!
-	payments(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedPaymentSystem!
+	payments(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedPaymentSystem!
 	company(id: String!): CompanyEntity!
-	companies(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedCompany!
+	companies(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedCompany!
 	shift(id: String!): ActiveShiftEntity!
-	shifts(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedActiveShift!
+	shifts(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedActiveShift!
 	language(id: String!): LanguageEntity!
-	languages(skip: Int! = 0, take: Int! = 25, filtersString: String): LanguageEntity!
+	languages(skip: Int! = 0, take: Int! = 25, filtersArgs: String): LanguageEntity!
 	order(id: String!): ActiveOrderEntity!
-	orders(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedActiveOrder!
+	orders(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedActiveOrder!
 	product(id: String!): ProductEntity!
-	products(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedProduct!
+	products(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedProduct!
 	hall(id: String!): HallEntity!
-	halls(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedHall!
+	halls(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedHall!
 	place(id: String!): PlaceEntity!
-	places(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedPlace!
+	places(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedPlace!
 	category(id: String!): CategoryEntity!
-	categories(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedCategory!
+	categories(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedCategory!
 	table(id: String!): TableEntity!
-	tables(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedTable!
+	tables(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedTable!
 	command(id: String!): CommandEntity!
-	commands(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedCommand!
+	commands(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedCommand!
 	user(id: String!): UserEntity!
-	users(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedUser!
+	users(skip: Int! = 0, take: Int! = 25, filtersArgs: String): PaginatedUser!
 }
 
 type Mutation {

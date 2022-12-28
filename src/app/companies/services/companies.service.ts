@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
-import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared/crud";
+import { getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { IUser } from "../../shared/interfaces";
 import type { CreateCompanyDto, UpdateCompanyDto } from "../dtos";
@@ -23,9 +23,8 @@ export class CompaniesService {
 		});
 	}
 
-	async getCompanies({ take, skip, filtersString }: PaginationArgsDto) {
-		const filters = getFiltersByUrl(filtersString);
-		const findOptions = getFindOptionsByFilters(filters) as any;
+	async getCompanies({ take, skip, filtersArgs }: PaginationArgsDto) {
+		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
 		const [data, totalCount] = await this._companiesRepository.findAndCount({
 			where: findOptions.where,

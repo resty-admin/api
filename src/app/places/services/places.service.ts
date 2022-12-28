@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
 import { CompanyEntity } from "../../companies/entities";
-import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared/crud";
+import { getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { CreatePlaceDto, UpdatePlaceDto } from "../dtos";
 import type { CreatePlaceInput, UpdatePlaceInput } from "../dtos";
@@ -26,9 +26,8 @@ export class PlacesService {
 		});
 	}
 
-	async getPlaces({ take, skip, filtersString }: PaginationArgsDto) {
-		const filters = getFiltersByUrl(filtersString);
-		const findOptions = getFindOptionsByFilters(filters) as any;
+	async getPlaces({ take, skip, filtersArgs }: PaginationArgsDto) {
+		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
 		const [data, count] = await this._placesRepository.findAndCount({
 			where: findOptions.where,

@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
-import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared";
+import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { CreateAttributeGroupDto, UpdateAttributeGroupDto } from "../dtos";
 import type { CreateAttributeGroupInput, UpdateAttributeGroupInput } from "../dtos";
@@ -21,9 +21,8 @@ export class AttributeGroupsService {
 		});
 	}
 
-	async getAttributeGroups({ take, skip, filtersString }: PaginationArgsDto) {
-		const filters = getFiltersByUrl(filtersString);
-		const findOptions = getFindOptionsByFilters(filters) as any;
+	async getAttributeGroups({ take, skip, filtersArgs }: PaginationArgsDto) {
+		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
 		const [data, count] = await this._attributeGroupsRepository.findAndCount({
 			where: findOptions.where,

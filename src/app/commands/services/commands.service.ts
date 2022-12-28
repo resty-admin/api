@@ -4,7 +4,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { CommandsEvents } from "src/app/shared/events";
 
 import { GatewaysService } from "../../gateways/services";
-import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared";
+import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import { TablesService } from "../../tables/services";
 import type { CreateCommandDto, UpdateCommandDto } from "../dtos";
@@ -33,9 +33,8 @@ export class CommandsService {
 		});
 	}
 
-	async getCommands({ take, skip, filtersString }: PaginationArgsDto) {
-		const filters = getFiltersByUrl(filtersString);
-		const findOptions = getFindOptionsByFilters(filters) as any;
+	async getCommands({ take, skip, filtersArgs }: PaginationArgsDto) {
+		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
 		const [data, count] = await this._commandsRepository.findAndCount({
 			where: findOptions.where,
@@ -58,8 +57,8 @@ export class CommandsService {
 		});
 	}
 
-	async updateCommand(id: string, user: UpdateCommandDto): Promise<CommandEntity> {
-		return this._commandsRepository.save({ id, ...user });
+	async updateCommand(id: string, command: UpdateCommandDto): Promise<CommandEntity> {
+		return this._commandsRepository.save({ id, ...command });
 	}
 
 	async deleteCommand(id: string): Promise<string> {

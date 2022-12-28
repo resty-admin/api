@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
-import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared";
+import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { CreateShiftDto, UpdateShiftDto } from "../dtos";
 import type { CreateShitInput, UpdateShitInput } from "../dtos";
@@ -21,9 +21,8 @@ export class ShiftsService {
 		});
 	}
 
-	async getShifts({ take, skip, filtersString }: PaginationArgsDto) {
-		const filters = getFiltersByUrl(filtersString);
-		const findOptions = getFindOptionsByFilters(filters) as any;
+	async getShifts({ take, skip, filtersArgs }: PaginationArgsDto) {
+		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
 		const [data, count] = await this._shiftsRepository.findAndCount({
 			where: findOptions.where,

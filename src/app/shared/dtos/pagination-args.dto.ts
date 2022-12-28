@@ -17,5 +17,20 @@ export class PaginationArgsDto {
 	@IsOptional()
 	@IsString()
 	// @ApiProperty()
-	filtersString?: string;
+	filtersArgs?: FiltersArgsDto[];
+}
+
+@ArgsType()
+export class FiltersArgsDto {
+	@Field(() => String)
+	@IsString()
+	key: string;
+
+	@Field(() => String)
+	@IsString()
+	operator: string;
+
+	@Field(() => String)
+	@IsString()
+	value: string;
 }

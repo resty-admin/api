@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
-import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared/crud";
+import { getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { CreateCategoryDto, UpdateCategoryDto } from "../dtos";
 import type { CreateCategoryInput, UpdateCategoryInput } from "../dtos";
@@ -21,9 +21,8 @@ export class CategoriesService {
 		});
 	}
 
-	async getCategories({ take, skip, filtersString }: PaginationArgsDto) {
-		const filters = getFiltersByUrl(filtersString);
-		const findOptions = getFindOptionsByFilters(filters) as any;
+	async getCategories({ take, skip, filtersArgs }: PaginationArgsDto) {
+		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
 		const [data, count] = await this._categoriesRepository.findAndCount({
 			where: findOptions.where,

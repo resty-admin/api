@@ -1,9 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
-import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared";
+import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { CreatePaymentSystemDto, UpdatePaymentSystemDto } from "../dtos";
+import type { CreatePaymentSystemInput, UpdatePaymentSystemInput } from "../dtos";
 import { PaymentSystemEntity } from "../entities";
 
 @Injectable()
@@ -16,9 +17,8 @@ export class PaymentSystemsService {
 		});
 	}
 
-	async getPaymentSystems({ take, skip, filtersString }: PaginationArgsDto) {
-		const filters = getFiltersByUrl(filtersString);
-		const findOptions = getFindOptionsByFilters(filters) as any;
+	async getPaymentSystems({ take, skip, filtersArgs }: PaginationArgsDto) {
+		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
 		const [data, count] = await this._paymentSystemRepository.findAndCount({
 			where: findOptions.where,
@@ -33,7 +33,9 @@ export class PaymentSystemsService {
 		};
 	}
 
-	async creatPaymentSystem(paymentSystemDto: CreatePaymentSystemDto): Promise<PaymentSystemEntity> {
+	async creatPaymentSystem(
+		paymentSystemDto: CreatePaymentSystemDto | CreatePaymentSystemInput
+	): Promise<PaymentSystemEntity> {
 		const savedOrder = await this._paymentSystemRepository.save(paymentSystemDto);
 
 		return this._paymentSystemRepository.findOne({
@@ -41,7 +43,10 @@ export class PaymentSystemsService {
 		});
 	}
 
-	async updatePaymentSystem(id: string, paymentSystemDto: UpdatePaymentSystemDto): Promise<PaymentSystemEntity> {
+	async updatePaymentSystem(
+		id: string,
+		paymentSystemDto: UpdatePaymentSystemDto | UpdatePaymentSystemInput
+	): Promise<PaymentSystemEntity> {
 		return this._paymentSystemRepository.save({ id, ...paymentSystemDto });
 	}
 

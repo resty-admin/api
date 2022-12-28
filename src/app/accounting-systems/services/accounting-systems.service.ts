@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
-import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared";
+import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { CreateAccountingSystemDto, UpdateAccountingSystemDto } from "../dtos";
 import { AccountingSystemEntity } from "../entities";
@@ -16,9 +16,8 @@ export class AccountingSystemsService {
 		});
 	}
 
-	async getAccountingSystems({ take, skip, filtersString }: PaginationArgsDto) {
-		const filters = getFiltersByUrl(filtersString);
-		const findOptions = getFindOptionsByFilters(filters) as any;
+	async getAccountingSystems({ take, skip, filtersArgs }: PaginationArgsDto) {
+		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
 		const [data, count] = await this._accountingSystemRepository.findAndCount({
 			where: findOptions.where,

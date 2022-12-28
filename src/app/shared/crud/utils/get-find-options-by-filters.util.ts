@@ -5,6 +5,19 @@ import { In } from "typeorm";
 import { SortTypeEnum } from "../enums";
 import { getNumberOrString } from "./get-number-or-string.util";
 
+// return {
+// 	key: isArray ? key.replace("[]", "") : key,
+// 	operator,
+// 	value: isArray ? [value] : value.includes(",") ? value.split(",") : Like(`%${value}%`)
+// };
+
+// [
+// 	{
+// 		key: "",
+// 		operator: "",
+// 		value: ""
+// 	}
+// ]
 export function getFindOptionsByFilters(filters: any[]): FindManyOptions {
 	const {
 		skip = 0,
