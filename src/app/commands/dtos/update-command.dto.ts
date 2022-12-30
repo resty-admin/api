@@ -1,12 +1,16 @@
 import { Field, InputType } from "@nestjs/graphql";
 
-import { IsNotEmpty, IsString } from "../../shared";
+import { IsOptional, IsString } from "../../shared";
 
 export class UpdateCommandDto {
 	@IsString()
-	@IsNotEmpty()
+	@IsOptional()
 	// @ApiProperty()
-	name: string;
+	name?: string;
+
+	@IsString()
+	@IsOptional()
+	place?: string;
 }
 
 @InputType()
@@ -14,6 +18,11 @@ export class UpdateCommandInput {
 	@Field(() => String)
 	id: string;
 
-	@Field(() => String)
-	name: string;
+	@Field(() => String, { nullable: true })
+	@IsOptional()
+	name?: string;
+
+	@Field(() => String, { nullable: true })
+	@IsOptional()
+	place?: string;
 }

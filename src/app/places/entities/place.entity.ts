@@ -3,6 +3,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "type
 
 import { AttributesGroupEntity } from "../../attributes/entities";
 import { CategoryEntity } from "../../categories/entities";
+import { CommandEntity } from "../../commands/entities";
 import { CompanyEntity } from "../../companies/entities";
 import { FileEntity } from "../../files/entities";
 import { HallEntity } from "../../halls/entities";
@@ -95,6 +96,10 @@ export class PlaceEntity extends BaseEntity {
 	@Field(() => [ActiveOrderEntity], { nullable: true })
 	@OneToMany(() => ActiveOrderEntity, (order) => order.place, { nullable: true })
 	orders?: ActiveOrderEntity[];
+
+	@Field(() => [CommandEntity], { nullable: true })
+	@OneToMany(() => CommandEntity, (command) => command.place, { nullable: true })
+	commands?: CommandEntity[];
 }
 
 @ObjectType()

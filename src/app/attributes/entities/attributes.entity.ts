@@ -1,6 +1,6 @@
 import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity, ManyToOne } from "typeorm";
+import { Column, Entity, ManyToMany } from "typeorm";
 
 import { BaseEntity } from "../../shared";
 import { Pagination } from "../../shared/entities/pagination.type";
@@ -17,8 +17,8 @@ export class AttributesEntity extends BaseEntity {
 	name: string;
 
 	@ApiProperty()
-	@Field(() => AttributesGroupEntity, { nullable: true })
-	@ManyToOne(() => AttributesGroupEntity, (attrGroup) => attrGroup.attributes, { nullable: true })
+	@Field(() => [AttributesGroupEntity], { nullable: true })
+	@ManyToMany(() => AttributesGroupEntity, (attrGroup) => attrGroup.attributes, { nullable: true })
 	attributesGroup?: AttributesGroupEntity;
 
 	@ApiProperty()

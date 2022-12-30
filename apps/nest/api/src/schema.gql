@@ -73,12 +73,24 @@ type PaginatedAttributeGroups {
 type AttributesEntity {
 	id: String!
 	name: String!
-	attributesGroup: AttributesGroupEntity
+	attributesGroup: [AttributesGroupEntity!]
 	price: Int
 }
 
 type PaginatedAttributes {
 	data: [AttributesEntity!]
+	page: Int!
+	totalCount: Int!
+}
+
+type CommandEntity {
+	id: String!
+	name: String!
+	place: PlaceEntity!
+}
+
+type PaginatedCommand {
+	data: [CommandEntity!]
 	page: Int!
 	totalCount: Int!
 }
@@ -167,6 +179,7 @@ type PlaceEntity {
 	holidayDays: String!
 	attrGroups: [AttributesGroupEntity!]!
 	orders: [ActiveOrderEntity!]
+	commands: [CommandEntity!]
 }
 
 enum PlaceStatusEnum {
@@ -241,17 +254,6 @@ enum UserStatusEnum {
 
 type PaginatedUser {
 	data: [UserEntity!]
-	page: Int!
-	totalCount: Int!
-}
-
-type CommandEntity {
-	id: String!
-	name: String!
-}
-
-type PaginatedCommand {
-	data: [CommandEntity!]
 	page: Int!
 	totalCount: Int!
 }
@@ -331,8 +333,13 @@ input AttributesGroupEntityInput {
 
 input AttributesEntityInput {
 	name: String!
-	attributesGroup: AttributesGroupEntityInput
+	attributesGroup: [AttributesGroupEntityInput!]
 	price: Int
+}
+
+input CommandEntityInput {
+	name: String!
+	place: PlaceEntityInput!
 }
 
 input ActiveOrderEntityInput {
@@ -384,6 +391,7 @@ input PlaceEntityInput {
 	holidayDays: String!
 	attrGroups: [AttributesGroupEntityInput!]!
 	orders: [ActiveOrderEntityInput!]
+	commands: [CommandEntityInput!]
 }
 
 input CompanyEntityInput {
@@ -687,11 +695,13 @@ input UpdateTableInput {
 
 input CreateCommandInput {
 	name: String!
+	place: String!
 }
 
 input UpdateCommandInput {
 	id: String!
-	name: String!
+	name: String
+	place: String
 }
 
 input CreateUserInput {

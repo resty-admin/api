@@ -10,6 +10,9 @@ import { AttributesGroupEntity } from "../entities";
 
 @Injectable()
 export class AttributeGroupsService {
+	private findRelations = ["attributes"];
+	private findOneRelations = ["attributes"];
+
 	constructor(
 		@InjectRepository(AttributesGroupEntity)
 		private readonly _attributeGroupsRepository: Repository<AttributesGroupEntity>
@@ -17,7 +20,8 @@ export class AttributeGroupsService {
 
 	async getAttributeGroup(id: string) {
 		return this._attributeGroupsRepository.findOne({
-			where: { id }
+			where: { id },
+			relations: this.findOneRelations
 		});
 	}
 
@@ -27,7 +31,8 @@ export class AttributeGroupsService {
 		const [data, count] = await this._attributeGroupsRepository.findAndCount({
 			where: findOptions.where,
 			take,
-			skip
+			skip,
+			relations: this.findRelations
 		});
 
 		return {

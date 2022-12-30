@@ -7,10 +7,17 @@ export class CreateCommandDto {
 	@IsNotEmpty()
 	// @ApiProperty()
 	name: string;
+
+	@IsString()
+	@IsNotEmpty()
+	place: string;
 }
 
 @InputType()
 export class CreateCommandInput {
 	@Field(() => String)
 	name: string;
+
+	@Field(() => String)
+	place: string;
 }
