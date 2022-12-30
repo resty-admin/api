@@ -38,7 +38,7 @@ export class FondyService {
 			order_desc: `resty order ${order.id}`,
 			currency: "UAH",
 			amount: order.totalPrice,
-			response_url: `http://192.168.68.52:4200/auth/test?order=${order.id}`
+			response_url: `http://localhost:3000/api/fondy/check`
 		};
 
 		const result = await this.fondy.Checkout(requestData);
