@@ -9,8 +9,8 @@ import { CategoryEntity } from "../entities";
 
 @Injectable()
 export class CategoriesService {
-	private findRelations = ["file"];
-	private findOneRelations = ["file"];
+	private findRelations = ["file", "products"];
+	private findOneRelations = ["file", "products"];
 
 	constructor(@InjectRepository(CategoryEntity) private readonly _categoriesRepository) {}
 

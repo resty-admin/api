@@ -16,7 +16,6 @@ export class FondyController {
 		description: "Verify fondy order"
 	})
 	async paymentSuccessfull(@Param("id") id: string) {
-		console.log("good", id);
 		return this._fondyService.verifyOrder(id);
 	}
 

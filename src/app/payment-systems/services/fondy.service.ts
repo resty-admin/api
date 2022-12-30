@@ -39,20 +39,11 @@ export class FondyService {
 			currency: "UAH",
 			amount: order.totalPrice,
 			response_url: `http://192.168.68.52:4200/auth/test?order=${order.id}`
-			// server_callback_url: "http://localhost:3000/api/payment/fondy/success-response"
 		};
 
 		const result = await this.fondy.Checkout(requestData);
 
 		return result.checkout_url;
-		// this.fondy
-		// .Checkout(requestData)
-		// .then((data) => {
-		// 	console.log(data, requestData);
-		// })
-		// .catch((error) => {
-		// 	console.log(error);
-		// });
 	}
 
 	async verifyOrder(id: string) {
