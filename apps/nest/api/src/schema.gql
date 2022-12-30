@@ -477,7 +477,7 @@ type Mutation {
 	createAttr(attr: CreateAttributeInput!): AttributesEntity!
 	updateAttr(attr: UpdateAttributeInput!): AttributesEntity!
 	deleteAttr(attrId: String!): String!
-	createAttrGroup(attr: CreateAttributeGroupInput!): AttributesGroupEntity!
+	createAttrGroup(attrGroup: CreateAttributeGroupInput!): AttributesGroupEntity!
 	updateAttrGroup(attrGroup: UpdateAttributeGroupInput!): AttributesGroupEntity!
 	deleteAttrGroup(attrGroupId: String!): String!
 	createAccountingSystem(accountingSystem: CreateAccountingSystemInput!): AccountingSystemEntity!

@@ -18,7 +18,7 @@ import { getNumberOrString } from "./get-number-or-string.util";
 // 		value: ""
 // 	}
 // ]
-export function getFindOptionsByFilters(filters: any[]): FindManyOptions {
+export function getFindOptionsByFilters(filters: any[] = []): FindManyOptions {
 	const {
 		skip = 0,
 		take = 0,
