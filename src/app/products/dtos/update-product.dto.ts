@@ -57,4 +57,8 @@ export class UpdateProductInput {
 	@Field(() => FileUploadInput, { nullable: true })
 	@IsOptional()
 	file?: FileUploadInput;
+
+	@Field(() => [String], { nullable: true })
+	@IsOptional()
+	attrsGroups?: string[];
 }
