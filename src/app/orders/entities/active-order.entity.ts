@@ -1,8 +1,8 @@
-import { Field, InputType, ObjectType } from "@nestjs/graphql";
-import { Column, Entity, Generated, ManyToMany, ManyToOne, OneToMany } from "typeorm";
+import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
+import { Column, Entity, Generated, ManyToMany, ManyToOne } from "typeorm";
 
 import { PlaceEntity } from "../../places/entities";
-import { BaseEntity } from "../../shared";
+import { BaseEntity, IsNotEmpty, IsNumber } from "../../shared";
 import { Pagination } from "../../shared/entities/pagination.type";
 import { OrderStatusEnum, OrderTypeEnum } from "../../shared/enums";
 import { ActiveShiftEntity } from "../../shifts/entities";
@@ -22,13 +22,13 @@ export class ActiveOrderEntity extends BaseEntity {
 
 	// @ApiProperty()
 	@Field(() => TableEntity)
-	@ManyToOne(() => TableEntity, (table) => table.orders)
-	table: TableEntity;
+	@ManyToOne(() => TableEntity, (table) => table.orders, { nullable: true })
+	table?: TableEntity;
 
 	// @ApiProperty()
 	@Field(() => [UserEntity])
-	@ManyToMany(() => UserEntity, (user) => user.orders)
-	users: UserEntity[];
+	@ManyToMany(() => UserEntity, (user) => user.orders, { nullable: true })
+	users?: UserEntity[];
 
 	// @ApiProperty()
 	@Field(() => OrderTypeEnum)
@@ -42,13 +42,19 @@ export class ActiveOrderEntity extends BaseEntity {
 
 	// @ApiProperty()
 	@Field(() => PlaceEntity)
-	@OneToMany(() => PlaceEntity, (place) => place.orders)
+	@ManyToOne(() => PlaceEntity, (place) => place.orders)
 	place: PlaceEntity;
+
+	@Field(() => Int)
+	@Column("int")
+	@IsNumber()
+	@IsNotEmpty()
+	totalPrice: number;
 
 	// @ApiProperty()
 	@Field(() => ActiveShiftEntity, { nullable: true })
-	@ManyToOne(() => ActiveShiftEntity, (shift) => shift.orders)
-	shift: ActiveOrderEntity;
+	@ManyToOne(() => ActiveShiftEntity, (shift) => shift.orders, { nullable: true })
+	shift?: ActiveShiftEntity;
 }
 
 @ObjectType()

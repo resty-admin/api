@@ -93,7 +93,7 @@ export class PlaceEntity extends BaseEntity {
 
 	// @ApiProperty()
 	@Field(() => [ActiveOrderEntity], { nullable: true })
-	@ManyToOne(() => ActiveOrderEntity, (order) => order.place, { nullable: true })
+	@OneToMany(() => ActiveOrderEntity, (order) => order.place, { nullable: true })
 	orders?: ActiveOrderEntity[];
 }
 

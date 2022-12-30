@@ -1,5 +1,6 @@
 import type { TypeOrmModuleOptions } from "@nestjs/typeorm";
 import * as fs from "fs";
+import { DataSource } from "typeorm";
 
 import { environment } from "../../../environments/environment";
 import { ACCOUNTING_SYSTEMS_ENTITIES } from "../../accounting-systems/entities";
@@ -19,12 +20,13 @@ import { TABLES_ENTITIES } from "../../tables/entities";
 import { USERS_ENITITES } from "../../users/entities";
 
 export const TYPEORM_CONFIG: TypeOrmModuleOptions = {
-	type: "postgres",
+	type: "postgres" as any,
 	host: environment.databaseHost,
 	port: environment.databasePort,
 	username: environment.databaseUsername,
 	password: environment.databasePassword,
 	database: environment.databaseName,
+	// entities: [join(__dirname, '**', '*.entity.{ts,js}')],
 	entities: [
 		...USERS_ENITITES,
 		...FILES_ENTITIES,
@@ -43,6 +45,7 @@ export const TYPEORM_CONFIG: TypeOrmModuleOptions = {
 		...SHIFTS_ENITITES
 	],
 	synchronize: true,
+	migrationsTableName: "resty-api-migrations",
 	migrations: [],
 	migrationsRun: false,
 	// environment.production,
@@ -55,7 +58,7 @@ export const TYPEORM_CONFIG: TypeOrmModuleOptions = {
 		: {})
 };
 
-// export default new DataSource({
-// 	...TYPEORM_CONFIG,
-// 	entities: ["apps/nest/api/src/app/**/entities/index.ts"]
-// });
+export default new DataSource({
+	...TYPEORM_CONFIG,
+	entities: ["/src/app/**/entities/index.ts"]
+} as any);
