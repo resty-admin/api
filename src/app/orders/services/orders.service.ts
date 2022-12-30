@@ -34,7 +34,6 @@ export class OrdersService {
 	}
 
 	async creatOrder(order: CreateOrderDto | CreateOrderInput): Promise<ActiveOrderEntity> {
-		console.log("ORDER", order);
 		const savedOrder = await this._ordersRepository.save({ ...order, place: { id: order.place } });
 
 		return this._ordersRepository.findOne({
