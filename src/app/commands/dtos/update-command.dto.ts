@@ -11,6 +11,10 @@ export class UpdateCommandDto {
 	@IsString()
 	@IsOptional()
 	place?: string;
+
+	@IsString()
+	@IsOptional()
+	description?: string;
 }
 
 @InputType()
@@ -25,4 +29,8 @@ export class UpdateCommandInput {
 	@Field(() => String, { nullable: true })
 	@IsOptional()
 	place?: string;
+
+	@Field(() => String, { nullable: true })
+	@IsOptional()
+	description?: string;
 }

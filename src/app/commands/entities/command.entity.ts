@@ -19,6 +19,10 @@ export class CommandEntity extends BaseEntity {
 	@Field(() => PlaceEntity)
 	// @ApiProperty()
 	place: PlaceEntity;
+
+	@Column()
+	@Field(() => String)
+	description: string;
 }
 
 @ObjectType()

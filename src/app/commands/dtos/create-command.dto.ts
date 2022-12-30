@@ -11,6 +11,9 @@ export class CreateCommandDto {
 	@IsString()
 	@IsNotEmpty()
 	place: string;
+
+	@IsString()
+	description: string;
 }
 
 @InputType()
@@ -20,4 +23,7 @@ export class CreateCommandInput {
 
 	@Field(() => String)
 	place: string;
+
+	@Field(() => String)
+	description: string;
 }

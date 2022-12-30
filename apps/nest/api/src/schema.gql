@@ -94,6 +94,7 @@ type CommandEntity {
 	id: String!
 	name: String!
 	place: PlaceEntity!
+	description: String!
 }
 
 type PaginatedCommand {
@@ -348,6 +349,7 @@ input AttributesEntityInput {
 input CommandEntityInput {
 	name: String!
 	place: PlaceEntityInput!
+	description: String!
 }
 
 input ActiveOrderEntityInput {
@@ -708,12 +710,14 @@ input UpdateTableInput {
 input CreateCommandInput {
 	name: String!
 	place: String!
+	description: String!
 }
 
 input UpdateCommandInput {
 	id: String!
 	name: String
 	place: String
+	description: String
 }
 
 input CreateUserInput {
