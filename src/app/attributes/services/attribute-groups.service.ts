@@ -42,7 +42,8 @@ export class AttributeGroupsService {
 	): Promise<AttributesGroupEntity> {
 		const savedAttributeGroup = await this._attributeGroupsRepository.save({
 			...attributeGroupDto,
-			place: { id: attributeGroupDto.place }
+			place: { id: attributeGroupDto.place },
+			attributes: attributeGroupDto.attributes?.length ? attributeGroupDto.attributes.map((el) => ({ id: el })) : []
 		});
 
 		return this._attributeGroupsRepository.findOne({
@@ -54,7 +55,11 @@ export class AttributeGroupsService {
 		id: string,
 		attributeGroupDto: UpdateAttributeGroupDto | UpdateAttributeGroupInput
 	): Promise<AttributesGroupEntity> {
-		return this._attributeGroupsRepository.save({ id, ...attributeGroupDto });
+		return this._attributeGroupsRepository.save({
+			...attributeGroupDto,
+			id,
+			attributes: attributeGroupDto.attributes?.length ? attributeGroupDto.attributes.map((el) => ({ id: el })) : []
+		});
 	}
 
 	async deleteAttributeGroup(id: string): Promise<string> {

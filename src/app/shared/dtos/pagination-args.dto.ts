@@ -15,7 +15,6 @@ export class PaginationArgsDto {
 
 	@Field(() => FiltersArgsDto, { nullable: true })
 	@IsOptional()
-	@IsOptional()
 	@IsString()
 	// @ApiProperty()
 	filtersArgs?: FiltersArgsDto[];

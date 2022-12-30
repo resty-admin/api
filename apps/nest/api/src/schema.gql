@@ -528,12 +528,14 @@ input CreateAttributeGroupInput {
 	name: String!
 	isUniq: Boolean
 	place: String!
+	attributes: [String!]
 }
 
 input UpdateAttributeGroupInput {
 	id: String!
 	name: String
 	isUniq: Boolean
+	attributes: [String!]
 }
 
 input CreateAccountingSystemInput {
@@ -673,7 +675,7 @@ input UpdateCategoryInput {
 
 input CreateTableInput {
 	name: String!
-	hall: String
+	hall: String!
 	file: FileUploadInput
 }
 

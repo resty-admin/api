@@ -1,7 +1,7 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { IsBoolean, IsUUID } from "class-validator";
 
-import { IsNotEmpty, IsOptional, IsString } from "../../shared";
+import { IsArray, IsNotEmpty, IsOptional, IsString } from "../../shared";
 
 export class UpdateAttributeGroupDto {
 	@IsString()
@@ -13,6 +13,10 @@ export class UpdateAttributeGroupDto {
 	@IsOptional()
 	// @ApiProperty()
 	isUniq: boolean;
+
+	@IsOptional()
+	@IsArray()
+	attributes?: string[];
 }
 
 @InputType()
@@ -28,4 +32,7 @@ export class UpdateAttributeGroupInput {
 	@Field(() => Boolean, { nullable: true })
 	@IsOptional()
 	isUniq?: boolean;
+
+	@Field(() => [String], { nullable: true })
+	attributes?: string[];
 }

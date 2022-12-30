@@ -1,7 +1,7 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { IsBoolean } from "class-validator";
 
-import { IsNotEmpty, IsOptional, IsString } from "../../shared";
+import { IsArray, IsNotEmpty, IsOptional, IsString } from "../../shared";
 
 export class CreateAttributeGroupDto {
 	@IsString()
@@ -18,6 +18,10 @@ export class CreateAttributeGroupDto {
 	// @ApiProperty()
 	@IsNotEmpty()
 	place: string;
+
+	@IsOptional()
+	@IsArray()
+	attributes?: string[];
 }
 
 @InputType()
@@ -31,4 +35,7 @@ export class CreateAttributeGroupInput {
 
 	@Field(() => String)
 	place: string;
+
+	@Field(() => [String], { nullable: true })
+	attributes?: string[];
 }

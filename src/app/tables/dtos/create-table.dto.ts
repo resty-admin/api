@@ -25,9 +25,8 @@ export class CreateTableInput {
 	@Field(() => String)
 	name: string;
 
-	@Field(() => String, { nullable: true })
-	@IsOptional()
-	hall?: string;
+	@Field(() => String)
+	hall: string;
 
 	@Field(() => FileUploadInput, { nullable: true })
 	file?: FileUploadInput;
