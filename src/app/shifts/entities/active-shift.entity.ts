@@ -1,7 +1,6 @@
 import { Field, InputType, ObjectType } from "@nestjs/graphql";
-import { Column, Entity, JoinColumn, OneToMany, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne } from "typeorm";
 
-import { ActiveOrderEntity } from "../../orders/entities";
 import { PlaceEntity } from "../../places/entities";
 import { BaseEntity } from "../../shared";
 import { Pagination } from "../../shared/entities/pagination.type";
@@ -32,9 +31,9 @@ export class ActiveShiftEntity extends BaseEntity {
 	place?: PlaceEntity;
 
 	// @ApiProperty()
-	@Field(() => [ActiveOrderEntity], { nullable: true })
-	@OneToMany(() => ActiveOrderEntity, (order) => order.shift, { nullable: true })
-	orders: ActiveOrderEntity;
+	// @Field(() => [ActiveOrderEntity], { nullable: true })
+	// @OneToMany(() => ActiveOrderEntity, (order) => order.shift, { nullable: true })
+	// orders: ActiveOrderEntity;
 
 	// @ApiProperty()
 	@Field(() => String)

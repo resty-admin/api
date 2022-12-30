@@ -39,31 +39,21 @@ export class CreateProductDto {
 @InputType()
 export class CreateProductInput {
 	@Field(() => String)
-	@IsNotEmpty()
-	@IsString()
 	name: string;
 
 	@Field(() => String)
-	@IsString()
-	@IsNotEmpty()
 	category: string;
 
-	@Field(() => String)
-	@IsString()
-	@IsOptional()
-	description: string;
+	@Field(() => String, { nullable: true })
+	description?: string;
 
-	@Field(() => Number)
-	@IsNumber()
-	@IsOptional()
-	price: number;
+	@Field(() => Number, { nullable: true })
+	price?: number;
 
 	@Field(() => FileEntity, { nullable: true })
 	@IsOptional()
 	file?: IFile;
 
 	@Field(() => [String], { nullable: true })
-	@IsOptional()
-	@IsArray()
-	attrsGroups: string[];
+	attrsGroups?: string[];
 }

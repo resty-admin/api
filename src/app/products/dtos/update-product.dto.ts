@@ -1,5 +1,5 @@
 import { Field, InputType } from "@nestjs/graphql";
-import { IsNotEmpty, IsString, IsUUID } from "class-validator";
+import { IsNotEmpty, IsString } from "class-validator";
 
 import { FileEntity } from "../../files/entities";
 import { IsNumber, IsOptional } from "../../shared";
@@ -36,32 +36,20 @@ export class UpdateProductDto {
 @InputType()
 export class UpdateProductInput {
 	@Field(() => String)
-	@IsUUID()
 	id: string;
 
-	@Field(() => String)
-	@IsNotEmpty()
-	@IsOptional()
-	@IsString()
-	name: string;
+	@Field(() => String, { nullable: true })
+	name?: string;
 
-	@Field(() => String)
-	@IsString()
-	@IsOptional()
-	@IsNotEmpty()
-	category: string;
+	@Field(() => String, { nullable: true })
+	category?: string;
 
-	@Field(() => String)
-	@IsString()
-	@IsOptional()
-	description: string;
+	@Field(() => String, { nullable: true })
+	description?: string;
 
-	@Field(() => Number)
-	@IsNumber()
-	@IsOptional()
-	price: number;
+	@Field(() => Number, { nullable: true })
+	price?: number;
 
 	@Field(() => FileEntity, { nullable: true })
-	@IsOptional()
 	file?: IFile;
 }

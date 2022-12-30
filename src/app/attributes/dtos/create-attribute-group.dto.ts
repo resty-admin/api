@@ -23,17 +23,11 @@ export class CreateAttributeGroupDto {
 @InputType()
 export class CreateAttributeGroupInput {
 	@Field(() => String)
-	@IsNotEmpty()
-	@IsString()
 	name: string;
 
-	@Field(() => Boolean)
-	@IsBoolean()
-	@IsOptional()
-	isUniq: boolean;
+	@Field(() => Boolean, { nullable: true })
+	isUniq?: boolean;
 
 	@Field(() => String)
-	@IsNotEmpty()
-	@IsString()
 	place: string;
 }

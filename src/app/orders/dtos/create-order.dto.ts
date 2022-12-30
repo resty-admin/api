@@ -23,15 +23,17 @@ export class CreateOrderDto {
 export class CreateOrderInput {
 	@Field(() => OrderTypeEnum)
 	@IsEnum(OrderTypeEnum)
-	@IsNotEmpty()
 	type: OrderTypeEnum;
 
 	@Field(() => String)
-	@IsNotEmpty()
 	place: string;
 
+	@Field(() => String, { nullable: true })
+	table?: string;
+
+	@Field(() => [String], { nullable: true })
+	users?: string[];
+
 	@Field(() => Int)
-	@IsNumber()
-	@IsNotEmpty()
 	totalPrice: number;
 }

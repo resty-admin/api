@@ -1,7 +1,7 @@
 import { Field, InputType } from "@nestjs/graphql";
-import { IsISO8601, IsUUID } from "class-validator";
+import { IsISO8601 } from "class-validator";
 
-import { IsArray, IsOptional, IsString } from "../../shared";
+import { IsOptional, IsString } from "../../shared";
 
 export class UpdateShiftDto {
 	// @ApiProperty()
@@ -20,9 +20,9 @@ export class UpdateShiftDto {
 	place: string;
 
 	// @ApiProperty()
-	@IsArray()
-	@IsOptional()
-	orders: string[];
+	// @IsArray()
+	// @IsOptional()
+	// orders: string[];
 
 	// @ApiProperty()
 	@IsOptional()
@@ -33,30 +33,23 @@ export class UpdateShiftDto {
 @InputType()
 export class UpdateShitInput {
 	@Field(() => String)
-	@IsUUID()
 	id: string;
 
-	@Field(() => String)
-	@IsOptional()
-	waiter: string;
+	@Field(() => String, { nullable: true })
+	waiter?: string;
 
-	@Field(() => String)
-	@IsOptional()
-	@IsString()
-	table: string;
+	@Field(() => String, { nullable: true })
+	table?: string;
 
-	@Field(() => String)
-	@IsOptional()
-	@IsString()
-	place: string;
+	@Field(() => String, { nullable: true })
+	place?: string;
 
-	@Field(() => [String])
-	@IsArray()
-	@IsOptional()
-	orders: string[];
+	// @Field(() => [String])
+	// @IsArray()
+	// @IsOptional()
+	// orders: string[];
 
-	@Field(() => [String])
-	@IsOptional()
+	@Field(() => [String], { nullable: true })
 	@IsISO8601()
-	shiftDate: string;
+	shiftDate?: string;
 }

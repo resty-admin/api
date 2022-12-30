@@ -47,10 +47,9 @@ export class CreateUserInput {
 	@IsEnum([UserRoleEnum.CLIENT, UserRoleEnum.WAITER, UserRoleEnum.HOOKAH, UserRoleEnum.HOSTESS])
 	role: UserRoleEnum;
 
-	@Field(() => String)
+	@Field(() => String, { nullable: true })
 	@IsString()
 	@IsNotEmpty()
 	// @ApiProperty()
-	@IsOptional()
-	tel: string;
+	tel?: string;
 }

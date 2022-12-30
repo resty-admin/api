@@ -83,30 +83,6 @@ type PaginatedAttributes {
 	totalCount: Int!
 }
 
-type ActiveShiftEntity {
-	id: String!
-	waiter: UserEntity
-	table: TableEntity
-	place: PlaceEntity
-	orders: [ActiveOrderEntity!]
-	shiftDate: String!
-}
-
-type PaginatedActiveShift {
-	data: [ActiveShiftEntity!]
-	page: Int!
-	totalCount: Int!
-}
-
-type HistoryShiftEntity {
-	id: String!
-	waiter: UserEntity
-	table: TableEntity
-	place: PlaceEntity
-	orders: [ActiveOrderEntity!]
-	shiftDate: String!
-}
-
 type ActiveOrderEntity {
 	id: String!
 	orderCode: String!
@@ -116,7 +92,6 @@ type ActiveOrderEntity {
 	status: OrderStatusEnum!
 	place: PlaceEntity!
 	totalPrice: Int!
-	shift: ActiveShiftEntity
 }
 
 enum OrderTypeEnum {
@@ -146,7 +121,6 @@ type HistoryOrderEntity {
 	status: OrderStatusEnum!
 	place: PlaceEntity!
 	totalPrice: Int!
-	shift: ActiveShiftEntity
 }
 
 type TableEntity {
@@ -282,6 +256,28 @@ type PaginatedCommand {
 	totalCount: Int!
 }
 
+type ActiveShiftEntity {
+	id: String!
+	waiter: UserEntity
+	table: TableEntity
+	place: PlaceEntity
+	shiftDate: String!
+}
+
+type PaginatedActiveShift {
+	data: [ActiveShiftEntity!]
+	page: Int!
+	totalCount: Int!
+}
+
+type HistoryShiftEntity {
+	id: String!
+	waiter: UserEntity
+	table: TableEntity
+	place: PlaceEntity
+	shiftDate: String!
+}
+
 type LanguageEntity {
 	id: String!
 	name: String!
@@ -339,22 +335,6 @@ input AttributesEntityInput {
 	price: Int
 }
 
-input ActiveShiftEntityInput {
-	waiter: UserEntityInput
-	table: TableEntityInput
-	place: PlaceEntityInput
-	orders: [ActiveOrderEntityInput!]
-	shiftDate: String!
-}
-
-input HistoryShiftEntityInput {
-	waiter: UserEntityInput
-	table: TableEntityInput
-	place: PlaceEntityInput
-	orders: [ActiveOrderEntityInput!]
-	shiftDate: String!
-}
-
 input ActiveOrderEntityInput {
 	orderCode: String!
 	table: TableEntityInput!
@@ -363,7 +343,6 @@ input ActiveOrderEntityInput {
 	status: OrderStatusEnum!
 	place: PlaceEntityInput!
 	totalPrice: Int!
-	shift: ActiveShiftEntityInput
 }
 
 input HistoryOrderEntityInput {
@@ -374,7 +353,6 @@ input HistoryOrderEntityInput {
 	status: OrderStatusEnum!
 	place: PlaceEntityInput!
 	totalPrice: Int!
-	shift: ActiveShiftEntityInput
 }
 
 input TableEntityInput {
@@ -434,6 +412,20 @@ input UserEntityInput {
 	company: CompanyEntityInput
 }
 
+input ActiveShiftEntityInput {
+	waiter: UserEntityInput
+	table: TableEntityInput
+	place: PlaceEntityInput
+	shiftDate: String!
+}
+
+input HistoryShiftEntityInput {
+	waiter: UserEntityInput
+	table: TableEntityInput
+	place: PlaceEntityInput
+	shiftDate: String!
+}
+
 input PaymentSystemEntityInput {
 	name: String!
 }
@@ -481,7 +473,7 @@ type Mutation {
 	createAttr(attr: CreateAttributeInput!): AttributesEntity!
 	updateAttr(attr: UpdateAttributeInput!): AttributesEntity!
 	deleteAttr(attrId: String!): String!
-	createAttrGroup(attr: CreateAttributeGroupInput!): AttributesGroupEntity!
+	createAttrGroup(attrGroup: CreateAttributeGroupInput!): AttributesGroupEntity!
 	updateAttrGroup(attrGroup: UpdateAttributeGroupInput!): AttributesGroupEntity!
 	deleteAttrGroup(attrGroupId: String!): String!
 	createAccountingSystem(accountingSystem: CreateAccountingSystemInput!): AccountingSystemEntity!
@@ -534,14 +526,14 @@ input UpdateAttributeInput {
 
 input CreateAttributeGroupInput {
 	name: String!
-	isUniq: Boolean!
+	isUniq: Boolean
 	place: String!
 }
 
 input UpdateAttributeGroupInput {
 	id: String!
-	name: String!
-	isUniq: Boolean!
+	name: String
+	isUniq: Boolean
 }
 
 input CreateAccountingSystemInput {
@@ -565,12 +557,17 @@ input UpdatePaymentSystemInput {
 input CreateOrderInput {
 	type: OrderTypeEnum!
 	place: String!
+	table: String
+	users: [String!]
 	totalPrice: Int!
 }
 
 input UpdateOrderInput {
 	id: String!
-	type: OrderTypeEnum!
+	table: String
+	users: [String!]
+	status: OrderStatusEnum
+	type: OrderTypeEnum
 }
 
 input CreateCompanyInput {
@@ -580,43 +577,41 @@ input CreateCompanyInput {
 
 input UpdateCompanyInput {
 	id: String!
-	name: String!
+	name: String
 	logo: FileEntityInput
 	employees: [String!]
 }
 
 input CreateShitInput {
-	waiter: String!
-	table: String!
-	place: String!
-	orders: [String!]!
-	shiftDate: [String!]!
+	waiter: String
+	table: String
+	place: String
+	shiftDate: [String!]
 }
 
 input UpdateShitInput {
 	id: String!
-	waiter: String!
-	table: String!
-	place: String!
-	orders: [String!]!
-	shiftDate: [String!]!
+	waiter: String
+	table: String
+	place: String
+	shiftDate: [String!]
 }
 
 input CreateProductInput {
 	name: String!
 	category: String!
-	description: String!
-	price: Float!
+	description: String
+	price: Float
 	file: FileEntityInput
 	attrsGroups: [String!]
 }
 
 input UpdateProductInput {
 	id: String!
-	name: String!
-	category: String!
-	description: String!
-	price: Float!
+	name: String
+	category: String
+	description: String
+	price: Float
 	file: FileEntityInput
 }
 
@@ -634,12 +629,12 @@ input UpdateHallInput {
 
 input CreatePlaceInput {
 	name: String!
-	address: String!
+	address: String
 	company: String!
-	file: FileEntityInput!
-	weekDays: WorkingHoursInput!
-	weekendDays: WorkingHoursInput!
-	holidayDays: WorkingHoursInput!
+	file: FileEntityInput
+	weekDays: WorkingHoursInput
+	weekendDays: WorkingHoursInput
+	holidayDays: WorkingHoursInput
 }
 
 input WorkingHoursInput {
@@ -650,12 +645,12 @@ input WorkingHoursInput {
 
 input UpdatePlaceInput {
 	id: String!
-	name: String!
-	address: String!
-	file: FileEntityInput!
-	weekDays: WorkingHoursInput!
-	weekendDays: WorkingHoursInput!
-	holidayDays: WorkingHoursInput!
+	name: String
+	address: String
+	file: FileEntityInput
+	weekDays: WorkingHoursInput
+	weekendDays: WorkingHoursInput
+	holidayDays: WorkingHoursInput
 }
 
 input CreateCategoryInput {
@@ -673,7 +668,7 @@ input UpdateCategoryInput {
 
 input CreateTableInput {
 	name: String!
-	hall: String!
+	hall: String
 	file: FileEntityInput
 }
 
@@ -696,12 +691,12 @@ input CreateUserInput {
 	email: String!
 	password: String!
 	role: UserRoleEnum!
-	tel: String!
+	tel: String
 }
 
 input UpdateUserInput {
 	id: String!
-	email: String!
-	password: String!
-	tel: String!
+	email: String
+	password: String
+	tel: String
 }

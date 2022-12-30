@@ -17,12 +17,8 @@ export class CreateAttributeDto {
 @InputType()
 export class CreateAttributeInput {
 	@Field(() => String)
-	@IsNotEmpty()
-	@IsString()
 	name: string;
 
 	@Field(() => Int)
-	@IsNotEmpty()
-	@IsString()
 	price: number;
 }

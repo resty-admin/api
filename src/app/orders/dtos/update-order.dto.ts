@@ -1,6 +1,5 @@
 import { Field, InputType } from "@nestjs/graphql";
-import { IsUUID } from "class-validator";
-import { OrderTypeEnum } from "src/app/shared/enums";
+import { OrderStatusEnum, OrderTypeEnum } from "src/app/shared/enums";
 
 import { IsEnum, IsNotEmpty, IsOptional } from "../../shared";
 
@@ -15,11 +14,18 @@ export class UpdateOrderDto {
 @InputType()
 export class UpdateOrderInput {
 	@Field(() => String)
-	@IsUUID()
 	id: string;
 
-	@Field(() => OrderTypeEnum)
+	@Field(() => String, { nullable: true })
+	table?: string;
+
+	@Field(() => [String], { nullable: true })
+	users?: string[];
+
+	@Field(() => OrderStatusEnum, { nullable: true })
+	status?: OrderStatusEnum;
+
+	@Field(() => OrderTypeEnum, { nullable: true })
 	@IsEnum(OrderTypeEnum)
-	@IsOptional()
-	type: OrderTypeEnum;
+	type?: OrderTypeEnum;
 }

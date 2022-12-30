@@ -23,14 +23,11 @@ export class CreateTableDto {
 @InputType()
 export class CreateTableInput {
 	@Field(() => String)
-	@IsNotEmpty()
 	name: string;
 
-	@Field(() => String)
-	@IsOptional()
-	hall: string;
+	@Field(() => String, { nullable: true })
+	hall?: string;
 
 	@Field(() => FileEntity, { nullable: true })
-	@IsOptional()
 	file?: IFile;
 }

@@ -12,6 +12,5 @@ export class CreateCommandDto {
 @InputType()
 export class CreateCommandInput {
 	@Field(() => String)
-	@IsNotEmpty()
 	name: string;
 }

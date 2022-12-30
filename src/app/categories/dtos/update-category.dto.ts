@@ -1,6 +1,5 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsUUID } from "class-validator";
 
 import { FileEntity } from "../../files/entities";
 import { IsNotEmpty, IsOptional, IsString } from "../../shared";
@@ -27,20 +26,14 @@ export class UpdateCategoryDto {
 @InputType()
 export class UpdateCategoryInput {
 	@Field(() => String)
-	@IsUUID()
 	id: string;
 
 	@Field(() => String, { nullable: true })
-	@IsOptional()
-	@IsString()
 	name?: string;
 
 	@Field(() => String, { nullable: true })
-	@IsOptional()
-	@IsString()
 	place?: string;
 
 	@Field(() => FileEntity, { nullable: true })
-	@IsOptional()
 	file?: IFile;
 }

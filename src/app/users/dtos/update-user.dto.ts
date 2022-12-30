@@ -1,5 +1,4 @@
 import { Field, InputType } from "@nestjs/graphql";
-import { IsUUID } from "class-validator";
 
 import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from "../../shared";
 
@@ -44,24 +43,20 @@ export class UpdateStatusUserDto {
 @InputType()
 export class UpdateUserInput {
 	@Field(() => String)
-	@IsUUID()
 	id: string;
 
-	@Field(() => String)
-	@IsOptional()
-	email: string;
+	@Field(() => String, { nullable: true })
+	email?: string;
 
-	@Field(() => String)
+	@Field(() => String, { nullable: true })
 	@IsString()
-	@IsOptional()
 	@MinLength(5)
 	// @ApiProperty()
-	password: string;
+	password?: string;
 
-	@Field(() => String)
+	@Field(() => String, { nullable: true })
 	@IsString()
 	@IsNotEmpty()
 	// @ApiProperty()
-	@IsOptional()
-	tel: string;
+	tel?: string;
 }

@@ -13,7 +13,5 @@ export class CreateAccountingSystemDto {
 @InputType()
 export class CreateAccountingSystemInput {
 	@Field(() => String)
-	@IsNotEmpty()
-	@IsString()
 	name: string;
 }

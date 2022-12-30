@@ -1,5 +1,4 @@
 import { Field, InputType } from "@nestjs/graphql";
-import { IsUUID } from "class-validator";
 
 import { FileEntity } from "../../files/entities";
 import { IsNotEmpty, IsOptional, IsString } from "../../shared";
@@ -19,14 +18,11 @@ export class UpdateTableDto {
 @InputType()
 export class UpdateTableInput {
 	@Field(() => String)
-	@IsUUID()
 	id: string;
 
 	@Field(() => String)
-	@IsNotEmpty()
 	name: string;
 
 	@Field(() => FileEntity, { nullable: true })
-	@IsOptional()
 	file?: IFile;
 }

@@ -5,7 +5,6 @@ import { PlaceEntity } from "../../places/entities";
 import { BaseEntity, IsNotEmpty, IsNumber } from "../../shared";
 import { Pagination } from "../../shared/entities/pagination.type";
 import { OrderStatusEnum, OrderTypeEnum } from "../../shared/enums";
-import { ActiveShiftEntity } from "../../shifts/entities";
 import { TableEntity } from "../../tables/entities";
 import { UserEntity } from "../../users/entities";
 import { ACTIVE_ORDERS } from "../constant";
@@ -14,33 +13,27 @@ import { ACTIVE_ORDERS } from "../constant";
 @InputType("ActiveOrderEntityInput")
 @Entity({ name: ACTIVE_ORDERS })
 export class ActiveOrderEntity extends BaseEntity {
-	// @ApiProperty()
 	@Generated("increment")
 	@Column("int", { unique: true })
 	@Field(() => String)
 	orderCode: number;
 
-	// @ApiProperty()
 	@Field(() => TableEntity)
 	@ManyToOne(() => TableEntity, (table) => table.orders, { nullable: true })
 	table?: TableEntity;
 
-	// @ApiProperty()
 	@Field(() => [UserEntity])
-	@ManyToMany(() => UserEntity, (user) => user.orders, { nullable: true })
+	@ManyToMany(() => UserEntity, (user) => user.orders)
 	users?: UserEntity[];
 
-	// @ApiProperty()
 	@Field(() => OrderTypeEnum)
 	@Column("enum", { enum: OrderTypeEnum })
 	type: OrderTypeEnum;
 
-	// @ApiProperty()
 	@Field(() => OrderStatusEnum)
 	@Column("enum", { enum: OrderStatusEnum, default: OrderStatusEnum.OPENED })
 	status: OrderStatusEnum;
 
-	// @ApiProperty()
 	@Field(() => PlaceEntity)
 	@ManyToOne(() => PlaceEntity, (place) => place.orders)
 	place: PlaceEntity;
@@ -52,9 +45,9 @@ export class ActiveOrderEntity extends BaseEntity {
 	totalPrice: number;
 
 	// @ApiProperty()
-	@Field(() => ActiveShiftEntity, { nullable: true })
-	@ManyToOne(() => ActiveShiftEntity, (shift) => shift.orders, { nullable: true })
-	shift?: ActiveShiftEntity;
+	// @Field(() => ActiveShiftEntity, { nullable: true })
+	// @ManyToOne(() => ActiveShiftEntity, (shift) => shift.orders, { nullable: true })
+	// shift?: ActiveShiftEntity;
 }
 
 @ObjectType()

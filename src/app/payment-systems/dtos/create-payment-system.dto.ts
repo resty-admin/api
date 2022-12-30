@@ -12,6 +12,5 @@ export class CreatePaymentSystemDto {
 @InputType()
 export class CreatePaymentSystemInput {
 	@Field(() => String)
-	@IsNotEmpty()
 	name: string;
 }

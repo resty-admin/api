@@ -21,13 +21,9 @@ export class UpdateAttributeGroupInput {
 	@IsUUID()
 	id: string;
 
-	@Field(() => String)
-	@IsOptional()
-	@IsString()
-	name: string;
+	@Field(() => String, { nullable: true })
+	name?: string;
 
-	@Field(() => Boolean)
-	@IsBoolean()
-	@IsOptional()
-	isUniq: boolean;
+	@Field(() => Boolean, { nullable: true })
+	isUniq?: boolean;
 }

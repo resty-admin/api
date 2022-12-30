@@ -24,16 +24,11 @@ export class CreateCategoryDto {
 @InputType()
 export class CreateCategoryInput {
 	@Field(() => String)
-	@IsNotEmpty()
-	@IsString()
 	name: string;
 
 	@Field(() => String)
-	@IsNotEmpty()
-	@IsString()
 	place: string;
 
 	@Field(() => FileEntity, { nullable: true })
-	@IsOptional()
 	file?: IFile;
 }

@@ -19,7 +19,5 @@ export class UpdateAccountingSystemInput {
 	id: string;
 
 	@Field(() => String)
-	@IsOptional()
-	@IsString()
 	name: string;
 }

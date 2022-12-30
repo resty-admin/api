@@ -23,14 +23,11 @@ export class CreateHallDto {
 @InputType()
 export class CreateHallInput {
 	@Field(() => String)
-	@IsNotEmpty()
 	name: string;
 
 	@Field(() => String)
-	@IsNotEmpty()
 	place: string;
 
 	@Field(() => FileEntity, { nullable: true })
-	@IsOptional()
 	file?: IFile;
 }

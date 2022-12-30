@@ -51,42 +51,31 @@ export class CreatePlaceDto {
 @InputType()
 export class CreatePlaceInput {
 	@Field(() => String)
-	@IsNotEmpty()
-	@IsString()
 	name: string;
 
-	@Field(() => String)
-	@IsString()
-	@IsOptional()
-	address: string;
+	@Field(() => String, { nullable: true })
+	address?: string;
 
 	@Field(() => String)
-	@IsString()
-	@IsNotEmpty()
 	company: string;
 
-	@Field(() => FileEntity)
-	@IsOptional()
-	file: IFile;
+	@Field(() => FileEntity, { nullable: true })
+	file?: IFile;
 
-	@Field(() => WorkingHoursInput)
-	@IsObject()
-	@IsOptional()
+	@Field(() => WorkingHoursInput, { nullable: true })
 	@ValidateNested()
 	@Type(() => WorkingHoursInput)
-	weekDays: WorkingHoursDto;
+	weekDays?: WorkingHoursDto;
 
-	@Field(() => WorkingHoursInput)
+	@Field(() => WorkingHoursInput, { nullable: true })
 	@IsObject()
-	@IsOptional()
 	@ValidateNested()
 	@Type(() => WorkingHoursInput)
-	weekendDays: WorkingHoursInput;
+	weekendDays?: WorkingHoursInput;
 
-	@Field(() => WorkingHoursInput)
-	@IsOptional()
+	@Field(() => WorkingHoursInput, { nullable: true })
 	@IsMap([isISO8601], [])
 	@ValidateNested()
 	@Type(() => WorkingHoursInput)
-	holidayDays: Map<Date, WorkingHoursInput>;
+	holidayDays?: Map<Date, WorkingHoursInput>;
 }

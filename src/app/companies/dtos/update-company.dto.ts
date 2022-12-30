@@ -1,5 +1,4 @@
 import { Field, InputType } from "@nestjs/graphql";
-import { IsUUID } from "class-validator";
 
 import { FileEntity } from "../../files/entities";
 import { IsNotEmpty, IsOptional, IsString } from "../../shared";
@@ -24,18 +23,14 @@ export class UpdateCompanyDto {
 @InputType()
 export class UpdateCompanyInput {
 	@Field(() => String)
-	@IsUUID()
 	id: string;
 
-	@Field(() => String)
-	@IsOptional()
-	name: string;
+	@Field(() => String, { nullable: true })
+	name?: string;
 
 	@Field(() => FileEntity, { nullable: true })
-	@IsOptional()
 	logo?: IFile;
 
 	@Field(() => [String], { nullable: true })
-	@IsOptional()
-	employees: string[];
+	employees?: string[];
 }

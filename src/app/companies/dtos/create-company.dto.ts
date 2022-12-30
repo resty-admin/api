@@ -19,10 +19,8 @@ export class CreateCompanyDto {
 @InputType()
 export class CreateCompanyInput {
 	@Field(() => String)
-	@IsNotEmpty()
 	name: string;
 
 	@Field(() => FileEntity, { nullable: true })
-	@IsOptional()
 	logo?: IFile;
 }
