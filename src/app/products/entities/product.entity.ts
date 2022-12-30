@@ -1,6 +1,6 @@
 import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne } from "typeorm";
 
 import { AttributesGroupEntity } from "../../attributes/entities";
 import { CategoryEntity } from "../../categories/entities";
@@ -54,6 +54,7 @@ export class ProductEntity extends BaseEntity {
 	@ApiProperty()
 	@Field(() => [AttributesGroupEntity], { nullable: true })
 	@ManyToMany(() => AttributesGroupEntity, (attrGroup) => attrGroup.products, { nullable: true })
+	@JoinTable()
 	attrsGroups?: AttributesGroupEntity[];
 }
 
