@@ -1,7 +1,7 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { IFile } from "src/app/shared/interfaces";
 
-import { FileEntity } from "../../files/entities";
+import { FileUploadInput } from "../../files/dtos";
 import { IsNotEmpty, IsOptional, IsString } from "../../shared";
 
 export class CreateHallDto {
@@ -28,7 +28,7 @@ export class CreateHallInput {
 	@Field(() => String)
 	place: string;
 
-	@Field(() => FileEntity, { nullable: true })
+	@Field(() => FileUploadInput, { nullable: true })
 	@IsOptional()
-	file?: IFile;
+	file?: FileUploadInput;
 }

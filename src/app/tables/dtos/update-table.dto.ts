@@ -1,6 +1,6 @@
 import { Field, InputType } from "@nestjs/graphql";
 
-import { FileEntity } from "../../files/entities";
+import { FileUploadInput } from "../../files/dtos";
 import { IsNotEmpty, IsOptional, IsString } from "../../shared";
 import { IFile } from "../../shared/interfaces";
 
@@ -23,7 +23,7 @@ export class UpdateTableInput {
 	@Field(() => String)
 	name: string;
 
-	@Field(() => FileEntity, { nullable: true })
+	@Field(() => FileUploadInput, { nullable: true })
 	@IsOptional()
-	file?: IFile;
+	file?: FileUploadInput;
 }

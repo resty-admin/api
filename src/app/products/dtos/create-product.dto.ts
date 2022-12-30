@@ -1,7 +1,7 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { IsArray } from "class-validator";
 
-import { FileEntity } from "../../files/entities";
+import { FileUploadInput } from "../../files/dtos";
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from "../../shared";
 import { IFile } from "../../shared/interfaces";
 
@@ -52,10 +52,10 @@ export class CreateProductInput {
 	@IsOptional()
 	price?: number;
 
-	@Field(() => FileEntity, { nullable: true })
+	@Field(() => FileUploadInput, { nullable: true })
 	@IsOptional()
 	@IsOptional()
-	file?: IFile;
+	file?: FileUploadInput;
 
 	@Field(() => [String], { nullable: true })
 	@IsOptional()

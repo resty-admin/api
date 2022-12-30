@@ -607,7 +607,7 @@ input CreateProductInput {
 	category: String!
 	description: String
 	price: Float
-	file: FileEntityInput
+	file: FileUploadInput
 	attrsGroups: [String!]
 }
 
@@ -617,19 +617,19 @@ input UpdateProductInput {
 	category: String
 	description: String
 	price: Float
-	file: FileEntityInput
+	file: FileUploadInput
 }
 
 input CreateHallInput {
 	name: String!
 	place: String!
-	file: FileEntityInput
+	file: FileUploadInput
 }
 
 input UpdateHallInput {
 	id: String!
 	name: String!
-	file: FileEntityInput
+	file: FileUploadInput
 }
 
 input CreatePlaceInput {
@@ -661,26 +661,26 @@ input UpdatePlaceInput {
 input CreateCategoryInput {
 	name: String!
 	place: String!
-	file: FileEntityInput
+	file: FileUploadInput
 }
 
 input UpdateCategoryInput {
 	id: String!
 	name: String
 	place: String
-	file: FileEntityInput
+	file: FileUploadInput
 }
 
 input CreateTableInput {
 	name: String!
 	hall: String
-	file: FileEntityInput
+	file: FileUploadInput
 }
 
 input UpdateTableInput {
 	id: String!
 	name: String!
-	file: FileEntityInput
+	file: FileUploadInput
 }
 
 input CreateCommandInput {
