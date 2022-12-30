@@ -18,7 +18,7 @@ export class ActiveOrderEntity extends BaseEntity {
 	@Field(() => String)
 	orderCode: number;
 
-	@Field(() => TableEntity)
+	@Field(() => TableEntity, { nullable: true })
 	@ManyToOne(() => TableEntity, (table) => table.orders, { nullable: true })
 	table?: TableEntity;
 

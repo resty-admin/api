@@ -54,7 +54,7 @@ export class CreatePlaceInput {
 	name: string;
 
 	@Field(() => String, { nullable: true })
-	@IsOptional()
+	// @IsOptional()
 	address?: string;
 
 	@Field(() => String)

@@ -29,7 +29,7 @@ type CategoryEntity {
 	id: String!
 	name: String!
 	place: PlaceEntity!
-	products: [ProductEntity!]!
+	products: [ProductEntity!]
 	file: FileEntity
 }
 
@@ -86,7 +86,7 @@ type PaginatedAttributes {
 type ActiveOrderEntity {
 	id: String!
 	orderCode: String!
-	table: TableEntity!
+	table: TableEntity
 	users: [UserEntity!]!
 	type: OrderTypeEnum!
 	status: OrderStatusEnum!
@@ -115,7 +115,7 @@ type PaginatedActiveOrder {
 type HistoryOrderEntity {
 	id: String!
 	orderCode: String!
-	table: TableEntity!
+	table: TableEntity
 	users: [UserEntity!]!
 	type: OrderTypeEnum!
 	status: OrderStatusEnum!
@@ -156,10 +156,10 @@ type PlaceEntity {
 	id: String!
 	name: String!
 	company: CompanyEntity!
-	address: String!
+	address: String
 	status: PlaceStatusEnum!
 	halls: [HallEntity!]!
-	categories: [CategoryEntity!]!
+	categories: [CategoryEntity!]
 	file: FileEntity
 	a11y: String!
 	weekDays: String!
@@ -216,7 +216,7 @@ type UserEntity {
 	verificationCode: Int
 	status: UserStatusEnum!
 	password: String
-	orders: [ActiveOrderEntity!]!
+	orders: [ActiveOrderEntity!]
 	company: CompanyEntity
 }
 
@@ -308,7 +308,7 @@ input FondyEntityInput {
 input CategoryEntityInput {
 	name: String!
 	place: PlaceEntityInput!
-	products: [ProductEntityInput!]!
+	products: [ProductEntityInput!]
 	file: FileEntityInput
 }
 
@@ -337,7 +337,7 @@ input AttributesEntityInput {
 
 input ActiveOrderEntityInput {
 	orderCode: String!
-	table: TableEntityInput!
+	table: TableEntityInput
 	users: [UserEntityInput!]!
 	type: OrderTypeEnum!
 	status: OrderStatusEnum!
@@ -347,7 +347,7 @@ input ActiveOrderEntityInput {
 
 input HistoryOrderEntityInput {
 	orderCode: String!
-	table: TableEntityInput!
+	table: TableEntityInput
 	users: [UserEntityInput!]!
 	type: OrderTypeEnum!
 	status: OrderStatusEnum!
@@ -373,10 +373,10 @@ input HallEntityInput {
 input PlaceEntityInput {
 	name: String!
 	company: CompanyEntityInput!
-	address: String!
+	address: String
 	status: PlaceStatusEnum!
 	halls: [HallEntityInput!]!
-	categories: [CategoryEntityInput!]!
+	categories: [CategoryEntityInput!]
 	file: FileEntityInput
 	a11y: String!
 	weekDays: String!
@@ -408,7 +408,7 @@ input UserEntityInput {
 	verificationCode: Int
 	status: UserStatusEnum!
 	password: String
-	orders: [ActiveOrderEntityInput!]!
+	orders: [ActiveOrderEntityInput!]
 	company: CompanyEntityInput
 }
 

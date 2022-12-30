@@ -25,7 +25,7 @@ export class CategoryEntity extends BaseEntity {
 	place: PlaceEntity;
 
 	@ApiProperty()
-	@Field(() => [ProductEntity])
+	@Field(() => [ProductEntity], { nullable: true })
 	@OneToMany(() => ProductEntity, (product) => product.category, { nullable: true })
 	products?: ProductEntity[];
 

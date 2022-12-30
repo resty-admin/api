@@ -29,9 +29,9 @@ export class PlaceEntity extends BaseEntity {
 	company: CompanyEntity;
 
 	// @ApiProperty()
-	@Column()
-	@Field(() => String)
-	address: string;
+	@Column({ nullable: true })
+	@Field(() => String, { nullable: true })
+	address?: string;
 
 	// @ApiProperty()
 	@Column("enum", { enum: PlaceStatusEnum, default: PlaceStatusEnum.CLOSED })
@@ -44,7 +44,7 @@ export class PlaceEntity extends BaseEntity {
 	halls: HallEntity[];
 
 	// @ApiProperty()
-	@Field(() => [CategoryEntity])
+	@Field(() => [CategoryEntity], { nullable: true })
 	@OneToMany(() => CategoryEntity, (category) => category.place, { nullable: true })
 	categories?: CategoryEntity[];
 

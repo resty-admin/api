@@ -63,7 +63,7 @@ export class UserEntity extends BaseEntity implements IUser {
 	password?: string;
 
 	// @ApiProperty()
-	@Field(() => [ActiveOrderEntity])
+	@Field(() => [ActiveOrderEntity], { nullable: true })
 	@ManyToMany(() => ActiveOrderEntity, (order) => order.users, { nullable: true })
 	orders?: ActiveOrderEntity[];
 

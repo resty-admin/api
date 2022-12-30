@@ -28,6 +28,7 @@ export class PlacesResolver {
 	@Mutation(() => PlaceEntity)
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
 	async createPlace(@Args("place") place: CreatePlaceInput) {
+		console.log("here", place);
 		return this._placesService.createPlace(place);
 	}
 
