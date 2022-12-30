@@ -1,7 +1,8 @@
-import { Field, InputType } from "@nestjs/graphql";
+import { Field, InputType, Int } from "@nestjs/graphql";
 import { IsBoolean, IsUUID } from "class-validator";
 
-import { IsArray, IsNotEmpty, IsOptional, IsString } from "../../shared";
+import { IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "../../shared";
+import { AttributeGroupTypeEnum } from "../../shared/enums";
 
 export class UpdateAttributeGroupDto {
 	@IsString()
@@ -35,4 +36,14 @@ export class UpdateAttributeGroupInput {
 
 	@Field(() => [String], { nullable: true })
 	attributes?: string[];
+
+	@Field(() => AttributeGroupTypeEnum, { nullable: true })
+	@IsEnum(AttributeGroupTypeEnum)
+	@IsOptional()
+	type?: AttributeGroupTypeEnum;
+
+	@Field(() => Int, { nullable: true })
+	@IsNumber()
+	@IsOptional()
+	maxItemsForPick?: number;
 }

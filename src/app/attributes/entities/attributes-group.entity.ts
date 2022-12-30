@@ -1,10 +1,11 @@
-import { Field, InputType, ObjectType } from "@nestjs/graphql";
+import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from "typeorm";
 
 import { PlaceEntity } from "../../places/entities";
 import { ProductEntity } from "../../products/entities";
 import { BaseEntity } from "../../shared";
 import { Pagination } from "../../shared/entities/pagination.type";
+import { AttributeGroupTypeEnum } from "../../shared/enums";
 import { ATTRIBUTE_GROUPS } from "../constant";
 import { AttributesEntity } from "./attributes.entity";
 
@@ -16,11 +17,6 @@ export class AttributesGroupEntity extends BaseEntity {
 	// @ApiProperty()
 	@Field(() => String)
 	name: string;
-
-	@Column()
-	// @ApiProperty()
-	@Field(() => Boolean, { defaultValue: false, nullable: true })
-	isUniq: boolean;
 
 	// @ApiProperty()
 	@Field(() => [AttributesEntity], { nullable: true })
@@ -37,6 +33,14 @@ export class AttributesGroupEntity extends BaseEntity {
 	@Field(() => PlaceEntity)
 	// @ApiProperty()
 	place: PlaceEntity;
+
+	@Field(() => AttributeGroupTypeEnum)
+	@Column("enum", { enum: AttributeGroupTypeEnum, default: AttributeGroupTypeEnum.ADD })
+	type: AttributeGroupTypeEnum;
+
+	@Field(() => Int)
+	@Column({ default: 5 })
+	maxItemsForPick: number;
 }
 
 @ObjectType()

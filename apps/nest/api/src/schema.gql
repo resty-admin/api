@@ -58,10 +58,17 @@ type PaginatedProduct {
 type AttributesGroupEntity {
 	id: String!
 	name: String!
-	isUniq: Boolean
 	attributes: [AttributesEntity!]
 	products: [ProductEntity!]
 	place: PlaceEntity!
+	type: AttributeGroupTypeEnum!
+	maxItemsForPick: Int!
+}
+
+enum AttributeGroupTypeEnum {
+	ADD_UNIQ
+	ADD
+	REMOVE
 }
 
 type PaginatedAttributeGroups {
@@ -325,10 +332,11 @@ input ProductEntityInput {
 
 input AttributesGroupEntityInput {
 	name: String!
-	isUniq: Boolean = false
 	attributes: [AttributesEntityInput!]
 	products: [ProductEntityInput!]
 	place: PlaceEntityInput!
+	type: AttributeGroupTypeEnum!
+	maxItemsForPick: Int!
 }
 
 input AttributesEntityInput {
@@ -534,9 +542,10 @@ input UpdateAttributeInput {
 
 input CreateAttributeGroupInput {
 	name: String!
-	isUniq: Boolean
 	place: String!
 	attributes: [String!]
+	type: AttributeGroupTypeEnum!
+	maxItemsForPick: Int!
 }
 
 input UpdateAttributeGroupInput {
@@ -544,6 +553,8 @@ input UpdateAttributeGroupInput {
 	name: String
 	isUniq: Boolean
 	attributes: [String!]
+	type: AttributeGroupTypeEnum
+	maxItemsForPick: Int
 }
 
 input CreateAccountingSystemInput {
@@ -628,6 +639,7 @@ input UpdateProductInput {
 	description: String
 	price: Float
 	file: FileUploadInput
+	attrsGroups: [String!]
 }
 
 input CreateHallInput {

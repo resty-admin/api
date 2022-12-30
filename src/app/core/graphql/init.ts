@@ -1,5 +1,6 @@
 import { registerEnumType } from "@nestjs/graphql";
 import {
+	AttributeGroupTypeEnum,
 	OrderStatusEnum,
 	OrderTypeEnum,
 	PlaceStatusEnum,
@@ -15,4 +16,5 @@ export function initGraphql() {
 	registerEnumType(PlaceStatusEnum, { name: "PlaceStatusEnum" });
 	registerEnumType(OrderStatusEnum, { name: "OrderStatusEnum" });
 	registerEnumType(OrderTypeEnum, { name: "OrderTypeEnum" });
+	registerEnumType(AttributeGroupTypeEnum, { name: "AttributeGroupTypeEnum" });
 }
