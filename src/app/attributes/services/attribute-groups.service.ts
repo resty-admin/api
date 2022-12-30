@@ -43,7 +43,7 @@ export class AttributeGroupsService {
 		const savedAttributeGroup = await this._attributeGroupsRepository.save({
 			...attributeGroupDto,
 			place: { id: attributeGroupDto.place },
-			attributes: attributeGroupDto.attributes?.length ? attributeGroupDto.attributes.map((el) => ({ id: el })) : []
+			attributes: attributeGroupDto.attributes?.length ? attributeGroupDto.attributes.map((el) => ({ id: el })) : null
 		});
 
 		return this._attributeGroupsRepository.findOne({
@@ -58,7 +58,7 @@ export class AttributeGroupsService {
 		return this._attributeGroupsRepository.save({
 			...attributeGroupDto,
 			id,
-			attributes: attributeGroupDto.attributes?.length ? attributeGroupDto.attributes.map((el) => ({ id: el })) : []
+			attributes: attributeGroupDto.attributes?.length ? attributeGroupDto.attributes.map((el) => ({ id: el })) : null
 		});
 	}
 
