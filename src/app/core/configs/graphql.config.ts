@@ -3,6 +3,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from "apollo-server-core";
 
 import { AccountingSystemsModule } from "../../accounting-systems/accounting-systems.module";
 import { AttributesModule } from "../../attributes/attributes.module";
+import { AuthModule } from "../../auth";
 import { CategoriesModule } from "../../categories/categories.module";
 import { CommandsModule } from "../../commands/commands.module";
 import { CompaniesModule } from "../../companies/companies.module";
@@ -38,7 +39,8 @@ export const GRAPHQL_CONFIG = {
 		PaymentSystemsModule,
 		AccountingSystemsModule,
 		AttributesModule,
-		ShiftsModule
+		ShiftsModule,
+		AuthModule
 	],
 	context: ({ req }) => ({ req }),
 	driver: ApolloDriver,

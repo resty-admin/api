@@ -266,6 +266,10 @@ type PaginatedUser {
 	totalCount: Int!
 }
 
+type AccessToken {
+	accessToken: String!
+}
+
 type ActiveShiftEntity {
 	id: String!
 	waiter: UserEntity
@@ -469,6 +473,9 @@ type Query {
 	products(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedProduct!
 	hall(id: String!): HallEntity!
 	halls(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedHall!
+	getMe: AccessToken!
+	user(id: String!): UserEntity!
+	users(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedUser!
 	place(id: String!): PlaceEntity!
 	places(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedPlace!
 	category(id: String!): CategoryEntity!
@@ -477,8 +484,6 @@ type Query {
 	tables(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedTable!
 	command(id: String!): CommandEntity!
 	commands(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedCommand!
-	user(id: String!): UserEntity!
-	users(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedUser!
 }
 
 input FiltersArgsDto {
@@ -515,6 +520,9 @@ type Mutation {
 	createHall(hall: CreateHallInput!): HallEntity!
 	updateHall(hall: UpdateHallInput!): HallEntity!
 	deleteHall(hallId: String!): String!
+	createUser(user: CreateUserInput!): UserEntity!
+	updateUser(user: UpdateUserInput!): UserEntity!
+	deleteUser(userId: String!): String!
 	createPlace(place: CreatePlaceInput!): PlaceEntity!
 	updatePlace(place: UpdatePlaceInput!): PlaceEntity!
 	deletePlace(placeId: String!): String!
@@ -527,9 +535,6 @@ type Mutation {
 	createCommand(command: CreateCommandInput!): CommandEntity!
 	updateCommand(command: UpdateCommandInput!): CommandEntity!
 	deleteCommand(commandId: String!): String!
-	createUser(user: CreateUserInput!): UserEntity!
-	updateUser(user: UpdateUserInput!): UserEntity!
-	deleteUser(userId: String!): String!
 }
 
 input CreateAttributeInput {
@@ -656,6 +661,20 @@ input UpdateHallInput {
 	file: FileUploadInput
 }
 
+input CreateUserInput {
+	email: String!
+	password: String!
+	role: UserRoleEnum!
+	tel: String
+}
+
+input UpdateUserInput {
+	id: String!
+	email: String
+	password: String
+	tel: String
+}
+
 input CreatePlaceInput {
 	name: String!
 	address: String
@@ -718,18 +737,4 @@ input UpdateCommandInput {
 	name: String
 	place: String
 	description: String
-}
-
-input CreateUserInput {
-	email: String!
-	password: String!
-	role: UserRoleEnum!
-	tel: String
-}
-
-input UpdateUserInput {
-	id: String!
-	email: String
-	password: String
-	tel: String
 }
