@@ -5,6 +5,7 @@ import { ApiService } from "src/app/shared/api";
 import { CryptoService } from "src/app/shared/crypto";
 import { Repository } from "typeorm";
 
+import { environment } from "../../../environments/environment";
 import { CompaniesService } from "../../companies/services";
 import { ActiveOrderEntity } from "../../orders/entities";
 import type { CreateFondyMerchantDto } from "../dtos";
@@ -32,13 +33,15 @@ export class FondyService {
 
 	async createPaymentOrderLink(createPaymentOrderLinkDto: CreatePaymentOrderLinkDto) {
 		const order = await this._ordersRepository.findOne({ where: { id: createPaymentOrderLinkDto.orderId } });
-		console.log("order", order);
+
+		const baseUrl = environment.production ? `https://api.resty.od.ua` : `http://localhost:3000`;
+
 		const requestData = {
 			order_id: order.id,
 			order_desc: `resty order ${order.id}`,
 			currency: "UAH",
 			amount: order.totalPrice,
-			response_url: `http://localhost:3000/api/fondy/check`
+			response_url: `${baseUrl}/api/fondy/check`
 		};
 
 		const result = await this.fondy.Checkout(requestData);
