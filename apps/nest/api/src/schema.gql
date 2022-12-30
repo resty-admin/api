@@ -572,7 +572,12 @@ input UpdateOrderInput {
 
 input CreateCompanyInput {
 	name: String!
-	logo: FileEntityInput
+	logo: FileUploadInput
+}
+
+input FileUploadInput {
+	id: String!
+	url: String!
 }
 
 input UpdateCompanyInput {

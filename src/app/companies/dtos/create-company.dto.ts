@@ -1,6 +1,6 @@
 import { Field, InputType } from "@nestjs/graphql";
 
-import { FileEntity } from "../../files/entities";
+import { FileUploadInput } from "../../files/dtos";
 import { IsNotEmpty, IsOptional, IsString, MinLength } from "../../shared";
 import { IFile } from "../../shared/interfaces";
 
@@ -21,7 +21,7 @@ export class CreateCompanyInput {
 	@Field(() => String)
 	name: string;
 
-	@Field(() => FileEntity, { nullable: true })
+	@Field(() => FileUploadInput, { nullable: true })
 	@IsOptional()
-	logo?: IFile;
+	logo?: FileUploadInput;
 }
