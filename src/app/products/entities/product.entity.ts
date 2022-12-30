@@ -37,6 +37,7 @@ export class ProductEntity extends BaseEntity {
 
 	// @ApiProperty()
 	@Field(() => String, { nullable: true })
+	@IsOptional()
 	@Column({ default: "", nullable: true })
 	description?: string;
 
@@ -47,13 +48,16 @@ export class ProductEntity extends BaseEntity {
 
 	@ApiProperty()
 	@Field(() => FileEntity, { nullable: true })
+	@IsOptional()
 	@OneToOne(() => FileEntity, { cascade: true, eager: true, nullable: true })
 	@JoinColumn()
 	file?: IFile;
 
 	@ApiProperty()
 	@Field(() => [AttributesGroupEntity], { nullable: true })
+	@IsOptional()
 	@ManyToMany(() => AttributesGroupEntity, (attrGroup) => attrGroup.products, { nullable: true })
+	@IsOptional()
 	attrsGroups?: AttributesGroupEntity[];
 }
 

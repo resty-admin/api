@@ -29,11 +29,14 @@ export class UpdateCategoryInput {
 	id: string;
 
 	@Field(() => String, { nullable: true })
+	@IsOptional()
 	name?: string;
 
 	@Field(() => String, { nullable: true })
+	@IsOptional()
 	place?: string;
 
 	@Field(() => FileEntity, { nullable: true })
+	@IsOptional()
 	file?: IFile;
 }

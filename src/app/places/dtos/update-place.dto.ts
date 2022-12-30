@@ -63,26 +63,32 @@ export class UpdatePlaceInput {
 	id: string;
 
 	@Field(() => String, { nullable: true })
+	@IsOptional()
 	name?: string;
 
 	@Field(() => String, { nullable: true })
+	@IsOptional()
 	address?: string;
 
 	@Field(() => FileEntity, { nullable: true })
+	@IsOptional()
 	file?: IFile;
 
 	@Field(() => WorkingHoursInput, { nullable: true })
+	@IsOptional()
 	@ValidateNested()
 	@Type(() => WorkingHoursInput)
 	weekDays?: WorkingHoursInput;
 
 	@Field(() => WorkingHoursInput, { nullable: true })
+	@IsOptional()
 	@IsObject()
 	@ValidateNested()
 	@Type(() => WorkingHoursInput)
 	weekendDays?: WorkingHoursInput;
 
 	@Field(() => WorkingHoursInput, { nullable: true })
+	@IsOptional()
 	@IsMap([isISO8601], [])
 	@ValidateNested()
 	@Type(() => WorkingHoursInput)

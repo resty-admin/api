@@ -29,5 +29,6 @@ export class CreateHallInput {
 	place: string;
 
 	@Field(() => FileEntity, { nullable: true })
+	@IsOptional()
 	file?: IFile;
 }

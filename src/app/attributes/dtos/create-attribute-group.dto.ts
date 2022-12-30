@@ -26,6 +26,7 @@ export class CreateAttributeGroupInput {
 	name: string;
 
 	@Field(() => Boolean, { nullable: true })
+	@IsOptional()
 	isUniq?: boolean;
 
 	@Field(() => String)

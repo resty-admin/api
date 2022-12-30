@@ -30,5 +30,6 @@ export class CreateCategoryInput {
 	place: string;
 
 	@Field(() => FileEntity, { nullable: true })
+	@IsOptional()
 	file?: IFile;
 }

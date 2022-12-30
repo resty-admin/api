@@ -39,17 +39,22 @@ export class UpdateProductInput {
 	id: string;
 
 	@Field(() => String, { nullable: true })
+	@IsOptional()
 	name?: string;
 
 	@Field(() => String, { nullable: true })
+	@IsOptional()
 	category?: string;
 
 	@Field(() => String, { nullable: true })
+	@IsOptional()
 	description?: string;
 
 	@Field(() => Number, { nullable: true })
+	@IsOptional()
 	price?: number;
 
 	@Field(() => FileEntity, { nullable: true })
+	@IsOptional()
 	file?: IFile;
 }

@@ -46,15 +46,18 @@ export class UpdateUserInput {
 	id: string;
 
 	@Field(() => String, { nullable: true })
+	@IsOptional()
 	email?: string;
 
 	@Field(() => String, { nullable: true })
+	@IsOptional()
 	@IsString()
 	@MinLength(5)
 	// @ApiProperty()
 	password?: string;
 
 	@Field(() => String, { nullable: true })
+	@IsOptional()
 	@IsString()
 	@IsNotEmpty()
 	// @ApiProperty()

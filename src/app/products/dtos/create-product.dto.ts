@@ -45,15 +45,19 @@ export class CreateProductInput {
 	category: string;
 
 	@Field(() => String, { nullable: true })
+	@IsOptional()
 	description?: string;
 
 	@Field(() => Number, { nullable: true })
+	@IsOptional()
 	price?: number;
 
 	@Field(() => FileEntity, { nullable: true })
 	@IsOptional()
+	@IsOptional()
 	file?: IFile;
 
 	@Field(() => [String], { nullable: true })
+	@IsOptional()
 	attrsGroups?: string[];
 }

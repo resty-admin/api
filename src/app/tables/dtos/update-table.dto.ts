@@ -24,5 +24,6 @@ export class UpdateTableInput {
 	name: string;
 
 	@Field(() => FileEntity, { nullable: true })
+	@IsOptional()
 	file?: IFile;
 }

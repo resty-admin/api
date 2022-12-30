@@ -22,8 +22,10 @@ export class UpdateAttributeGroupInput {
 	id: string;
 
 	@Field(() => String, { nullable: true })
+	@IsOptional()
 	name?: string;
 
 	@Field(() => Boolean, { nullable: true })
+	@IsOptional()
 	isUniq?: boolean;
 }

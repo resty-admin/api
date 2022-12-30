@@ -26,6 +26,7 @@ export class CreateTableInput {
 	name: string;
 
 	@Field(() => String, { nullable: true })
+	@IsOptional()
 	hall?: string;
 
 	@Field(() => FileEntity, { nullable: true })

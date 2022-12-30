@@ -36,12 +36,15 @@ export class UpdateShitInput {
 	id: string;
 
 	@Field(() => String, { nullable: true })
+	@IsOptional()
 	waiter?: string;
 
 	@Field(() => String, { nullable: true })
+	@IsOptional()
 	table?: string;
 
 	@Field(() => String, { nullable: true })
+	@IsOptional()
 	place?: string;
 
 	// @Field(() => [String])
@@ -50,6 +53,7 @@ export class UpdateShitInput {
 	// orders: string[];
 
 	@Field(() => [String], { nullable: true })
+	@IsOptional()
 	@IsISO8601()
 	shiftDate?: string;
 }

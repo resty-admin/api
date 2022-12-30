@@ -26,11 +26,14 @@ export class UpdateCompanyInput {
 	id: string;
 
 	@Field(() => String, { nullable: true })
+	@IsOptional()
 	name?: string;
 
 	@Field(() => FileEntity, { nullable: true })
+	@IsOptional()
 	logo?: IFile;
 
 	@Field(() => [String], { nullable: true })
+	@IsOptional()
 	employees?: string[];
 }

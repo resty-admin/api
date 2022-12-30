@@ -48,6 +48,7 @@ export class CreateUserInput {
 	role: UserRoleEnum;
 
 	@Field(() => String, { nullable: true })
+	@IsOptional()
 	@IsString()
 	@IsNotEmpty()
 	// @ApiProperty()

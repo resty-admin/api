@@ -22,5 +22,6 @@ export class CreateCompanyInput {
 	name: string;
 
 	@Field(() => FileEntity, { nullable: true })
+	@IsOptional()
 	logo?: IFile;
 }

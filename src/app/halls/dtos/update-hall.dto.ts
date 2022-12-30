@@ -22,5 +22,6 @@ export class UpdateHallInput {
 	name: string;
 
 	@Field(() => FileEntity, { nullable: true })
+	@IsOptional()
 	file?: IFile;
 }

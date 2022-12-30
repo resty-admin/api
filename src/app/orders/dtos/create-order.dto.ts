@@ -29,9 +29,11 @@ export class CreateOrderInput {
 	place: string;
 
 	@Field(() => String, { nullable: true })
+	@IsOptional()
 	table?: string;
 
 	@Field(() => [String], { nullable: true })
+	@IsOptional()
 	users?: string[];
 
 	@Field(() => Int)

@@ -33,12 +33,15 @@ export class CreateShiftDto {
 @InputType()
 export class CreateShitInput {
 	@Field(() => String, { nullable: true })
+	@IsOptional()
 	waiter?: string;
 
 	@Field(() => String, { nullable: true })
+	@IsOptional()
 	table?: string;
 
 	@Field(() => String, { nullable: true })
+	@IsOptional()
 	place?: string;
 
 	// @Field(() => [String])
@@ -47,6 +50,7 @@ export class CreateShitInput {
 	// orders: string[];
 
 	@Field(() => [String], { nullable: true })
+	@IsOptional()
 	@IsISO8601()
 	shiftDate?: string;
 }
