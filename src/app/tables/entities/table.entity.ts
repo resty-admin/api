@@ -34,10 +34,10 @@ export class TableEntity extends BaseEntity {
 	orders?: ActiveOrderEntity[];
 
 	// @ApiProperty()
-	@Field(() => FileEntity)
-	@OneToOne(() => FileEntity, { cascade: true, eager: true })
+	@Field(() => FileEntity, { nullable: true })
+	@OneToOne(() => FileEntity, { cascade: true, eager: true, nullable: true })
 	@JoinColumn()
-	file: FileEntity;
+	file?: FileEntity;
 }
 
 @ObjectType()

@@ -1,5 +1,5 @@
 import { Field, InputType, ObjectType } from "@nestjs/graphql";
-import { Column, Entity, ManyToMany, ManyToOne } from "typeorm";
+import { Column, Entity, ManyToMany, ManyToOne, OneToMany } from "typeorm";
 
 import { PlaceEntity } from "../../places/entities";
 import { ProductEntity } from "../../products/entities";
@@ -24,7 +24,7 @@ export class AttributesGroupEntity extends BaseEntity {
 
 	// @ApiProperty()
 	@Field(() => [AttributesEntity], { nullable: true })
-	@ManyToOne(() => AttributesEntity, (attr) => attr.attributesGroup, { nullable: true })
+	@OneToMany(() => AttributesEntity, (attr) => attr.attributesGroup, { cascade: true, nullable: true })
 	attributes?: AttributesEntity[];
 
 	// @ApiProperty()

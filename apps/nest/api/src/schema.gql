@@ -129,7 +129,7 @@ type TableEntity {
 	code: Int!
 	hall: HallEntity!
 	orders: [ActiveOrderEntity!]
-	file: FileEntity!
+	file: FileEntity
 }
 
 type PaginatedTable {
@@ -360,7 +360,7 @@ input TableEntityInput {
 	code: Int!
 	hall: HallEntityInput!
 	orders: [ActiveOrderEntityInput!]
-	file: FileEntityInput!
+	file: FileEntityInput
 }
 
 input HallEntityInput {

@@ -29,5 +29,6 @@ export class CreateTableInput {
 	hall: string;
 
 	@Field(() => FileUploadInput, { nullable: true })
+	@IsOptional()
 	file?: FileUploadInput;
 }
