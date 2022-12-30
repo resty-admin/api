@@ -25,16 +25,13 @@ export class HallEntity extends BaseEntity {
 
 	// @ApiProperty()
 	@Field(() => FileEntity, { nullable: true })
-	@IsOptional()
 	@OneToOne(() => FileEntity, { cascade: true, eager: true, nullable: true })
 	@JoinColumn()
 	file?: IFile;
 
 	// @ApiProperty()
 	@Field(() => [TableEntity], { nullable: true })
-	@IsOptional()
 	@OneToMany(() => TableEntity, (table) => table.hall, { nullable: true })
-	@IsOptional()
 	tables?: TableEntity[];
 }
 

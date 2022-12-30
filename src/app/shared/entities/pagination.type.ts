@@ -11,7 +11,6 @@ export function Pagination<T>(classRef: Type<T>): Type<IPaginatedType<T>> {
 	@ObjectType({ isAbstract: true })
 	abstract class PaginatedType implements IPaginatedType<T> {
 		@Field(() => [classRef], { nullable: true })
-		@IsOptional()
 		data: T[];
 
 		@Field(() => Int)

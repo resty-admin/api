@@ -1,7 +1,7 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
 import { OrderTypeEnum } from "src/app/shared/enums";
 
-import { IsEnum, IsNotEmpty, IsNumber, IsString } from "../../shared";
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "../../shared";
 
 export class CreateOrderDto {
 	@IsEnum(OrderTypeEnum)
