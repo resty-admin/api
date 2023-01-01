@@ -34,7 +34,7 @@ export class FondyService {
 	async createPaymentOrderLink(createPaymentOrderLinkDto: CreatePaymentOrderLinkDto) {
 		const order = await this._ordersRepository.findOne({ where: { id: createPaymentOrderLinkDto.orderId } });
 
-		const baseUrl = environment.production ? `https://api.resty.od.ua` : `http://192.168.68.103:3000`;
+		const baseUrl = environment.production ? `https://dev-api.resty.od.ua` : `http://192.168.68.105:3000`;
 
 		const requestData = {
 			order_id: order.id,
