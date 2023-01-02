@@ -9,11 +9,15 @@ import { ActiveOrderEntity } from "../entities";
 
 @Injectable()
 export class OrdersService {
+	private findRelations = ["users", "table", "place"];
+	private findOneRelations = ["users", "table", "place"];
+
 	constructor(@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository) {}
 
 	async getOrder(id: string) {
 		return this._ordersRepository.findOne({
-			where: { id }
+			where: { id },
+			relations: this.findOneRelations
 		});
 	}
 
@@ -22,6 +26,7 @@ export class OrdersService {
 
 		const [data, count] = await this._ordersRepository.findAndCount({
 			where: findOptions.where,
+			relations: this.findRelations,
 			take,
 			skip
 		});

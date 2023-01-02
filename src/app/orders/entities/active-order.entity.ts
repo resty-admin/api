@@ -1,5 +1,5 @@
 import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
-import { Column, Entity, Generated, ManyToMany, ManyToOne } from "typeorm";
+import { Column, Entity, Generated, JoinTable, ManyToMany, ManyToOne } from "typeorm";
 
 import { PlaceEntity } from "../../places/entities";
 import { BaseEntity, IsNotEmpty, IsNumber } from "../../shared";
@@ -24,6 +24,7 @@ export class ActiveOrderEntity extends BaseEntity {
 
 	@Field(() => [UserEntity])
 	@ManyToMany(() => UserEntity, (user) => user.orders)
+	@JoinTable()
 	users?: UserEntity[];
 
 	@Field(() => OrderTypeEnum)
@@ -42,12 +43,7 @@ export class ActiveOrderEntity extends BaseEntity {
 	@Column("int")
 	@IsNumber()
 	@IsNotEmpty()
-	totalPrice: number;
-
-	// @ApiProperty()
-	// @Field(() => ActiveShiftEntity, { nullable: true })
-	// @ManyToOne(() => ActiveShiftEntity, (shift) => shift.orders, { nullable: true })
-	// shift?: ActiveShiftEntity;
+	totalPrice?: number;
 }
 
 @ObjectType()
