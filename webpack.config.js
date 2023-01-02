@@ -5,7 +5,7 @@ module.exports = function (options, webpack) {
 			...options.plugins,
 			new webpack.NormalModuleReplacementPlugin(
 				/src[\\\/]environments[\\\/]environment.ts/,
-				`./environment.${process.env.NODE_ENV}.ts`
+				`./environment${process.env.NODE_ENV ? "." + process.env.NODE_ENV : ""}.ts`
 			)
 		]
 	};
