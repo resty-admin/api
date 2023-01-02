@@ -47,8 +47,14 @@ export class OrdersService {
 		});
 	}
 
-	async updateOrder(id: string, user: UpdateOrderDto | UpdateOrderInput): Promise<ActiveOrderEntity> {
-		return this._ordersRepository.save({ id, ...user });
+	async updateOrder(id: string, order: UpdateOrderDto | UpdateOrderInput): Promise<ActiveOrderEntity> {
+		console.log("order", order);
+		await this._ordersRepository.save({ id, ...order });
+
+		return this._ordersRepository.findOne({
+			where: { id },
+			relations: this.findOneRelations
+		});
 	}
 
 	async deleteOrder(id: string): Promise<string> {

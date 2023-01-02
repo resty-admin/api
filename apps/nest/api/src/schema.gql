@@ -586,7 +586,7 @@ input CreateOrderInput {
 	type: OrderTypeEnum!
 	place: String!
 	table: String
-	users: [String!]
+	users: [String!]!
 	totalPrice: Int!
 }
 
@@ -596,6 +596,7 @@ input UpdateOrderInput {
 	users: [String!]
 	status: OrderStatusEnum
 	type: OrderTypeEnum
+	totalPrice: Int
 }
 
 input CreateCompanyInput {

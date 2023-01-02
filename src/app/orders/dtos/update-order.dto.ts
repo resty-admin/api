@@ -1,4 +1,4 @@
-import { Field, InputType } from "@nestjs/graphql";
+import { Field, InputType, Int } from "@nestjs/graphql";
 import { OrderStatusEnum, OrderTypeEnum } from "src/app/shared/enums";
 
 import { IsEnum, IsNotEmpty, IsOptional } from "../../shared";
@@ -32,4 +32,8 @@ export class UpdateOrderInput {
 	@IsOptional()
 	@IsEnum(OrderTypeEnum)
 	type?: OrderTypeEnum;
+
+	@Field(() => Int, { nullable: true })
+	@IsOptional()
+	totalPrice?: number;
 }

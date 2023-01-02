@@ -1,4 +1,4 @@
-import { Logger, ValidationPipe } from "@nestjs/common";
+import { Logger } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import * as requestIp from "request-ip";
 
@@ -9,7 +9,7 @@ import { environment } from "./environments/environment";
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
-	app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+	// app.useGlobalPipes(new ValidationPipe({transform: true, whitelist: true}));
 
 	app.setGlobalPrefix("api");
 	app.use(requestIp.mw());
