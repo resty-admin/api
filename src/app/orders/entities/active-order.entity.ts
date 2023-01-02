@@ -25,7 +25,7 @@ export class ActiveOrderEntity extends BaseEntity {
 	@Field(() => [UserEntity])
 	@ManyToMany(() => UserEntity, (user) => user.orders)
 	@JoinTable()
-	users?: UserEntity[];
+	users: UserEntity[];
 
 	@Field(() => OrderTypeEnum)
 	@Column("enum", { enum: OrderTypeEnum })

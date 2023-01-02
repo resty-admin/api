@@ -32,9 +32,9 @@ export class CreateOrderInput {
 	@IsOptional()
 	table?: string;
 
-	@Field(() => [String], { nullable: true })
+	@Field(() => [String])
 	@IsOptional()
-	users?: string[];
+	users: string[];
 
 	@Field(() => Int)
 	totalPrice: number;
