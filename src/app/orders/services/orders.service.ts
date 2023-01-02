@@ -42,7 +42,8 @@ export class OrdersService {
 		const savedOrder = await this._ordersRepository.save({ ...order, place: { id: order.place } });
 
 		return this._ordersRepository.findOne({
-			where: { id: savedOrder.id }
+			where: { id: savedOrder.id },
+			relations: this.findOneRelations
 		});
 	}
 
