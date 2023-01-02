@@ -20,9 +20,9 @@ export class UpdateOrderInput {
 	@IsOptional()
 	table?: string;
 
-	@Field(() => [String], { nullable: true })
-	@IsOptional()
-	users?: string[];
+	// @Field(() => [String], { nullable: true })
+	// @IsOptional()
+	// users?: string[];
 
 	@Field(() => OrderStatusEnum, { nullable: true })
 	@IsOptional()

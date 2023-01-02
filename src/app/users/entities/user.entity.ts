@@ -1,9 +1,8 @@
 import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { Exclude } from "class-transformer";
-import { Column, Entity, ManyToMany, ManyToOne } from "typeorm";
+import { Column, Entity, ManyToOne } from "typeorm";
 
 import { CompanyEntity } from "../../companies/entities";
-import { ActiveOrderEntity } from "../../orders/entities";
 import { BaseEntity } from "../../shared";
 import { Pagination } from "../../shared/entities/pagination.type";
 import { ThemeEnum, UserRoleEnum, UserStatusEnum } from "../../shared/enums";
@@ -63,14 +62,18 @@ export class UserEntity extends BaseEntity implements IUser {
 	password?: string;
 
 	// @ApiProperty()
-	@Field(() => [ActiveOrderEntity], { nullable: true })
-	@ManyToMany(() => ActiveOrderEntity, (order) => order.users, { nullable: true })
-	orders?: ActiveOrderEntity[];
+	// @Field(() => [ActiveOrderEntity], { nullable: true })
+	// @ManyToMany(() => ActiveOrderEntity, (order) => order.users, { nullable: true })
+	// orders?: ActiveOrderEntity[];
 
 	// @ApiProperty()
 	@Field(() => CompanyEntity, { nullable: true })
 	@ManyToOne(() => CompanyEntity, (company) => company.employees, { nullable: true })
 	company?: CompanyEntity;
+
+	// @Field(() => [UserToOrderEntity])
+	// @OneToMany(() => UserToOrderEntity, (uTo) => uTo.user)
+	// usersToOrders: UserToOrderEntity[];
 
 	// @OneToMany(() => UserToOrderEntity, (userToOrder) => userToOrder.user, { cascade: true })
 	// orders: IUserToOrder[];

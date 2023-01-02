@@ -3,14 +3,29 @@ import { InjectRepository } from "@nestjs/typeorm";
 
 import { getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
-import type { CreateOrderDto, UpdateOrderDto } from "../dtos";
+import type { UpdateOrderDto } from "../dtos";
 import type { CreateOrderInput, UpdateOrderInput } from "../dtos";
 import { ActiveOrderEntity } from "../entities";
 
 @Injectable()
 export class OrdersService {
-	private findRelations = ["users", "table", "place"];
-	private findOneRelations = ["users", "table", "place"];
+	private findRelations = [
+		"usersToOrders",
+		"usersToOrders.user",
+		"usersToOrders.product",
+		"usersToOrders.attributes",
+		"table",
+		"place"
+	];
+
+	private findOneRelations = [
+		"usersToOrders",
+		"usersToOrders.user",
+		"usersToOrders.product",
+		"usersToOrders.attributes",
+		"table",
+		"place"
+	];
 
 	constructor(@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository) {}
 
@@ -38,8 +53,10 @@ export class OrdersService {
 		};
 	}
 
-	async creatOrder(order: CreateOrderDto | CreateOrderInput): Promise<ActiveOrderEntity> {
-		const savedOrder = await this._ordersRepository.save({ ...order, place: { id: order.place } });
+	async creatOrder(order: CreateOrderInput): Promise<ActiveOrderEntity> {
+		const savedOrder = await this._ordersRepository.save({
+			...order
+		});
 
 		return this._ordersRepository.findOne({
 			where: { id: savedOrder.id },
@@ -48,7 +65,6 @@ export class OrdersService {
 	}
 
 	async updateOrder(id: string, order: UpdateOrderDto | UpdateOrderInput): Promise<ActiveOrderEntity> {
-		console.log("order", order);
 		await this._ordersRepository.save({ id, ...order });
 
 		return this._ordersRepository.findOne({

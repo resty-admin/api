@@ -56,6 +56,10 @@ export class ProductEntity extends BaseEntity {
 	@ManyToMany(() => AttributesGroupEntity, (attrGroup) => attrGroup.products, { nullable: true })
 	@JoinTable()
 	attrsGroups?: AttributesGroupEntity[];
+
+	// @Field(() => [UserToOrderEntity])
+	// @OneToMany(() => UserToOrderEntity, (uTo) => uTo.product)
+	// usersToOrders: UserToOrderEntity[];
 }
 
 @ObjectType()

@@ -103,15 +103,24 @@ type PaginatedCommand {
 	totalCount: Int!
 }
 
+type UserToOrderEntity {
+	id: String!
+	user: UserEntity!
+	product: ProductEntity!
+	attributes: [AttributesEntity!]
+	order: ActiveOrderEntity!
+	count: Int!
+}
+
 type ActiveOrderEntity {
 	id: String!
 	orderCode: String!
 	table: TableEntity
-	users: [UserEntity!]!
 	type: OrderTypeEnum!
 	status: OrderStatusEnum!
 	place: PlaceEntity!
 	totalPrice: Int!
+	usersToOrders: [UserToOrderEntity!]
 }
 
 enum OrderTypeEnum {
@@ -136,11 +145,11 @@ type HistoryOrderEntity {
 	id: String!
 	orderCode: String!
 	table: TableEntity
-	users: [UserEntity!]!
 	type: OrderTypeEnum!
 	status: OrderStatusEnum!
 	place: PlaceEntity!
 	totalPrice: Int!
+	usersToOrders: [UserToOrderEntity!]
 }
 
 type TableEntity {
@@ -237,7 +246,6 @@ type UserEntity {
 	verificationCode: Int
 	status: UserStatusEnum!
 	password: String
-	orders: [ActiveOrderEntity!]
 	company: CompanyEntity
 }
 
@@ -356,24 +364,32 @@ input CommandEntityInput {
 	description: String!
 }
 
+input UserToOrderEntityInput {
+	user: UserEntityInput!
+	product: ProductEntityInput!
+	attributes: [AttributesEntityInput!]
+	order: ActiveOrderEntityInput!
+	count: Int!
+}
+
 input ActiveOrderEntityInput {
 	orderCode: String!
 	table: TableEntityInput
-	users: [UserEntityInput!]!
 	type: OrderTypeEnum!
 	status: OrderStatusEnum!
 	place: PlaceEntityInput!
 	totalPrice: Int!
+	usersToOrders: [UserToOrderEntityInput!]
 }
 
 input HistoryOrderEntityInput {
 	orderCode: String!
 	table: TableEntityInput
-	users: [UserEntityInput!]!
 	type: OrderTypeEnum!
 	status: OrderStatusEnum!
 	place: PlaceEntityInput!
 	totalPrice: Int!
+	usersToOrders: [UserToOrderEntityInput!]
 }
 
 input TableEntityInput {
@@ -430,7 +446,6 @@ input UserEntityInput {
 	verificationCode: Int
 	status: UserStatusEnum!
 	password: String
-	orders: [ActiveOrderEntityInput!]
 	company: CompanyEntityInput
 }
 
@@ -586,14 +601,20 @@ input CreateOrderInput {
 	type: OrderTypeEnum!
 	place: String!
 	table: String
-	users: [String!]!
 	totalPrice: Int!
+	usersToOrders: [CreateUserToOrderInput!]
+}
+
+input CreateUserToOrderInput {
+	user: String!
+	product: String!
+	attributes: [String!]
+	count: Int!
 }
 
 input UpdateOrderInput {
 	id: String!
 	table: String
-	users: [String!]
 	status: OrderStatusEnum
 	type: OrderTypeEnum
 	totalPrice: Int
