@@ -36,10 +36,6 @@ export class CreateOrderInput {
 	@Transform(({ value }) => ({ id: value }))
 	table?: string;
 
-	// @Field(() => [String])
-	// @IsOptional()
-	// users: string[];
-
 	@Field(() => Int)
 	totalPrice: number;
 

@@ -1,7 +1,9 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
+import { Transform } from "class-transformer";
 import { OrderStatusEnum, OrderTypeEnum } from "src/app/shared/enums";
 
 import { IsEnum, IsNotEmpty, IsOptional } from "../../shared";
+import { CreateUserToOrderInput } from "./create-user-to-order.dto";
 
 export class UpdateOrderDto {
 	@IsEnum(OrderTypeEnum)
@@ -36,4 +38,15 @@ export class UpdateOrderInput {
 	@Field(() => Int, { nullable: true })
 	@IsOptional()
 	totalPrice?: number;
+
+	@Field(() => [CreateUserToOrderInput], { nullable: true })
+	@Transform(({ value }) =>
+		value.map((el) => ({
+			...el,
+			user: { id: el.user },
+			product: { id: el.product },
+			attributes: el.attributes?.map((el) => ({ id: el })) || null
+		}))
+	)
+	usersToOrders?: CreateUserToOrderInput[];
 }
