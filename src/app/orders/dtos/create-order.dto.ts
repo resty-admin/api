@@ -3,7 +3,6 @@ import { Transform } from "class-transformer";
 import { OrderTypeEnum } from "src/app/shared/enums";
 
 import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "../../shared";
-import { CreateUserToOrderInput } from "./create-user-to-order.dto";
 
 export class CreateOrderDto {
 	@IsEnum(OrderTypeEnum)
@@ -39,14 +38,17 @@ export class CreateOrderInput {
 	@Field(() => Int)
 	totalPrice: number;
 
-	@Field(() => [CreateUserToOrderInput], { nullable: true })
-	@Transform(({ value }) =>
-		value.map((el) => ({
-			...el,
-			user: { id: el.user },
-			product: { id: el.product },
-			attributes: el.attributes?.map((el) => ({ id: el })) || null
-		}))
-	)
-	usersToOrders?: CreateUserToOrderInput[];
+	@Field(() => [String], { nullable: true })
+	@Transform(({ value }) => value.map((id) => ({ id })))
+	users?: string[];
+	// @Field(() => [CreateUserToOrderInput], { nullable: true })
+	// @Transform(({ value }) =>
+	// 	value.map((el) => ({
+	// 		...el,
+	// 		user: { id: el.user },
+	// 		product: { id: el.product },
+	// 		attributes: el.attributes?.map((el) => ({ id: el })) || null
+	// 	}))
+	// )
+	// usersToOrders?: CreateUserToOrderInput[];
 }

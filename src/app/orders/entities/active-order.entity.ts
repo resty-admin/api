@@ -1,11 +1,12 @@
 import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
-import { Column, Entity, Generated, ManyToOne, OneToMany } from "typeorm";
+import { Column, Entity, Generated, JoinTable, ManyToMany, ManyToOne, OneToMany } from "typeorm";
 
 import { PlaceEntity } from "../../places/entities";
-import { BaseEntity, IsNotEmpty, IsNumber } from "../../shared";
+import { BaseEntity } from "../../shared";
 import { Pagination } from "../../shared/entities/pagination.type";
 import { OrderStatusEnum, OrderTypeEnum } from "../../shared/enums";
 import { TableEntity } from "../../tables/entities";
+import { UserEntity } from "../../users/entities";
 import { ACTIVE_ORDERS } from "../constant";
 import { UserToOrderEntity } from "./user-to-order.entity";
 
@@ -22,10 +23,10 @@ export class ActiveOrderEntity extends BaseEntity {
 	@ManyToOne(() => TableEntity, (table) => table.orders, { nullable: true })
 	table?: TableEntity;
 
-	// @Field(() => [UserEntity])
-	// @ManyToMany(() => UserEntity, (user) => user.orders)
-	// @JoinTable()
-	// users: UserEntity[];
+	@Field(() => [UserEntity], { nullable: true })
+	@ManyToMany(() => UserEntity, (user) => user.orders, { nullable: true })
+	@JoinTable()
+	users: UserEntity[];
 
 	@Field(() => OrderTypeEnum)
 	@Column("enum", { enum: OrderTypeEnum })
@@ -41,8 +42,6 @@ export class ActiveOrderEntity extends BaseEntity {
 
 	@Field(() => Int)
 	@Column("int")
-	@IsNumber()
-	@IsNotEmpty()
 	totalPrice?: number;
 
 	@Field(() => [UserToOrderEntity], { nullable: true })

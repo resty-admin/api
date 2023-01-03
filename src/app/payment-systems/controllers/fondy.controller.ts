@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Post, Res, UseGuards } from "@nestjs/common";
 import { ApiCreatedResponse, ApiOperation } from "@nestjs/swagger";
 import { Response } from "express";
 
@@ -16,17 +16,18 @@ export class FondyController {
 	async checkFondy(@Body() body: any, @Res() response: Response) {
 		const baseUrl = environment.production ? `https://dev.resty.od.ua/` : `http://192.168.68.105:4201`;
 
+		await this._fondyService.verifyOrder(body);
 		return response.redirect(`${baseUrl}/orders/${body.order_id}/payment-status`);
 	}
 
-	@Get("verify-order/:id")
-	@ApiOperation({ summary: "Verify fondy order" })
-	@ApiCreatedResponse({
-		description: "Verify fondy order"
-	})
-	async paymentSuccessfull(@Param("id") id: string) {
-		return this._fondyService.verifyOrder(id);
-	}
+	// @Get("verify-order/:id")
+	// @ApiOperation({ summary: "Verify fondy order" })
+	// @ApiCreatedResponse({
+	// 	description: "Verify fondy order"
+	// })
+	// async paymentSuccessfull(@Param("id") id: string) {
+	// 	return this._fondyService.verifyOrder(id);
+	// }
 
 	@Post("new-merchant")
 	@ApiOperation({ summary: "Add new fondy merchant" })
@@ -43,8 +44,9 @@ export class FondyController {
 	@ApiCreatedResponse({
 		description: "Link created"
 	})
-	async createPaymentOrderLink(@Body() createPaymentOrderLinkDto: CreatePaymentOrderLinkDto) {
-		const link = await this._fondyService.createPaymentOrderLink(createPaymentOrderLinkDto);
+	async createPaymentOrderLink(@Body() userToOrder: CreatePaymentOrderLinkDto) {
+		// return this._fondyService.createPaymentOrderLink(userToOrder);
+		const link = await this._fondyService.createPaymentOrderLink(userToOrder);
 		return {
 			link
 		};

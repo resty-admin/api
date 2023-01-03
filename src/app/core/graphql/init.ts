@@ -4,6 +4,7 @@ import {
 	OrderStatusEnum,
 	OrderTypeEnum,
 	PlaceStatusEnum,
+	ProductToOrderStatusEnum,
 	ThemeEnum,
 	UserRoleEnum,
 	UserStatusEnum
@@ -17,4 +18,5 @@ export function initGraphql() {
 	registerEnumType(OrderStatusEnum, { name: "OrderStatusEnum" });
 	registerEnumType(OrderTypeEnum, { name: "OrderTypeEnum" });
 	registerEnumType(AttributeGroupTypeEnum, { name: "AttributeGroupTypeEnum" });
+	registerEnumType(ProductToOrderStatusEnum, { name: "ProductToOrderStatusEnum" });
 }

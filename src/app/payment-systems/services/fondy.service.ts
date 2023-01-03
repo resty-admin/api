@@ -7,9 +7,9 @@ import { Repository } from "typeorm";
 
 import { environment } from "../../../environments/environment";
 import { CompaniesService } from "../../companies/services";
-import { ActiveOrderEntity } from "../../orders/entities";
-import type { CreateFondyMerchantDto } from "../dtos";
-import type { CreatePaymentOrderLinkDto } from "../dtos";
+import { ActiveOrderEntity, UserToOrderEntity } from "../../orders/entities";
+import { OrderStatusEnum, ProductToOrderStatusEnum } from "../../shared/enums";
+import type { CreateFondyMerchantDto, CreatePaymentOrderLinkDto } from "../dtos";
 import { PaymentSystemEntity } from "../entities";
 import { FondyEntity } from "../entities/fondy.entity";
 
@@ -20,6 +20,7 @@ export class FondyService {
 	constructor(
 		@InjectRepository(PaymentSystemEntity) private readonly _paymentSystemRepository,
 		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository: Repository<ActiveOrderEntity>,
+		@InjectRepository(UserToOrderEntity) private readonly _userToOrderRepository: Repository<UserToOrderEntity>,
 		private readonly _apiService: ApiService,
 		private readonly _cryptoService: CryptoService,
 		@InjectRepository(FondyEntity) private readonly _fondyRepository,
@@ -31,37 +32,91 @@ export class FondyService {
 		});
 	}
 
-	async createPaymentOrderLink(createPaymentOrderLinkDto: CreatePaymentOrderLinkDto) {
-		const order = await this._ordersRepository.findOne({ where: { id: createPaymentOrderLinkDto.orderId } });
+	async createPaymentOrderLink({ userId, orderId }: CreatePaymentOrderLinkDto) {
+		const usersToOrders = await this._userToOrderRepository.find({
+			where: {
+				user: {
+					id: userId
+				},
+				order: {
+					id: orderId
+				}
+			},
+			relations: ["product", "user", "order"]
+		});
 
-		const baseUrl = environment.production ? `https://dev-api.resty.od.ua` : `http://192.168.68.105:3000`;
+		if (usersToOrders.length > 0 && usersToOrders[0].paymentLink) {
+			return usersToOrders[0].paymentLink;
+		}
+
+		const baseUrl = false && environment.production ? `https://dev-api.resty.od.ua` : `http://localhost:3000`;
 
 		const requestData = {
-			order_id: order.id,
-			order_desc: `resty order ${order.id}`,
+			order_id: `${orderId}_${userId}`,
+			order_desc: usersToOrders.reduce((pre, curr) => `${pre} ${curr.product.name} x${curr.count} ` + `\n`, ""),
 			currency: "UAH",
-			amount: order.totalPrice,
+			amount: 100 * usersToOrders.reduce((pre, curr) => pre + curr.count * curr.product.price, 0),
 			response_url: `${baseUrl}/api/fondy/check`
 		};
 
 		const result = await this.fondy.Checkout(requestData);
 
+		for (const el of usersToOrders) {
+			await this._userToOrderRepository.save({
+				id: el.id,
+				paymentLink: result.checkout_url
+			});
+		}
+
 		return result.checkout_url;
 	}
 
-	async verifyOrder(id: string) {
-		const requestData = {
-			order_id: id
-		};
+	async verifyOrder(body) {
+		const [orderId, userId] = body.order_id.split("_");
 
-		this.fondy
-			.Status(requestData)
-			.then((data) => {
-				console.log(data, requestData);
-			})
-			.catch((error) => {
-				console.log(error);
+		const usersToOrders = await this._userToOrderRepository.find({
+			where: {
+				user: {
+					id: userId
+				},
+				order: {
+					id: orderId
+				}
+			},
+			relations: ["product", "user", "order"]
+		});
+
+		for (const el of usersToOrders) {
+			await this._userToOrderRepository.save({
+				id: el.id,
+				status: ProductToOrderStatusEnum.PAID
 			});
+		}
+
+		const order = await this._ordersRepository.findOne({ where: { id: orderId }, relations: ["usersToOrders"] });
+
+		const allProductsPaid = order.usersToOrders.every((el) => el.status === ProductToOrderStatusEnum.PAID);
+
+		if (allProductsPaid) {
+			await this._ordersRepository.save({
+				...order,
+				status: OrderStatusEnum.PAID
+			});
+		}
+		// const requestData = {
+		// 	order_id: id
+		// };
+		//
+		// this.fondy
+		// 	.Status(requestData)
+		// 	.then((data) => {
+		// 		console.log(data, requestData);
+		// 	})
+		// 	.catch((error) => {
+		// 		console.log(error);
+		// 	});
+
+		console.log("body", body);
 	}
 
 	async createMerchant(createFondyMerchantDto: CreateFondyMerchantDto) {

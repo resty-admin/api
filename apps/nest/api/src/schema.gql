@@ -110,12 +110,23 @@ type UserToOrderEntity {
 	attributes: [AttributesEntity!]
 	order: ActiveOrderEntity!
 	count: Int!
+	status: ProductToOrderStatusEnum!
+	paymentLink: String
+}
+
+enum ProductToOrderStatusEnum {
+	ADDED
+	REQUESTED_TO_CONFIRM
+	CONFIRMED
+	REQUESTED_TO_PAY
+	PAID
 }
 
 type ActiveOrderEntity {
 	id: String!
 	orderCode: String!
 	table: TableEntity
+	users: [UserEntity!]
 	type: OrderTypeEnum!
 	status: OrderStatusEnum!
 	place: PlaceEntity!
@@ -133,6 +144,8 @@ enum OrderTypeEnum {
 enum OrderStatusEnum {
 	OPENED
 	CLOSED
+	UNPAID
+	PAID
 }
 
 type PaginatedActiveOrder {
@@ -145,6 +158,7 @@ type HistoryOrderEntity {
 	id: String!
 	orderCode: String!
 	table: TableEntity
+	users: [UserEntity!]
 	type: OrderTypeEnum!
 	status: OrderStatusEnum!
 	place: PlaceEntity!
@@ -246,6 +260,7 @@ type UserEntity {
 	verificationCode: Int
 	status: UserStatusEnum!
 	password: String
+	orders: [ActiveOrderEntity!]
 	company: CompanyEntity
 }
 
@@ -370,11 +385,14 @@ input UserToOrderEntityInput {
 	attributes: [AttributesEntityInput!]
 	order: ActiveOrderEntityInput!
 	count: Int!
+	status: ProductToOrderStatusEnum!
+	paymentLink: String
 }
 
 input ActiveOrderEntityInput {
 	orderCode: String!
 	table: TableEntityInput
+	users: [UserEntityInput!]
 	type: OrderTypeEnum!
 	status: OrderStatusEnum!
 	place: PlaceEntityInput!
@@ -385,6 +403,7 @@ input ActiveOrderEntityInput {
 input HistoryOrderEntityInput {
 	orderCode: String!
 	table: TableEntityInput
+	users: [UserEntityInput!]
 	type: OrderTypeEnum!
 	status: OrderStatusEnum!
 	place: PlaceEntityInput!
@@ -446,6 +465,7 @@ input UserEntityInput {
 	verificationCode: Int
 	status: UserStatusEnum!
 	password: String
+	orders: [ActiveOrderEntityInput!]
 	company: CompanyEntityInput
 }
 
@@ -523,6 +543,9 @@ type Mutation {
 	createOrder(order: CreateOrderInput!): ActiveOrderEntity!
 	updateOrder(order: UpdateOrderInput!): ActiveOrderEntity!
 	deleteOrder(orderId: String!): String!
+	addProductToOrder(orderId: String!, product: CreateUserToOrderInput!): ActiveOrderEntity!
+	removeUserProductInOrder(userToOrderId: String!): String!
+	updateUserProductInOrder(userToOrder: UpdateUserToOrderInput!): ActiveOrderEntity!
 	createCompany(company: CreateCompanyInput!): CompanyEntity!
 	updateCompany(company: UpdateCompanyInput!): CompanyEntity!
 	deleteCompany(companyId: String!): String!
@@ -602,7 +625,16 @@ input CreateOrderInput {
 	place: String!
 	table: String
 	totalPrice: Int!
-	usersToOrders: [CreateUserToOrderInput!]
+	users: [String!]
+}
+
+input UpdateOrderInput {
+	id: String!
+	table: String
+	users: [String!]
+	status: OrderStatusEnum
+	type: OrderTypeEnum
+	totalPrice: Int
 }
 
 input CreateUserToOrderInput {
@@ -612,12 +644,12 @@ input CreateUserToOrderInput {
 	count: Int!
 }
 
-input UpdateOrderInput {
+input UpdateUserToOrderInput {
 	id: String!
-	table: String
-	status: OrderStatusEnum
-	type: OrderTypeEnum
-	totalPrice: Int
+	user: String
+	product: String
+	attributes: [String!]
+	count: Int
 }
 
 input CreateCompanyInput {

@@ -5,7 +5,7 @@ import { UserRoleEnum } from "src/app/shared/enums";
 import { GqlJwtGuard } from "../../auth";
 import { RolesGuard } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
-import { CreateOrderInput, UpdateOrderInput } from "../dtos";
+import { CreateOrderInput, CreateUserToOrderInput, UpdateOrderInput, UpdateUserToOrderInput } from "../dtos";
 import { ActiveOrderEntity, PaginatedActiveOrder } from "../entities";
 import { OrdersService } from "../services";
 
@@ -41,5 +41,23 @@ export class OrdersResolver {
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
 	async deleteOrder(@Args("orderId") id: string) {
 		return this._ordersService.deleteOrder(id);
+	}
+
+	@Mutation(() => ActiveOrderEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	async addProductToOrder(@Args("orderId") id: string, @Args("product") product: CreateUserToOrderInput) {
+		return this._ordersService.addProductToOrder(id, product);
+	}
+
+	@Mutation(() => String)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	async removeUserProductInOrder(@Args("userToOrderId") id: string) {
+		return this._ordersService.removeUserProductInOrder(id);
+	}
+
+	@Mutation(() => ActiveOrderEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	async updateUserProductInOrder(@Args("userToOrder") userToOrder: UpdateUserToOrderInput) {
+		return this._ordersService.updateUserProductInOrder(userToOrder);
 	}
 }
