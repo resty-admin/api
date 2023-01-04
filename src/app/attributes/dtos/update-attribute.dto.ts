@@ -23,5 +23,5 @@ export class UpdateAttributeInput {
 
 	@Field(() => Int, { nullable: true })
 	@IsOptional()
-	price: number;
+	price?: number;
 }
