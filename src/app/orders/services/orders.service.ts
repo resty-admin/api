@@ -64,7 +64,7 @@ export class OrdersService {
 	async creatOrder(order: CreateOrderInput): Promise<ActiveOrderEntity> {
 		const savedOrder = await this._ordersRepository.save({
 			...order,
-			orderHash: Math.floor(Math.random() * 9999)
+			code: Math.floor(Math.random() * 9999)
 		});
 
 		return this._ordersRepository.findOne({
@@ -122,13 +122,13 @@ export class OrdersService {
 		return "DELETED";
 	}
 
-	async addUserToOrder(placeId: string, orderCode: number, userId: string) {
+	async addUserToOrder(placeId: string, code: number, userId: string) {
 		const currOrder = await this._ordersRepository.findOne({
 			where: {
 				place: {
 					id: placeId
 				},
-				orderCode
+				code
 			},
 			relations: this.findOneRelations
 		});

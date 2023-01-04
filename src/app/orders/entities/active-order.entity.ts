@@ -16,7 +16,7 @@ import { UserToOrderEntity } from "./user-to-order.entity";
 export class ActiveOrderEntity extends BaseEntity {
 	@Column({ unique: true })
 	@Field(() => Int)
-	orderCode: number;
+	code: number;
 
 	@Field(() => TableEntity, { nullable: true })
 	@ManyToOne(() => TableEntity, (table) => table.orders, { nullable: true })

@@ -66,9 +66,9 @@ export class OrdersResolver {
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
 	async addUserToOrder(
 		@Args("placeId") placeId: string,
-		@Args({ name: "orderCode", type: () => Int }) orderCode: number,
+		@Args({ name: "code", type: () => Int }) code: number,
 		@UserGql() user: IUser
 	) {
-		return this._ordersService.addUserToOrder(placeId, orderCode, user.id);
+		return this._ordersService.addUserToOrder(placeId, code, user.id);
 	}
 }
