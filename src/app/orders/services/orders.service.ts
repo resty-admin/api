@@ -92,10 +92,16 @@ export class OrdersService {
 
 		const usersToOrders = [...(currOrder.usersToOrders?.length ? currOrder.usersToOrders : []), product];
 
-		return this._ordersRepository.save({
+		await this._ordersRepository.save({
 			...currOrder,
-			usersToOrders,
-			totalPrice: this.calculateTotalPrice([...usersToOrders, product])
+			usersToOrders
+		});
+
+		const updatedOrder = await this._ordersRepository.findOne({ where: { id }, relations: this.findRelations });
+
+		return this._ordersRepository.save({
+			...updatedOrder,
+			totalPrice: this.calculateTotalPrice([...updatedOrder.usersToOrders])
 		});
 	}
 
