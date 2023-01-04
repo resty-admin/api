@@ -1,5 +1,5 @@
 import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
-import { Column, Entity, Generated, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 
 import { FileEntity } from "../../files/entities";
 import { HallEntity } from "../../halls/entities";
@@ -18,8 +18,7 @@ export class TableEntity extends BaseEntity {
 	name: string;
 
 	// @ApiProperty()
-	@Generated("increment")
-	@Column("int", { unique: true })
+	@Column("int")
 	@Field(() => Int)
 	code: number;
 

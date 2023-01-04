@@ -1,4 +1,4 @@
-import { Field, InputType } from "@nestjs/graphql";
+import { Field, InputType, Int } from "@nestjs/graphql";
 import { Transform } from "class-transformer";
 
 import { IsNotEmpty, IsOptional, IsString } from "../../shared";
@@ -23,6 +23,10 @@ export class CreateTableDto {
 export class CreateTableInput {
 	@Field(() => String)
 	name: string;
+
+	@Field(() => Int, { nullable: true })
+	@IsOptional()
+	code?: number;
 
 	@Field(() => String)
 	hall: string;

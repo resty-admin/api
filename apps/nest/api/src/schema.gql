@@ -584,6 +584,7 @@ input CreateAttributeInput {
 input UpdateAttributeInput {
 	id: String!
 	name: String!
+	price: Int
 }
 
 input CreateAttributeGroupInput {
@@ -710,16 +711,17 @@ input UpdateHallInput {
 }
 
 input CreateUserInput {
+	name: String
 	email: String!
-	password: String!
+	password: String
 	role: UserRoleEnum!
 	tel: String
 }
 
 input UpdateUserInput {
 	id: String!
+	name: String
 	email: String
-	password: String
 	tel: String
 }
 
@@ -764,12 +766,14 @@ input UpdateCategoryInput {
 
 input CreateTableInput {
 	name: String!
+	code: Int
 	hall: String!
 	file: String
 }
 
 input UpdateTableInput {
 	id: String!
+	code: Int
 	name: String!
 	file: String
 }
