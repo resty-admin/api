@@ -17,8 +17,10 @@ export class CreateAttributeDto {
 @InputType()
 export class CreateAttributeInput {
 	@Field(() => String)
+	@IsString()
 	name: string;
 
 	@Field(() => Int)
+	@IsNumber()
 	price: number;
 }

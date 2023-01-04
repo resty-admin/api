@@ -35,6 +35,7 @@ export class UpdateAttributeGroupInput {
 	isUniq?: boolean;
 
 	@Field(() => [String], { nullable: true })
+	@IsOptional()
 	attributes?: string[];
 
 	@Field(() => AttributeGroupTypeEnum, { nullable: true })

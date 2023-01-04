@@ -54,7 +54,6 @@ export class CreateProductInput {
 
 	@Field(() => FileUploadInput, { nullable: true })
 	@IsOptional()
-	@IsOptional()
 	file?: FileUploadInput;
 
 	@Field(() => [String], { nullable: true })

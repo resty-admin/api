@@ -1,4 +1,4 @@
-import { Field, InputType, Int } from "@nestjs/graphql";
+import { Field, InputType } from "@nestjs/graphql";
 import { Transform } from "class-transformer";
 import { OrderTypeEnum } from "src/app/shared/enums";
 
@@ -35,8 +35,8 @@ export class CreateOrderInput {
 	@Transform(({ value }) => ({ id: value }))
 	table?: string;
 
-	@Field(() => Int)
-	totalPrice: number;
+	// @Field(() => Int)
+	// totalPrice: number;
 
 	@Field(() => [String], { nullable: true })
 	@Transform(({ value }) => value.map((id) => ({ id })))

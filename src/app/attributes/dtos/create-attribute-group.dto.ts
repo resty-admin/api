@@ -28,12 +28,15 @@ export class CreateAttributeGroupDto {
 @InputType()
 export class CreateAttributeGroupInput {
 	@Field(() => String)
+	@IsString()
 	name: string;
 
 	@Field(() => String)
+	@IsString()
 	place: string;
 
 	@Field(() => [String], { nullable: true })
+	@IsOptional()
 	attributes?: string[];
 
 	@Field(() => AttributeGroupTypeEnum)
