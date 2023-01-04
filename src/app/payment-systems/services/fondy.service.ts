@@ -42,7 +42,7 @@ export class FondyService {
 					id: orderId
 				}
 			},
-			relations: ["product", "user", "order"]
+			relations: ["product", "user", "order", "attributes"]
 		});
 
 		if (usersToOrders.length > 0 && usersToOrders[0].paymentLink) {
@@ -55,7 +55,16 @@ export class FondyService {
 			order_id: `${orderId}_${userId}`,
 			order_desc: usersToOrders.reduce((pre, curr) => `${pre} ${curr.product.name} x${curr.count} ` + `\n`, ""),
 			currency: "UAH",
-			amount: 100 * usersToOrders.reduce((pre, curr) => pre + curr.count * curr.product.price, 0),
+			amount:
+				100 *
+				usersToOrders.reduce(
+					(pre, curr) =>
+						pre +
+						curr.count *
+							((curr.attributes.length > 0 ? curr.attributes.reduce((pre, curr) => pre + curr.price, 0) : 0) +
+								curr.product.price),
+					0
+				),
 			response_url: `${baseUrl}/api/fondy/check`
 		};
 

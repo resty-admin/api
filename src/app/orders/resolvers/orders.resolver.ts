@@ -1,10 +1,11 @@
 import { UseGuards } from "@nestjs/common";
-import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { UserRoleEnum } from "src/app/shared/enums";
 
 import { GqlJwtGuard } from "../../auth";
-import { RolesGuard } from "../../shared";
+import { RolesGuard, UserGql } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
+import { IUser } from "../../shared/interfaces";
 import { CreateOrderInput, CreateUserToOrderInput, UpdateOrderInput, UpdateUserToOrderInput } from "../dtos";
 import { ActiveOrderEntity, PaginatedActiveOrder } from "../entities";
 import { OrdersService } from "../services";
@@ -59,5 +60,15 @@ export class OrdersResolver {
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
 	async updateUserProductInOrder(@Args("userToOrder") userToOrder: UpdateUserToOrderInput) {
 		return this._ordersService.updateUserProductInOrder(userToOrder);
+	}
+
+	@Mutation(() => ActiveOrderEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	async addUserToOrder(
+		@Args("placeId") placeId: string,
+		@Args({ name: "orderCode", type: () => Int }) orderCode: number,
+		@UserGql() user: IUser
+	) {
+		return this._ordersService.addUserToOrder(placeId, orderCode, user.id);
 	}
 }

@@ -28,7 +28,6 @@ export class AttributesResolver {
 	@Mutation(() => AttributesEntity)
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
 	async createAttr(@Args("attr") attr: CreateAttributeInput) {
-		console.log("here", attr);
 		return this._attributesService.createAttribute(attr);
 	}
 

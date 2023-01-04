@@ -182,7 +182,6 @@ export class AuthService {
 	}
 
 	async telegram({ id, first_name, last_name }: ITelegramUser) {
-		console.log("here?");
 		const existUser = await this._usersService.getUser({ telegramId: id });
 
 		if (existUser) {

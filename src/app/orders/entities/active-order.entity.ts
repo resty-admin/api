@@ -1,5 +1,5 @@
 import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
-import { Column, Entity, Generated, JoinTable, ManyToMany, ManyToOne, OneToMany } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from "typeorm";
 
 import { PlaceEntity } from "../../places/entities";
 import { BaseEntity } from "../../shared";
@@ -14,9 +14,8 @@ import { UserToOrderEntity } from "./user-to-order.entity";
 @InputType("ActiveOrderEntityInput")
 @Entity({ name: ACTIVE_ORDERS })
 export class ActiveOrderEntity extends BaseEntity {
-	@Generated("increment")
-	@Column("int", { unique: true })
-	@Field(() => String)
+	@Column({ unique: true })
+	@Field(() => Int)
 	orderCode: number;
 
 	@Field(() => TableEntity, { nullable: true })
@@ -40,8 +39,8 @@ export class ActiveOrderEntity extends BaseEntity {
 	@ManyToOne(() => PlaceEntity, (place) => place.orders)
 	place: PlaceEntity;
 
-	@Field(() => Int)
-	@Column("int")
+	@Field(() => Int, { nullable: true })
+	@Column("int", { nullable: true })
 	totalPrice?: number;
 
 	@Field(() => [UserToOrderEntity], { nullable: true })

@@ -14,6 +14,7 @@ export class CreateUserToOrderInput {
 	product: string;
 
 	@Field(() => [String], { nullable: true })
+	@Transform(({ value }) => value.map((id) => ({ id })))
 	attributes?: string[];
 
 	@Field(() => Int)
