@@ -33,7 +33,7 @@ export class OrdersResolver {
 	}
 
 	@Mutation(() => ActiveOrderEntity)
-	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.ADMIN]))
 	async updateOrder(@Args("order") order: UpdateOrderInput) {
 		return this._ordersService.updateOrder(order.id, order);
 	}
@@ -45,25 +45,25 @@ export class OrdersResolver {
 	}
 
 	@Mutation(() => ActiveOrderEntity)
-	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.ADMIN]))
 	async addProductToOrder(@Args("orderId") id: string, @Args("product") product: CreateUserToOrderInput) {
 		return this._ordersService.addProductToOrder(id, product);
 	}
 
 	@Mutation(() => String)
-	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.ADMIN]))
 	async removeUserProductInOrder(@Args("userToOrderId") id: string) {
 		return this._ordersService.removeUserProductInOrder(id);
 	}
 
 	@Mutation(() => ActiveOrderEntity)
-	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.ADMIN]))
 	async updateUserProductInOrder(@Args("userToOrder") userToOrder: UpdateUserToOrderInput) {
 		return this._ordersService.updateUserProductInOrder(userToOrder);
 	}
 
 	@Mutation(() => ActiveOrderEntity)
-	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.CLIENT, UserRoleEnum.ADMIN]))
 	async addUserToOrder(
 		@Args("placeId") placeId: string,
 		@Args({ name: "code", type: () => Int }) code: number,
