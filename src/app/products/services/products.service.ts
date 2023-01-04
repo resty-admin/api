@@ -9,7 +9,7 @@ import { ProductEntity } from "../entities";
 
 @Injectable()
 export class ProductsService {
-	private findRelations = ["file", "category"];
+	private findRelations = ["file", "category", "attrsGroups", "attrsGroups.attributes"];
 	private findOneRelations = ["file", "category", "attrsGroups", "attrsGroups.attributes"];
 
 	constructor(@InjectRepository(ProductEntity) private readonly _productsRepository) {}
@@ -51,7 +51,9 @@ export class ProductsService {
 	}
 
 	async updateProduct(id: string, user: UpdateProductDto | UpdateProductInput): Promise<ProductEntity> {
-		return this._productsRepository.save({ id, ...user });
+		await this._productsRepository.save({ id, ...user });
+
+		return this._productsRepository.findOne({ where: { id }, relations: this.findOneRelations });
 	}
 
 	async deleteProduct(id: string): Promise<string> {
