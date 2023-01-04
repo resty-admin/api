@@ -1,7 +1,7 @@
-import { Field, InputType } from "@nestjs/graphql";
+import { Field, InputType, Int } from "@nestjs/graphql";
 import { IsUUID } from "class-validator";
 
-import { IsNotEmpty, IsString } from "../../shared";
+import { IsNotEmpty, IsOptional, IsString } from "../../shared";
 
 export class UpdateAttributeDto {
 	@IsString()
@@ -20,4 +20,8 @@ export class UpdateAttributeInput {
 	@IsNotEmpty()
 	@IsString()
 	name: string;
+
+	@Field(() => Int, { nullable: true })
+	@IsOptional()
+	price: number;
 }
