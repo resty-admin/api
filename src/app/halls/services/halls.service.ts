@@ -47,7 +47,12 @@ export class HallsService {
 	}
 
 	async updateHall(id: string, hall: UpdateHallDto | UpdateHallInput): Promise<HallEntity> {
-		return this._hallsRepository.save({ id, ...hall });
+		this._hallsRepository.save({ id, ...hall });
+
+		return this._hallsRepository.findOne({
+			where: { id },
+			relations: this.findOneRelations
+		});
 	}
 
 	async deleteHall(id: string): Promise<string> {

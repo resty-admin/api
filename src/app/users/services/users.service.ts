@@ -45,7 +45,8 @@ export class UsersService {
 
 	async updateUser(id: string, user: Partial<IUser>): Promise<UserEntity> {
 		try {
-			return await this._userRepository.save({ id, ...user });
+			await this._userRepository.save({ id, ...user });
+			return await this._userRepository.findOne({ where: { id }, relations: [] });
 		} catch (error) {
 			console.error(error);
 			throw new InternalServerErrorException();

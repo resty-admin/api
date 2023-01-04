@@ -47,7 +47,12 @@ export class TablesService {
 	}
 
 	async updateTable(id: string, table: UpdateTableDto | UpdateTableInput): Promise<TableEntity> {
-		return this._tablesRepository.save({ id, ...table });
+		await this._tablesRepository.save({ id, ...table });
+
+		return this._tablesRepository.findOne({
+			where: { id },
+			relations: this.findOneRelations
+		});
 	}
 
 	async deleteTable(id: string): Promise<string> {

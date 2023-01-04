@@ -49,7 +49,9 @@ export class PlacesService {
 	}
 
 	async updatePlace(id: string, place: UpdatePlaceDto | UpdatePlaceInput): Promise<PlaceEntity> {
-		return this._placesRepository.save({ id, ...place });
+		await this._placesRepository.save({ id, ...place });
+
+		return this._placesRepository.findOne({ where: { id }, relations: this.findOneRelations });
 	}
 
 	async deletePlace(id: string): Promise<string> {

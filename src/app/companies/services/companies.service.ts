@@ -48,11 +48,16 @@ export class CompaniesService {
 	}
 
 	async updateCompany(id: string, company: UpdateCompanyDto | UpdateCompanyInput): Promise<CompanyEntity> {
-		return this._companiesRepository.save({
+		await this._companiesRepository.save({
 			...company,
 			id,
 			...(company.employees?.length > 0 && { employees: company.employees.map((el) => ({ id: el })) })
 			// employees: [...company.employees?.map((el) => ({ id: el }))]
+		});
+
+		return this._companiesRepository.findOne({
+			where: { id },
+			relations: this.findOneRelations
 		});
 	}
 

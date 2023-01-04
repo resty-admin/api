@@ -60,10 +60,15 @@ export class AttributeGroupsService {
 		id: string,
 		attributeGroupDto: UpdateAttributeGroupDto | UpdateAttributeGroupInput
 	): Promise<AttributesGroupEntity> {
-		return this._attributeGroupsRepository.save({
+		await this._attributeGroupsRepository.save({
 			...attributeGroupDto,
 			id,
 			attributes: attributeGroupDto.attributes?.length ? attributeGroupDto.attributes.map((el) => ({ id: el })) : null
+		});
+
+		return this._attributeGroupsRepository.findOne({
+			where: { id },
+			relations: this.findOneRelations
 		});
 	}
 
