@@ -57,7 +57,6 @@ export class UpdateProductInput {
 
 	@Field(() => String, { nullable: true })
 	@IsOptional()
-	@IsString()
 	@Transform(({ value }) => ({ id: value }))
 	file?: FileUploadInput;
 

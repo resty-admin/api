@@ -1,7 +1,6 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { Transform, Type } from "class-transformer";
 import { isISO8601, ValidateNested } from "class-validator";
-import { IFile } from "src/app/shared/interfaces";
 
 import { IsNotEmpty, IsObject, IsOptional, IsString } from "../../shared";
 import { IsMap } from "../../shared/validators/is-map.validator";
@@ -25,7 +24,7 @@ export class CreatePlaceDto {
 
 	// @ApiProperty()
 	@IsOptional()
-	file: IFile;
+	file: string;
 
 	@IsObject()
 	@IsOptional()
@@ -61,7 +60,6 @@ export class CreatePlaceInput {
 
 	@Field(() => String, { nullable: true })
 	@IsOptional()
-	@IsString()
 	@Transform(({ value }) => ({ id: value }))
 	file?: string;
 

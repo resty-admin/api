@@ -20,6 +20,7 @@ export class UpdateCommandDto {
 @InputType()
 export class UpdateCommandInput {
 	@Field(() => String)
+	@IsString()
 	id: string;
 
 	@Field(() => String, { nullable: true })

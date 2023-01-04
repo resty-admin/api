@@ -23,7 +23,6 @@ export class CreateCompanyInput {
 
 	@Field(() => String, { nullable: true })
 	@IsOptional()
-	@IsString()
 	@Transform(({ value }) => ({ id: value }))
 	logo?: string;
 }

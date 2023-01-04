@@ -54,7 +54,6 @@ export class CreateProductInput {
 
 	@Field(() => String, { nullable: true })
 	@IsOptional()
-	@IsString()
 	@Transform(({ value }) => ({ id: value }))
 	file?: string;
 

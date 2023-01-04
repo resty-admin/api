@@ -30,7 +30,6 @@ export class CreateHallInput {
 
 	@Field(() => String, { nullable: true })
 	@IsOptional()
-	@IsString()
 	@Transform(({ value }) => ({ id: value }))
 	file?: string;
 }

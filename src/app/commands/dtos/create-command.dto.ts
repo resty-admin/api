@@ -19,11 +19,14 @@ export class CreateCommandDto {
 @InputType()
 export class CreateCommandInput {
 	@Field(() => String)
+	@IsString()
 	name: string;
 
 	@Field(() => String)
+	@IsString()
 	place: string;
 
 	@Field(() => String)
+	@IsString()
 	description: string;
 }

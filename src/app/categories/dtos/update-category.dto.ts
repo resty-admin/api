@@ -38,7 +38,6 @@ export class UpdateCategoryInput {
 
 	@Field(() => String, { nullable: true })
 	@IsOptional()
-	@IsString()
 	@Transform(({ value }) => ({ id: value }))
 	file?: string;
 }

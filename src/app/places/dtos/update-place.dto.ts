@@ -2,7 +2,6 @@ import { Field, InputType } from "@nestjs/graphql";
 import { Transform, Type } from "class-transformer";
 import { isISO8601, ValidateNested } from "class-validator";
 import { PlaceStatusEnum } from "src/app/shared/enums";
-import { IFile } from "src/app/shared/interfaces";
 
 import { IsEnum, IsNotEmpty, IsObject, IsOptional, IsString } from "../../shared";
 import { IsMap } from "../../shared/validators/is-map.validator";
@@ -29,7 +28,7 @@ export class UpdatePlaceDto {
 
 	@IsOptional()
 	// @ApiProperty()
-	file: IFile;
+	file: string;
 
 	@IsOptional()
 	@IsString()
@@ -71,7 +70,6 @@ export class UpdatePlaceInput {
 
 	@Field(() => String, { nullable: true })
 	@IsOptional()
-	@IsString()
 	@Transform(({ value }) => ({ id: value }))
 	file?: string;
 
