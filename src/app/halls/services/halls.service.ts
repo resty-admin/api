@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
 
 import { getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
@@ -13,7 +12,7 @@ export class HallsService {
 	private findRelations = ["place", "tables", "file"];
 	private findOneRelations = ["place", "tables", "file"];
 
-	constructor(@InjectRepository(HallEntity) private readonly _hallsRepository: Repository<HallEntity>) {}
+	constructor(@InjectRepository(HallEntity) private readonly _hallsRepository) {}
 
 	async getHall(id: string) {
 		return this._hallsRepository.findOne({

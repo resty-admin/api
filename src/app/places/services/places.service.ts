@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
 
 import { CompanyEntity } from "../../companies/entities";
 import { getFindOptionsByFilters } from "../../shared/crud";
@@ -15,8 +14,8 @@ export class PlacesService {
 	private findOneRelations = ["company", "company.owner", "halls", "file"];
 
 	constructor(
-		@InjectRepository(PlaceEntity) private readonly _placesRepository: Repository<PlaceEntity>,
-		@InjectRepository(CompanyEntity) private readonly _companiesRepository: Repository<CompanyEntity>
+		@InjectRepository(PlaceEntity) private readonly _placesRepository,
+		@InjectRepository(CompanyEntity) private readonly _companiesRepository
 	) {}
 
 	async getPlace(id: string) {

@@ -1,6 +1,6 @@
 import { Field, InputType } from "@nestjs/graphql";
+import { Transform } from "class-transformer";
 
-import { FileUploadInput } from "../../files/dtos";
 import { IsNotEmpty, IsOptional, IsString, MinLength } from "../../shared";
 import { IFile } from "../../shared/interfaces";
 
@@ -21,7 +21,9 @@ export class CreateCompanyInput {
 	@Field(() => String)
 	name: string;
 
-	@Field(() => FileUploadInput, { nullable: true })
+	@Field(() => String, { nullable: true })
 	@IsOptional()
-	logo?: FileUploadInput;
+	@IsString()
+	@Transform(({ value }) => ({ id: value }))
+	logo?: string;
 }

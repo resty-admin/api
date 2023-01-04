@@ -652,18 +652,13 @@ input UpdateUserToOrderInput {
 
 input CreateCompanyInput {
 	name: String!
-	logo: FileUploadInput
-}
-
-input FileUploadInput {
-	id: String!
-	url: String!
+	logo: String
 }
 
 input UpdateCompanyInput {
 	id: String!
 	name: String
-	logo: FileEntityInput
+	logo: String
 	employees: [String!]
 }
 
@@ -687,7 +682,7 @@ input CreateProductInput {
 	category: String!
 	description: String
 	price: Float
-	file: FileUploadInput
+	file: String
 	attrsGroups: [String!]
 }
 
@@ -697,20 +692,20 @@ input UpdateProductInput {
 	category: String
 	description: String
 	price: Float
-	file: FileUploadInput
+	file: String
 	attrsGroups: [String!]
 }
 
 input CreateHallInput {
 	name: String!
 	place: String!
-	file: FileUploadInput
+	file: String
 }
 
 input UpdateHallInput {
 	id: String!
 	name: String!
-	file: FileUploadInput
+	file: String
 }
 
 input CreateUserInput {
@@ -731,7 +726,7 @@ input CreatePlaceInput {
 	name: String!
 	address: String
 	company: String!
-	file: FileEntityInput
+	file: String
 	weekDays: WorkingHoursInput
 	weekendDays: WorkingHoursInput
 	holidayDays: WorkingHoursInput
@@ -747,7 +742,7 @@ input UpdatePlaceInput {
 	id: String!
 	name: String
 	address: String
-	file: FileEntityInput
+	file: String
 	weekDays: WorkingHoursInput
 	weekendDays: WorkingHoursInput
 	holidayDays: WorkingHoursInput
@@ -756,26 +751,26 @@ input UpdatePlaceInput {
 input CreateCategoryInput {
 	name: String!
 	place: String!
-	file: FileUploadInput
+	file: String
 }
 
 input UpdateCategoryInput {
 	id: String!
 	name: String
 	place: String
-	file: FileUploadInput
+	file: String
 }
 
 input CreateTableInput {
 	name: String!
 	hall: String!
-	file: FileUploadInput
+	file: String
 }
 
 input UpdateTableInput {
 	id: String!
 	name: String!
-	file: FileUploadInput
+	file: String
 }
 
 input CreateCommandInput {

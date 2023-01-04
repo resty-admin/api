@@ -1,4 +1,5 @@
 import { Field, InputType } from "@nestjs/graphql";
+import { Transform } from "class-transformer";
 import { IsNotEmpty, IsString } from "class-validator";
 
 import { FileUploadInput } from "../../files/dtos";
@@ -54,8 +55,10 @@ export class UpdateProductInput {
 	@IsOptional()
 	price?: number;
 
-	@Field(() => FileUploadInput, { nullable: true })
+	@Field(() => String, { nullable: true })
 	@IsOptional()
+	@IsString()
+	@Transform(({ value }) => ({ id: value }))
 	file?: FileUploadInput;
 
 	@Field(() => [String], { nullable: true })

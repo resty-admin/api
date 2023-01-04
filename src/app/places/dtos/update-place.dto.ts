@@ -1,10 +1,9 @@
 import { Field, InputType } from "@nestjs/graphql";
-import { Type } from "class-transformer";
+import { Transform, Type } from "class-transformer";
 import { isISO8601, ValidateNested } from "class-validator";
 import { PlaceStatusEnum } from "src/app/shared/enums";
 import { IFile } from "src/app/shared/interfaces";
 
-import { FileEntity } from "../../files/entities";
 import { IsEnum, IsNotEmpty, IsObject, IsOptional, IsString } from "../../shared";
 import { IsMap } from "../../shared/validators/is-map.validator";
 import { WorkingHoursDto, WorkingHoursInput } from "./date-types.dto";
@@ -70,9 +69,11 @@ export class UpdatePlaceInput {
 	@IsOptional()
 	address?: string;
 
-	@Field(() => FileEntity, { nullable: true })
+	@Field(() => String, { nullable: true })
 	@IsOptional()
-	file?: IFile;
+	@IsString()
+	@Transform(({ value }) => ({ id: value }))
+	file?: string;
 
 	@Field(() => WorkingHoursInput, { nullable: true })
 	@IsOptional()

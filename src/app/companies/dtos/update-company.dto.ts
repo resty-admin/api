@@ -1,6 +1,6 @@
 import { Field, InputType } from "@nestjs/graphql";
+import { Transform } from "class-transformer";
 
-import { FileEntity } from "../../files/entities";
 import { IsNotEmpty, IsOptional, IsString } from "../../shared";
 import { IFile } from "../../shared/interfaces";
 
@@ -29,9 +29,11 @@ export class UpdateCompanyInput {
 	@IsOptional()
 	name?: string;
 
-	@Field(() => FileEntity, { nullable: true })
+	@Field(() => String, { nullable: true })
 	@IsOptional()
-	logo?: IFile;
+	@IsString()
+	@Transform(({ value }) => ({ id: value }))
+	logo?: string;
 
 	@Field(() => [String], { nullable: true })
 	@IsOptional()

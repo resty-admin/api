@@ -1,7 +1,7 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
+import { Transform } from "class-transformer";
 
-import { FileUploadInput } from "../../files/dtos";
 import { IsNotEmpty, IsOptional, IsString } from "../../shared";
 import { IFile } from "../../shared/interfaces";
 
@@ -29,7 +29,9 @@ export class CreateCategoryInput {
 	@Field(() => String)
 	place: string;
 
-	@Field(() => FileUploadInput, { nullable: true })
+	@Field(() => String, { nullable: true })
 	@IsOptional()
-	file?: FileUploadInput;
+	@IsString()
+	@Transform(({ value }) => ({ id: value }))
+	file?: string;
 }

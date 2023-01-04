@@ -1,8 +1,7 @@
 import { Field, InputType } from "@nestjs/graphql";
+import { Transform } from "class-transformer";
 
-import { FileUploadInput } from "../../files/dtos";
 import { IsNotEmpty, IsOptional, IsString } from "../../shared";
-import { IFile } from "../../shared/interfaces";
 
 export class CreateTableDto {
 	@IsString()
@@ -17,7 +16,7 @@ export class CreateTableDto {
 
 	// @ApiProperty()
 	@IsOptional()
-	file: IFile;
+	file: string;
 }
 
 @InputType()
@@ -28,7 +27,9 @@ export class CreateTableInput {
 	@Field(() => String)
 	hall: string;
 
-	@Field(() => FileUploadInput, { nullable: true })
+	@Field(() => String, { nullable: true })
 	@IsOptional()
-	file?: FileUploadInput;
+	@IsString()
+	@Transform(({ value }) => ({ id: value }))
+	file?: string;
 }
