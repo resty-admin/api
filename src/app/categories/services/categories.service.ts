@@ -47,7 +47,12 @@ export class CategoriesService {
 	}
 
 	async updateCategory(id: string, category: UpdateCategoryDto | UpdateCategoryInput): Promise<CategoryEntity> {
-		return this._categoriesRepository.save({ id, ...category });
+		await this._categoriesRepository.save({ id, ...category });
+
+		return this._categoriesRepository.findOne({
+			where: { id },
+			relations: this.findOneRelations
+		});
 	}
 
 	async deleteCategory(id: string): Promise<string> {
