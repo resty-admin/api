@@ -150,7 +150,9 @@ export class OrdersService {
 				(pre, curr) =>
 					pre +
 					curr.count *
-						((curr.attributes?.length > 0 ? curr.attributes.reduce((pre, curr) => pre + curr.price, 0) : 0) +
+						((curr.attributes && curr.attributes.length > 0
+							? curr.attributes.reduce((pre, curr) => pre + curr.price, 0)
+							: 0) +
 							curr.product.price),
 				0
 			)
