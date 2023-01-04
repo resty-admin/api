@@ -12,7 +12,7 @@ export class CreateUserDto {
 	@IsNotEmpty()
 	@MinLength(5)
 	// @ApiProperty()
-	password: string;
+	password?: string;
 
 	@IsString()
 	@IsNotEmpty()
@@ -29,16 +29,19 @@ export class CreateUserDto {
 
 @InputType()
 export class CreateUserInput {
+	@Field(() => String, { nullable: true })
+	@IsOptional()
+	name?: string;
+
 	@Field(() => String)
 	@IsEmail()
 	email: string;
 
-	@Field(() => String)
-	@IsString()
-	@IsNotEmpty()
+	@Field(() => String, { nullable: true })
+	@IsOptional()
 	@MinLength(5)
 	// @ApiProperty()
-	password: string;
+	password?: string;
 
 	@Field(() => UserRoleEnum)
 	@IsString()

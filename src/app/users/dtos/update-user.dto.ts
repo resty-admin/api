@@ -31,12 +31,6 @@ export class UpdateStatusUserDto {
 	@IsOptional()
 	@MinLength(5)
 	// @ApiProperty()
-	password: string;
-
-	@IsString()
-	@IsOptional()
-	@MinLength(5)
-	// @ApiProperty()
 	status: string;
 }
 
@@ -47,14 +41,11 @@ export class UpdateUserInput {
 
 	@Field(() => String, { nullable: true })
 	@IsOptional()
-	email?: string;
+	name?: string;
 
 	@Field(() => String, { nullable: true })
 	@IsOptional()
-	@IsString()
-	@MinLength(5)
-	// @ApiProperty()
-	password?: string;
+	email?: string;
 
 	@Field(() => String, { nullable: true })
 	@IsOptional()
