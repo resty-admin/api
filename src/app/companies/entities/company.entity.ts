@@ -21,7 +21,7 @@ export class CompanyEntity extends BaseEntity {
 	name: string;
 
 	// @ApiProperty()
-	@ManyToOne(() => UserEntity)
+	@ManyToOne(() => UserEntity, { onDelete: "CASCADE" })
 	@JoinColumn()
 	@Field(() => UserEntity)
 	owner: UserEntity;
@@ -33,7 +33,7 @@ export class CompanyEntity extends BaseEntity {
 
 	// @ApiProperty()
 	@Field(() => [UserEntity], { nullable: true })
-	@OneToMany(() => UserEntity, (user) => user.company, { nullable: true })
+	@OneToMany(() => UserEntity, (user) => user.companies, { nullable: true })
 	employees: UserEntity[];
 
 	// @ApiProperty()

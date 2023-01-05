@@ -13,20 +13,20 @@ import { ActiveOrderEntity } from "./active-order.entity";
 @Entity({ name: "user-to-order" })
 export class UserToOrderEntity extends BaseEntity {
 	@Field(() => UserEntity)
-	@ManyToOne(() => UserEntity)
+	@ManyToOne(() => UserEntity, { onDelete: "CASCADE" })
 	user: UserEntity;
 
 	@Field(() => ProductEntity)
-	@ManyToOne(() => ProductEntity)
+	@ManyToOne(() => ProductEntity, { onDelete: "CASCADE" })
 	product: ProductEntity;
 
 	@Field(() => [AttributesEntity], { nullable: true })
-	@ManyToMany(() => AttributesEntity, { nullable: true })
+	@ManyToMany(() => AttributesEntity, { nullable: true, onDelete: "CASCADE" })
 	@JoinTable()
 	attributes?: AttributesEntity[];
 
 	@Field(() => ActiveOrderEntity)
-	@ManyToOne(() => ActiveOrderEntity, (order) => order.usersToOrders)
+	@ManyToOne(() => ActiveOrderEntity, (order) => order.usersToOrders, { onDelete: "CASCADE" })
 	order: ActiveOrderEntity;
 
 	// @Field(() => String)

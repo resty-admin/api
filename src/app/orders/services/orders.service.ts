@@ -8,7 +8,7 @@ import type { UpdateOrderDto } from "../dtos";
 import type { CreateOrderInput, UpdateOrderInput } from "../dtos";
 import type { CreateUserToOrderInput } from "../dtos";
 import type { UpdateUserToOrderInput } from "../dtos";
-import { ActiveOrderEntity, UserToOrderEntity } from "../entities";
+import { ActiveOrderEntity, HistoryOrderEntity, UserToOrderEntity } from "../entities";
 
 @Injectable()
 export class OrdersService {
@@ -34,7 +34,8 @@ export class OrdersService {
 
 	constructor(
 		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository,
-		@InjectRepository(UserToOrderEntity) private readonly _userToOrderRepository
+		@InjectRepository(UserToOrderEntity) private readonly _userToOrderRepository,
+		@InjectRepository(HistoryOrderEntity) private readonly _historyOrderRepository
 	) {}
 
 	async getOrder(id: string) {
@@ -147,6 +148,25 @@ export class OrdersService {
 			...currOrder,
 			users: [...currOrder.users, { id: userId }]
 		});
+	}
+
+	async closeOrder(orderId: string) {
+		const order = await this._ordersRepository.findOne({
+			where: { id: orderId },
+			relations: this.findOneRelations
+		});
+
+		// console.log('order', order);
+
+		try {
+			await this._historyOrderRepository.save(order);
+			await this._ordersRepository.delete(order.id);
+
+			return "ARCHIVED";
+		} catch (error) {
+			console.log("e", error);
+			return "fuck!";
+		}
 	}
 
 	calculateTotalPrice(usersToOrders) {

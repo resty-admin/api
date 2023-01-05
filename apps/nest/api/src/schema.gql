@@ -125,6 +125,7 @@ enum ProductToOrderStatusEnum {
 type ActiveOrderEntity {
 	id: String!
 	code: Int!
+	orderNumber: Int!
 	table: TableEntity
 	users: [UserEntity!]
 	type: OrderTypeEnum!
@@ -152,18 +153,6 @@ type PaginatedActiveOrder {
 	data: [ActiveOrderEntity!]
 	page: Int!
 	totalCount: Int!
-}
-
-type HistoryOrderEntity {
-	id: String!
-	code: Int!
-	table: TableEntity
-	users: [UserEntity!]
-	type: OrderTypeEnum!
-	status: OrderStatusEnum!
-	place: PlaceEntity!
-	totalPrice: Int
-	usersToOrders: [UserToOrderEntity!]
 }
 
 type TableEntity {
@@ -261,7 +250,7 @@ type UserEntity {
 	status: UserStatusEnum!
 	password: String
 	orders: [ActiveOrderEntity!]
-	company: CompanyEntity
+	companies: CompanyEntity
 }
 
 enum UserRoleEnum {
@@ -391,17 +380,7 @@ input UserToOrderEntityInput {
 
 input ActiveOrderEntityInput {
 	code: Int!
-	table: TableEntityInput
-	users: [UserEntityInput!]
-	type: OrderTypeEnum!
-	status: OrderStatusEnum!
-	place: PlaceEntityInput!
-	totalPrice: Int
-	usersToOrders: [UserToOrderEntityInput!]
-}
-
-input HistoryOrderEntityInput {
-	code: Int!
+	orderNumber: Int!
 	table: TableEntityInput
 	users: [UserEntityInput!]
 	type: OrderTypeEnum!
@@ -466,7 +445,7 @@ input UserEntityInput {
 	status: UserStatusEnum!
 	password: String
 	orders: [ActiveOrderEntityInput!]
-	company: CompanyEntityInput
+	companies: CompanyEntityInput
 }
 
 input ActiveShiftEntityInput {
@@ -547,6 +526,7 @@ type Mutation {
 	removeUserProductInOrder(userToOrderId: String!): String!
 	updateUserProductInOrder(userToOrder: UpdateUserToOrderInput!): ActiveOrderEntity!
 	addUserToOrder(placeId: String!, code: Int!): ActiveOrderEntity!
+	closeOrder(orderId: String!): String!
 	createCompany(company: CreateCompanyInput!): CompanyEntity!
 	updateCompany(company: UpdateCompanyInput!): CompanyEntity!
 	deleteCompany(companyId: String!): String!

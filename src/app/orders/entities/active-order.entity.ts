@@ -1,5 +1,5 @@
 import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from "typeorm";
+import { Column, Entity, Generated, JoinTable, ManyToMany, ManyToOne, OneToMany } from "typeorm";
 
 import { PlaceEntity } from "../../places/entities";
 import { BaseEntity } from "../../shared";
@@ -17,6 +17,11 @@ export class ActiveOrderEntity extends BaseEntity {
 	@Column({ unique: true })
 	@Field(() => Int)
 	code: number;
+
+	@Generated("increment")
+	@Column("int", { unique: true })
+	@Field(() => Int)
+	orderNumber: number;
 
 	@Field(() => TableEntity, { nullable: true })
 	@ManyToOne(() => TableEntity, (table) => table.orders, { nullable: true })

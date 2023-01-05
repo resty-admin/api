@@ -71,4 +71,10 @@ export class OrdersResolver {
 	) {
 		return this._ordersService.addUserToOrder(placeId, code, user.id);
 	}
+
+	@Mutation(() => String)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.CLIENT]))
+	async closeOrder(@Args("orderId") orderId: string) {
+		return this._ordersService.closeOrder(orderId);
+	}
 }
