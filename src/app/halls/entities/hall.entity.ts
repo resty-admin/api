@@ -33,6 +33,10 @@ export class HallEntity extends BaseEntity {
 	@Field(() => [TableEntity], { nullable: true })
 	@OneToMany(() => TableEntity, (table) => table.hall, { nullable: true })
 	tables?: TableEntity[];
+
+	@Field(() => Boolean)
+	@Column("boolean", { default: false })
+	isHide: boolean;
 }
 
 @ObjectType()

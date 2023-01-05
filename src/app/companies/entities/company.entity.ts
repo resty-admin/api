@@ -52,6 +52,10 @@ export class CompanyEntity extends BaseEntity {
 	@OneToOne(() => FondyEntity, { cascade: true, nullable: true })
 	@JoinColumn()
 	fondy: FondyEntity;
+
+	@Field(() => Boolean)
+	@Column("boolean", { default: false })
+	isHide: boolean;
 }
 
 @ObjectType()

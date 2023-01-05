@@ -31,6 +31,7 @@ type CategoryEntity {
 	place: PlaceEntity!
 	products: [ProductEntity!]
 	file: FileEntity
+	isHide: Boolean!
 }
 
 type PaginatedCategory {
@@ -42,11 +43,12 @@ type PaginatedCategory {
 type ProductEntity {
 	id: String!
 	name: String!
-	category: CategoryEntity!
+	category: CategoryEntity
 	description: String
 	price: Int!
 	file: FileEntity
 	attrsGroups: [AttributesGroupEntity!]
+	isHide: Boolean!
 }
 
 type PaginatedProduct {
@@ -162,6 +164,7 @@ type TableEntity {
 	hall: HallEntity!
 	orders: [ActiveOrderEntity!]
 	file: FileEntity
+	isHide: Boolean!
 }
 
 type PaginatedTable {
@@ -176,6 +179,7 @@ type HallEntity {
 	place: PlaceEntity!
 	file: FileEntity
 	tables: [TableEntity!]
+	isHide: Boolean!
 }
 
 type PaginatedHall {
@@ -200,6 +204,7 @@ type PlaceEntity {
 	attrGroups: [AttributesGroupEntity!]!
 	orders: [ActiveOrderEntity!]
 	commands: [CommandEntity!]
+	isHide: Boolean!
 }
 
 enum PlaceStatusEnum {
@@ -222,6 +227,7 @@ type CompanyEntity {
 	status: CompanyStatusEnum!
 	logo: FileEntity
 	fondy: FondyEntity
+	isHide: Boolean!
 }
 
 enum CompanyStatusEnum {
@@ -336,15 +342,17 @@ input CategoryEntityInput {
 	place: PlaceEntityInput!
 	products: [ProductEntityInput!]
 	file: FileEntityInput
+	isHide: Boolean!
 }
 
 input ProductEntityInput {
 	name: String!
-	category: CategoryEntityInput!
+	category: CategoryEntityInput
 	description: String
 	price: Int!
 	file: FileEntityInput
 	attrsGroups: [AttributesGroupEntityInput!]
+	isHide: Boolean!
 }
 
 input AttributesGroupEntityInput {
@@ -396,6 +404,7 @@ input TableEntityInput {
 	hall: HallEntityInput!
 	orders: [ActiveOrderEntityInput!]
 	file: FileEntityInput
+	isHide: Boolean!
 }
 
 input HallEntityInput {
@@ -403,6 +412,7 @@ input HallEntityInput {
 	place: PlaceEntityInput!
 	file: FileEntityInput
 	tables: [TableEntityInput!]
+	isHide: Boolean!
 }
 
 input PlaceEntityInput {
@@ -420,6 +430,7 @@ input PlaceEntityInput {
 	attrGroups: [AttributesGroupEntityInput!]!
 	orders: [ActiveOrderEntityInput!]
 	commands: [CommandEntityInput!]
+	isHide: Boolean!
 }
 
 input CompanyEntityInput {
@@ -430,6 +441,7 @@ input CompanyEntityInput {
 	status: CompanyStatusEnum!
 	logo: FileEntityInput
 	fondy: FondyEntityInput
+	isHide: Boolean!
 }
 
 input UserEntityInput {
@@ -525,7 +537,7 @@ type Mutation {
 	addProductToOrder(orderId: String!, product: CreateUserToOrderInput!): ActiveOrderEntity!
 	removeUserProductInOrder(userToOrderId: String!): String!
 	updateUserProductInOrder(userToOrder: UpdateUserToOrderInput!): ActiveOrderEntity!
-	addUserToOrder(placeId: String!, code: Int!): ActiveOrderEntity!
+	addUserToOrder(code: Int!): ActiveOrderEntity!
 	closeOrder(orderId: String!): String!
 	createCompany(company: CreateCompanyInput!): CompanyEntity!
 	updateCompany(company: UpdateCompanyInput!): CompanyEntity!

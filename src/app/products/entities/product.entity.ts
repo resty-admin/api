@@ -31,9 +31,13 @@ export class ProductEntity extends BaseEntity {
 	// }
 
 	// @ApiProperty()
-	@Field(() => CategoryEntity)
-	@ManyToOne(() => CategoryEntity, (category) => category.products, { cascade: true })
-	category: CategoryEntity;
+	@Field(() => CategoryEntity, { nullable: true })
+	@ManyToOne(() => CategoryEntity, (category) => category.products, {
+		nullable: true,
+		cascade: true,
+		onDelete: "CASCADE"
+	})
+	category?: CategoryEntity;
 
 	// @ApiProperty()
 	@Field(() => String, { nullable: true })
@@ -56,6 +60,10 @@ export class ProductEntity extends BaseEntity {
 	@ManyToMany(() => AttributesGroupEntity, (attrGroup) => attrGroup.products, { nullable: true })
 	@JoinTable()
 	attrsGroups?: AttributesGroupEntity[];
+
+	@Field(() => Boolean)
+	@Column("boolean", { default: false })
+	isHide: boolean;
 
 	// @Field(() => [UserToOrderEntity])
 	// @OneToMany(() => UserToOrderEntity, (uTo) => uTo.product)

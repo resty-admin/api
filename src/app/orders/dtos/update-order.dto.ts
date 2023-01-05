@@ -19,6 +19,7 @@ export class UpdateOrderInput {
 
 	@Field(() => String, { nullable: true })
 	@IsOptional()
+	@Transform(({ value }) => ({ id: value }))
 	table?: string;
 
 	@Field(() => [String], { nullable: true })

@@ -1,8 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
+import { ActiveOrderEntity } from "../../orders/entities";
 import { getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
+import { OrderStatusEnum } from "../../shared/enums";
 import type { CreateProductDto, UpdateProductDto } from "../dtos";
 import type { CreateProductInput, UpdateProductInput } from "../dtos";
 import { ProductEntity } from "../entities";
@@ -12,7 +14,10 @@ export class ProductsService {
 	private findRelations = ["file", "category", "attrsGroups", "attrsGroups.attributes"];
 	private findOneRelations = ["file", "category", "attrsGroups", "attrsGroups.attributes"];
 
-	constructor(@InjectRepository(ProductEntity) private readonly _productsRepository) {}
+	constructor(
+		@InjectRepository(ProductEntity) private readonly _productsRepository,
+		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository
+	) {}
 
 	async getProduct(id: string) {
 		return this._productsRepository.findOne({
@@ -57,6 +62,23 @@ export class ProductsService {
 	}
 
 	async deleteProduct(id: string): Promise<string> {
+		const orders: ActiveOrderEntity[] = await this._ordersRepository.find({
+			where: {
+				usersToOrders: {
+					product: { id }
+				}
+			},
+			relations: ["usersToOrders", "usersToOrders.product"]
+		});
+
+		const isActiveOrdersPresent = orders.some((el) => el.status !== OrderStatusEnum.CLOSED);
+
+		if (isActiveOrdersPresent) {
+			await this._productsRepository.save({ id, isHide: true });
+
+			return `Product is using in active order(s). Product will be hide for now`;
+		}
+
 		await this._productsRepository.delete(id);
 		return "DELETED";
 	}

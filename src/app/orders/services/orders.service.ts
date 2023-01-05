@@ -129,12 +129,9 @@ export class OrdersService {
 		return "DELETED";
 	}
 
-	async addUserToOrder(placeId: string, code: number, userId: string) {
+	async addUserToOrder(code: number, userId: string) {
 		const currOrder = await this._ordersRepository.findOne({
 			where: {
-				place: {
-					id: placeId
-				},
 				code
 			},
 			relations: this.findOneRelations
@@ -155,8 +152,6 @@ export class OrdersService {
 			where: { id: orderId },
 			relations: this.findOneRelations
 		});
-
-		// console.log('order', order);
 
 		try {
 			await this._historyOrderRepository.save(order);

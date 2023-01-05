@@ -100,6 +100,10 @@ export class PlaceEntity extends BaseEntity {
 	@Field(() => [CommandEntity], { nullable: true })
 	@OneToMany(() => CommandEntity, (command) => command.place, { nullable: true })
 	commands?: CommandEntity[];
+
+	@Field(() => Boolean)
+	@Column("boolean", { default: false })
+	isHide: boolean;
 }
 
 @ObjectType()

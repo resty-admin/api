@@ -64,12 +64,8 @@ export class OrdersResolver {
 
 	@Mutation(() => ActiveOrderEntity)
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.CLIENT, UserRoleEnum.ADMIN]))
-	async addUserToOrder(
-		@Args("placeId") placeId: string,
-		@Args({ name: "code", type: () => Int }) code: number,
-		@UserGql() user: IUser
-	) {
-		return this._ordersService.addUserToOrder(placeId, code, user.id);
+	async addUserToOrder(@Args({ name: "code", type: () => Int }) code: number, @UserGql() user: IUser) {
+		return this._ordersService.addUserToOrder(code, user.id);
 	}
 
 	@Mutation(() => String)

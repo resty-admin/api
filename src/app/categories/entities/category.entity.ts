@@ -26,7 +26,7 @@ export class CategoryEntity extends BaseEntity {
 
 	@ApiProperty()
 	@Field(() => [ProductEntity], { nullable: true })
-	@OneToMany(() => ProductEntity, (product) => product.category, { nullable: true, onDelete: "SET NULL" })
+	@OneToMany(() => ProductEntity, (product) => product.category, { nullable: true })
 	products?: ProductEntity[];
 
 	@ApiProperty()
@@ -34,6 +34,10 @@ export class CategoryEntity extends BaseEntity {
 	@OneToOne(() => FileEntity, { cascade: true, eager: true, nullable: true })
 	@JoinColumn()
 	file?: IFile;
+
+	@Field(() => Boolean)
+	@Column("boolean", { default: false })
+	isHide: boolean;
 
 	// @OneToMany(() => ProductEntity, (product) => product.category)
 	// products: IProduct[];

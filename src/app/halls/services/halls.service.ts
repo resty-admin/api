@@ -1,8 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
+import { ActiveOrderEntity } from "../../orders/entities";
 import { getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
+import { OrderStatusEnum } from "../../shared/enums";
 import type { CreateHallDto, UpdateHallDto } from "../dtos";
 import type { CreateHallInput, UpdateHallInput } from "../dtos";
 import { HallEntity } from "../entities";
@@ -12,7 +14,10 @@ export class HallsService {
 	private findRelations = ["place", "tables", "file"];
 	private findOneRelations = ["place", "tables", "file"];
 
-	constructor(@InjectRepository(HallEntity) private readonly _hallsRepository) {}
+	constructor(
+		@InjectRepository(HallEntity) private readonly _hallsRepository,
+		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository
+	) {}
 
 	async getHall(id: string) {
 		return this._hallsRepository.findOne({
@@ -56,6 +61,23 @@ export class HallsService {
 	}
 
 	async deleteHall(id: string): Promise<string> {
+		const orders: ActiveOrderEntity[] = await this._ordersRepository.find({
+			where: {
+				table: {
+					hall: { id }
+				}
+			},
+			relations: ["table", "table.hall"]
+		});
+
+		const isActiveOrdersPresent = orders.some((el) => el.status !== OrderStatusEnum.CLOSED);
+
+		if (isActiveOrdersPresent) {
+			await this._hallsRepository.save({ id, isHide: true });
+
+			return `Hall is using in active order(s). Hall will be hide for now`;
+		}
+
 		await this._hallsRepository.delete(id);
 		return `${id} deleted`;
 	}

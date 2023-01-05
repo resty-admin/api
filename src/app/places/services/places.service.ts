@@ -4,6 +4,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { CompanyEntity } from "../../companies/entities";
 import { getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
+import { OrderStatusEnum } from "../../shared/enums";
 import type { CreatePlaceDto, UpdatePlaceDto } from "../dtos";
 import type { CreatePlaceInput, UpdatePlaceInput } from "../dtos";
 import { PlaceEntity } from "../entities";
@@ -55,6 +56,19 @@ export class PlacesService {
 	}
 
 	async deletePlace(id: string): Promise<string> {
+		const place: PlaceEntity = await this._placesRepository.findOne({
+			where: { id },
+			relations: [...this.findOneRelations, "orders"]
+		});
+
+		const isActiveOrdersPresent = place.orders.some((el) => el.status !== OrderStatusEnum.CLOSED);
+
+		if (isActiveOrdersPresent) {
+			await this._placesRepository.save({ ...place, isHide: true });
+
+			return `${place.name} is having active order(s). Place will be hide for now`;
+		}
+
 		await this._placesRepository.delete(id);
 		return `${id} deleted`;
 	}

@@ -37,6 +37,10 @@ export class TableEntity extends BaseEntity {
 	@OneToOne(() => FileEntity, { cascade: true, eager: true, nullable: true })
 	@JoinColumn()
 	file?: FileEntity;
+
+	@Field(() => Boolean)
+	@Column("boolean", { default: false })
+	isHide: boolean;
 }
 
 @ObjectType()
