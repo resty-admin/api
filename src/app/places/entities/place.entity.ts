@@ -26,7 +26,7 @@ export class PlaceEntity extends BaseEntity {
 
 	// @ApiProperty()
 	@Field(() => CompanyEntity)
-	@ManyToOne(() => CompanyEntity, (company) => company.places, { cascade: true })
+	@ManyToOne(() => CompanyEntity, (company) => company.places, { cascade: true, onDelete: "CASCADE" })
 	company: CompanyEntity;
 
 	// @ApiProperty()

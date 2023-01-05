@@ -26,7 +26,7 @@ export class CategoryEntity extends BaseEntity {
 
 	@ApiProperty()
 	@Field(() => [ProductEntity], { nullable: true })
-	@OneToMany(() => ProductEntity, (product) => product.category, { nullable: true })
+	@OneToMany(() => ProductEntity, (product) => product.category, { nullable: true, onDelete: "SET NULL" })
 	products?: ProductEntity[];
 
 	@ApiProperty()

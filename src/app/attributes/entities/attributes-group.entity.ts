@@ -20,7 +20,7 @@ export class AttributesGroupEntity extends BaseEntity {
 
 	// @ApiProperty()
 	@Field(() => [AttributesEntity], { nullable: true })
-	@ManyToMany(() => AttributesEntity, (attr) => attr.attributesGroup, { nullable: true })
+	@ManyToMany(() => AttributesEntity, (attr) => attr.attributesGroup, { nullable: true, onDelete: "CASCADE" })
 	@JoinTable()
 	attributes?: AttributesEntity[];
 

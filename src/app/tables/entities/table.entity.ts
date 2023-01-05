@@ -24,7 +24,7 @@ export class TableEntity extends BaseEntity {
 
 	// @ApiProperty()
 	@Field(() => HallEntity)
-	@ManyToOne(() => HallEntity, (hall) => hall.tables)
+	@ManyToOne(() => HallEntity, (hall) => hall.tables, { onDelete: "CASCADE" })
 	hall: HallEntity;
 
 	// @ApiProperty()

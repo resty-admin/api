@@ -18,7 +18,7 @@ export class HallEntity extends BaseEntity {
 	@Field(() => String)
 	name: string;
 
-	@ManyToOne(() => PlaceEntity, (place) => place.halls, { cascade: true })
+	@ManyToOne(() => PlaceEntity, (place) => place.halls, { cascade: true, onDelete: "CASCADE" })
 	@Field(() => PlaceEntity)
 	// @ApiProperty()
 	place: PlaceEntity;
