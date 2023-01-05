@@ -63,9 +63,7 @@ export class TablesService {
 	async deleteTable(id: string): Promise<string> {
 		const orders: ActiveOrderEntity[] = await this._ordersRepository.find({
 			where: {
-				table: {
-					hall: { id }
-				}
+				table: { id }
 			},
 			relations: ["table"]
 		});
