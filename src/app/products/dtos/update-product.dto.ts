@@ -61,6 +61,7 @@ export class UpdateProductInput {
 	file?: FileUploadInput;
 
 	@Field(() => [String], { nullable: true })
+	@Transform(({ value }) => value.map((id) => ({ id })))
 	@IsOptional()
 	attrsGroups?: string[];
 }
