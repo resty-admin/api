@@ -26,7 +26,7 @@ export class AttributesGroupEntity extends BaseEntity {
 
 	// @ApiProperty()
 	@Field(() => [ProductEntity], { nullable: true })
-	@ManyToMany(() => ProductEntity, (product) => product.attrsGroups, { nullable: true })
+	@ManyToMany(() => ProductEntity, (product) => product.attrsGroups, { nullable: true, orphanedRowAction: "nullify" })
 	products?: ProductEntity[];
 
 	@ManyToOne(() => PlaceEntity, (place) => place.attrGroups, { cascade: true })
