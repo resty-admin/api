@@ -4,11 +4,14 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import { ErrorsEnum } from "../../shared/enums";
+import { ActiveShiftEntity } from "../../shifts/entities";
 import type { UpdateOrderDto } from "../dtos";
 import type { CreateOrderInput, UpdateOrderInput } from "../dtos";
 import type { CreateUserToOrderInput } from "../dtos";
 import type { UpdateUserToOrderInput } from "../dtos";
 import { ActiveOrderEntity, HistoryOrderEntity, UserToOrderEntity } from "../entities";
+import { OrdersGateway } from "../gateways";
+import { ORDER_CREATED } from "../gateways/events/order.event";
 
 @Injectable()
 export class OrdersService {
@@ -34,8 +37,10 @@ export class OrdersService {
 
 	constructor(
 		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository,
+		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository,
 		@InjectRepository(UserToOrderEntity) private readonly _userToOrderRepository,
-		@InjectRepository(HistoryOrderEntity) private readonly _historyOrderRepository
+		@InjectRepository(HistoryOrderEntity) private readonly _historyOrderRepository,
+		private readonly _orderGateway: OrdersGateway
 	) {}
 
 	async getOrder(id: string) {
@@ -67,6 +72,27 @@ export class OrdersService {
 			...order,
 			code: Math.floor(Math.random() * 9999)
 		});
+
+		const isWaitersPresent = order.table;
+
+		const waiters = [];
+
+		if (isWaitersPresent) {
+			const activeShifts: ActiveShiftEntity[] = await this._shiftsRepository.find({
+				where: {
+					tables: {
+						id: (order.table as any).id
+					}
+				},
+				relations: ["tables", "waiter"]
+			});
+
+			for (const el of activeShifts) {
+				waiters.push(el.waiter);
+			}
+		}
+
+		this._orderGateway.emitEvent(ORDER_CREATED, { savedOrder, waiters });
 
 		return this._ordersRepository.findOne({
 			where: { id: savedOrder.id },

@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import * as CloudIpsp from "cloudipsp-node-js-sdk";
 import { ApiService } from "src/app/shared/api";
 import { CryptoService } from "src/app/shared/crypto";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 
 import { environment } from "../../../environments/environment";
 import { CompaniesService } from "../../companies/services";
@@ -32,11 +32,11 @@ export class FondyService {
 		});
 	}
 
-	async createPaymentOrderLink({ userId, orderId }: CreatePaymentOrderLinkDto) {
+	async createPaymentOrderLink({ users, orderId }: CreatePaymentOrderLinkDto) {
 		const usersToOrders = await this._userToOrderRepository.find({
 			where: {
 				user: {
-					id: userId
+					id: In(users)
 				},
 				order: {
 					id: orderId
@@ -52,7 +52,7 @@ export class FondyService {
 		const baseUrl = false && environment.production ? `https://dev-api.resty.od.ua` : `http://localhost:3000`;
 
 		const requestData = {
-			order_id: `${orderId}_${userId}`,
+			order_id: `${orderId}`,
 			order_desc: usersToOrders.reduce((pre, curr) => `${pre} ${curr.product.name} x${curr.count} ` + `\n`, ""),
 			currency: "UAH",
 			amount:
@@ -112,19 +112,6 @@ export class FondyService {
 				status: OrderStatusEnum.PAID
 			});
 		}
-		// const requestData = {
-		// 	order_id: id
-		// };
-		//
-		// this.fondy
-		// 	.Status(requestData)
-		// 	.then((data) => {
-		// 		console.log(data, requestData);
-		// 	})
-		// 	.catch((error) => {
-		// 		console.log(error);
-		// 	});
-
 		console.log("body", body);
 	}
 

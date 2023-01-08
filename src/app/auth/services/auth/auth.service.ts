@@ -46,6 +46,15 @@ export class AuthService {
 		return this._jwtService.getAccessToken(me);
 	}
 
+	async updateMe(user: any) {
+		return this._usersService.updateUser(user.id, user);
+	}
+
+	async deleteMe(id) {
+		await this._usersService.deleteUser(id);
+		return "DELETED";
+	}
+
 	async verifyCode(user: IUser, body: IVerifyCode) {
 		const isVerified = Number(user?.verificationCode) === Number(body?.verificationCode);
 

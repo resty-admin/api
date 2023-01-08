@@ -45,7 +45,6 @@ export class FondyController {
 		description: "Link created"
 	})
 	async createPaymentOrderLink(@Body() userToOrder: CreatePaymentOrderLinkDto) {
-		// return this._fondyService.createPaymentOrderLink(userToOrder);
 		const link = await this._fondyService.createPaymentOrderLink(userToOrder);
 		return {
 			link

@@ -479,10 +479,11 @@ type Query {
 	paymentSystems(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedPaymentSystem!
 	order(id: String!): ActiveOrderEntity!
 	orders(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedActiveOrder!
-	company(id: String!): CompanyEntity!
-	companies(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedCompany!
 	shift(id: String!): ActiveShiftEntity!
 	shifts(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedActiveShift!
+	activeShift: ActiveShiftEntity!
+	company(id: String!): CompanyEntity!
+	companies(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedCompany!
 	language(id: String!): LanguageEntity!
 	languages(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): LanguageEntity!
 	product(id: String!): ProductEntity!
@@ -529,20 +530,21 @@ type Mutation {
 	updateUserProductInOrder(userToOrder: UpdateUserToOrderInput!): ActiveOrderEntity!
 	addUserToOrder(code: Int!): ActiveOrderEntity!
 	closeOrder(orderId: String!): String!
+	createShift(shift: CreateShiftInput!): ActiveShiftEntity!
+	closeShift(shiftId: String!): String!
+	updateShift(shift: UpdateShiftInput!): ActiveShiftEntity!
+	deleteShift(shiftId: String!): String!
 	createCompany(company: CreateCompanyInput!): CompanyEntity!
 	updateCompany(company: UpdateCompanyInput!): CompanyEntity!
 	deleteCompany(companyId: String!): String!
-	createShift(shift: CreateShiftInput!): ActiveShiftEntity!
-	closeShift(shiftId: String!): String!
-	activeShift: ActiveShiftEntity!
-	updateShift(shift: UpdateShiftInput!): ActiveShiftEntity!
-	deleteShift(shiftId: String!): String!
 	createProduct(product: CreateProductInput!): ProductEntity!
 	updateProduct(product: UpdateProductInput!): ProductEntity!
 	deleteProduct(productId: String!): String!
 	createHall(hall: CreateHallInput!): HallEntity!
 	updateHall(hall: UpdateHallInput!): HallEntity!
 	deleteHall(hallId: String!): String!
+	updateMe(user: UpdateMeInput!): UserEntity!
+	deleteMe(userId: String!): String!
 	createUser(user: CreateUserInput!): UserEntity!
 	updateUser(user: UpdateUserInput!): UserEntity!
 	deleteUser(userId: String!): String!
@@ -636,6 +638,16 @@ input UpdateUserToOrderInput {
 	count: Int
 }
 
+input CreateShiftInput {
+	tables: [String!]!
+	place: String
+}
+
+input UpdateShiftInput {
+	id: String!
+	tables: String
+}
+
 input CreateCompanyInput {
 	name: String!
 	logo: String
@@ -646,16 +658,6 @@ input UpdateCompanyInput {
 	name: String
 	logo: String
 	employees: [String!]
-}
-
-input CreateShiftInput {
-	tables: [String!]!
-	place: String
-}
-
-input UpdateShiftInput {
-	id: String!
-	tables: String
 }
 
 input CreateProductInput {
@@ -687,6 +689,13 @@ input UpdateHallInput {
 	id: String!
 	name: String!
 	file: String
+}
+
+input UpdateMeInput {
+	id: String!
+	name: String
+	email: String
+	tel: String
 }
 
 input CreateUserInput {

@@ -11,6 +11,5 @@ export class CreatePaymentOrderLinkDto {
 	orderId: string;
 
 	@IsNotEmpty()
-	@IsString()
-	userId: string;
+	users: string[];
 }
