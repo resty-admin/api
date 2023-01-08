@@ -1,4 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { GraphQLError } from "graphql/error";
 import { Random } from "random-js";
 import { CryptoService } from "src/app/shared/crypto";
 import { ErrorsEnum, UserStatusEnum } from "src/app/shared/enums";
@@ -18,7 +20,9 @@ import { MailsService } from "src/app/shared/mails";
 import { MessagesService } from "src/app/shared/messages";
 import { removeFirstSlash } from "src/app/shared/utils";
 
+// import { ActiveOrderEntity } from "../../../orders/entities";
 import { UsersService } from "../../../users";
+import { UserEntity } from "../../../users/entities";
 
 @Injectable()
 export class AuthService {
@@ -29,7 +33,8 @@ export class AuthService {
 		private readonly _jwtService: JwtService,
 		private readonly _messagesService: MessagesService,
 		private readonly _cryptoService: CryptoService,
-		private readonly _mailsService: MailsService
+		private readonly _mailsService: MailsService,
+		@InjectRepository(UserEntity) private readonly _usersRepository
 	) {}
 
 	async validate(user: IUser): Promise<IUser> {
@@ -51,6 +56,17 @@ export class AuthService {
 	}
 
 	async deleteMe(id) {
+		console.log("id", id);
+		const user = await this._usersRepository.findOne({ where: { id }, relations: ["orders"] });
+
+		if (user.orders.length > 0) {
+			throw new GraphQLError(ErrorsEnum.ActiveOrderExist.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
+
 		await this._usersService.deleteUser(id);
 		return "DELETED";
 	}

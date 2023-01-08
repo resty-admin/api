@@ -23,7 +23,7 @@ export class ActiveShiftEntity extends BaseEntity {
 	tables?: TableEntity;
 
 	@Field(() => PlaceEntity, { nullable: true })
-	@ManyToOne(() => PlaceEntity, { cascade: true, eager: true, nullable: true })
+	@ManyToOne(() => PlaceEntity, { cascade: true, eager: true, nullable: true, onDelete: "CASCADE" })
 	@JoinColumn()
 	place?: PlaceEntity;
 

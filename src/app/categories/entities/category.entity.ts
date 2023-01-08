@@ -21,7 +21,7 @@ export class CategoryEntity extends BaseEntity {
 
 	@ApiProperty()
 	@Field(() => PlaceEntity)
-	@ManyToOne(() => PlaceEntity, (place) => place.categories)
+	@ManyToOne(() => PlaceEntity, (place) => place.categories, { onDelete: "CASCADE" })
 	place: PlaceEntity;
 
 	@ApiProperty()

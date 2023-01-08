@@ -544,7 +544,7 @@ type Mutation {
 	updateHall(hall: UpdateHallInput!): HallEntity!
 	deleteHall(hallId: String!): String!
 	updateMe(user: UpdateMeInput!): UserEntity!
-	deleteMe(userId: String!): String!
+	deleteMe: String!
 	createUser(user: CreateUserInput!): UserEntity!
 	updateUser(user: UpdateUserInput!): UserEntity!
 	deleteUser(userId: String!): String!
@@ -692,7 +692,6 @@ input UpdateHallInput {
 }
 
 input UpdateMeInput {
-	id: String!
 	name: String
 	email: String
 	tel: String
