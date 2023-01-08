@@ -1,11 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { GraphQLError } from "graphql/error";
 
 import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
+import { ErrorsEnum } from "../../shared/enums";
 import type { IUser } from "../../shared/interfaces";
 import type { CreateShiftDto, UpdateShiftDto } from "../dtos";
-import type { CreateShitInput, UpdateShitInput } from "../dtos";
+import type { CreateShiftInput, UpdateShiftInput } from "../dtos";
 import { ActiveShiftEntity } from "../entities";
 import { HistoryShiftEntity } from "../entities/history-shift.entity";
 
@@ -43,7 +45,30 @@ export class ShiftsService {
 		};
 	}
 
-	async createShift(shift: CreateShiftDto | CreateShitInput, user: IUser): Promise<ActiveShiftEntity> {
+	async getActiveShift(id: string) {
+		return this._shiftsRepository.findOne({
+			where: {
+				user: {
+					id
+				}
+			},
+			relations: this.findOneRelations
+		});
+	}
+
+	async createShift(shift: CreateShiftDto | CreateShiftInput, user: IUser) {
+		const shiftPresent = await this._shiftsRepository.findOne({
+			where: { waiter: { id: user.id } },
+			relations: ["waiter"]
+		});
+
+		if (shiftPresent) {
+			throw new GraphQLError(ErrorsEnum.ActiveShiftExist.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
 		const savedShift = await this._shiftsRepository.save({
 			...shift,
 			waiter: { id: user.id }
@@ -71,7 +96,7 @@ export class ShiftsService {
 		}
 	}
 
-	async updateShift(id: string, shift: UpdateShiftDto | UpdateShitInput): Promise<ActiveShiftEntity> {
+	async updateShift(id: string, shift: UpdateShiftDto | UpdateShiftInput): Promise<ActiveShiftEntity> {
 		return this._shiftsRepository.save({ id, ...shift });
 	}
 

@@ -1,5 +1,5 @@
 import { Field, InputType, ObjectType } from "@nestjs/graphql";
-import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, OneToOne } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne } from "typeorm";
 
 import { PlaceEntity } from "../../places/entities";
 import { BaseEntity } from "../../shared";
@@ -23,7 +23,7 @@ export class ActiveShiftEntity extends BaseEntity {
 	tables?: TableEntity;
 
 	@Field(() => PlaceEntity, { nullable: true })
-	@OneToOne(() => PlaceEntity, { cascade: true, eager: true, nullable: true })
+	@ManyToOne(() => PlaceEntity, { cascade: true, eager: true, nullable: true })
 	@JoinColumn()
 	place?: PlaceEntity;
 

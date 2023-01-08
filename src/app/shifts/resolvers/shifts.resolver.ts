@@ -6,7 +6,7 @@ import { GqlJwtGuard } from "../../auth";
 import { RolesGuard, UserGql } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
 import { IUser } from "../../shared/interfaces";
-import { CreateShitInput, UpdateShitInput } from "../dtos";
+import { CreateShiftInput, UpdateShiftInput } from "../dtos";
 import { ActiveShiftEntity, PaginatedActiveShift } from "../entities";
 import { ShiftsService } from "../services";
 
@@ -28,7 +28,7 @@ export class ShiftsResolver {
 
 	@Mutation(() => ActiveShiftEntity)
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.WAITER]))
-	async createShift(@Args("shift") shift: CreateShitInput, @UserGql() user: IUser) {
+	async createShift(@Args("shift") shift: CreateShiftInput, @UserGql() user: IUser) {
 		return this._shiftsService.createShift(shift, user);
 	}
 
@@ -39,8 +39,14 @@ export class ShiftsResolver {
 	}
 
 	@Mutation(() => ActiveShiftEntity)
-	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
-	async updateShift(@Args("shift") shift: UpdateShitInput) {
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.WAITER]))
+	async activeShift(@UserGql() user: IUser) {
+		return this._shiftsService.getActiveShift(user.id);
+	}
+
+	@Mutation(() => ActiveShiftEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.WAITER]))
+	async updateShift(@Args("shift") shift: UpdateShiftInput) {
 		return this._shiftsService.updateShift(shift.id, shift);
 	}
 

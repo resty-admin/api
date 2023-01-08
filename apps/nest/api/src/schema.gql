@@ -532,9 +532,10 @@ type Mutation {
 	createCompany(company: CreateCompanyInput!): CompanyEntity!
 	updateCompany(company: UpdateCompanyInput!): CompanyEntity!
 	deleteCompany(companyId: String!): String!
-	createShift(shift: CreateShitInput!): ActiveShiftEntity!
+	createShift(shift: CreateShiftInput!): ActiveShiftEntity!
 	closeShift(shiftId: String!): String!
-	updateShift(shift: UpdateShitInput!): ActiveShiftEntity!
+	activeShift: ActiveShiftEntity!
+	updateShift(shift: UpdateShiftInput!): ActiveShiftEntity!
 	deleteShift(shiftId: String!): String!
 	createProduct(product: CreateProductInput!): ProductEntity!
 	updateProduct(product: UpdateProductInput!): ProductEntity!
@@ -647,17 +648,14 @@ input UpdateCompanyInput {
 	employees: [String!]
 }
 
-input CreateShitInput {
+input CreateShiftInput {
 	tables: [String!]!
 	place: String
 }
 
-input UpdateShitInput {
+input UpdateShiftInput {
 	id: String!
-	waiter: String
-	table: String
-	place: String
-	shiftDate: [String!]
+	tables: String
 }
 
 input CreateProductInput {

@@ -32,7 +32,7 @@ export class CreateShiftDto {
 }
 
 @InputType()
-export class CreateShitInput {
+export class CreateShiftInput {
 	// @Field(() => String, { nullable: true })
 	// @IsOptional()
 	// waiter?: string;

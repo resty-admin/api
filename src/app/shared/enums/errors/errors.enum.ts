@@ -19,5 +19,6 @@ export enum ErrorsEnum {
 	IsDate = 1017,
 	IsKeyDate = 1018,
 	IsArray = 1019,
-	OrderByCodeNotExist = 1020
+	OrderByCodeNotExist = 1020,
+	ActiveShiftExist = 1021
 }
