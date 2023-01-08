@@ -3,8 +3,9 @@ import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { UserRoleEnum } from "src/app/shared/enums";
 
 import { GqlJwtGuard } from "../../auth";
-import { RolesGuard } from "../../shared";
+import { RolesGuard, UserGql } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
+import { IUser } from "../../shared/interfaces";
 import { CreateShitInput, UpdateShitInput } from "../dtos";
 import { ActiveShiftEntity, PaginatedActiveShift } from "../entities";
 import { ShiftsService } from "../services";
@@ -26,9 +27,15 @@ export class ShiftsResolver {
 	}
 
 	@Mutation(() => ActiveShiftEntity)
-	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
-	async createShift(@Args("shift") shift: CreateShitInput) {
-		return this._shiftsService.createShift(shift);
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.WAITER]))
+	async createShift(@Args("shift") shift: CreateShitInput, @UserGql() user: IUser) {
+		return this._shiftsService.createShift(shift, user);
+	}
+
+	@Mutation(() => String)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.WAITER]))
+	async closeShift(@Args("shiftId") shiftId: string) {
+		return this._shiftsService.closeShift(shiftId);
 	}
 
 	@Mutation(() => ActiveShiftEntity)

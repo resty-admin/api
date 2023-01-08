@@ -291,23 +291,20 @@ type AccessToken {
 type ActiveShiftEntity {
 	id: String!
 	waiter: UserEntity
-	table: TableEntity
+	tables: [TableEntity!]
 	place: PlaceEntity
-	shiftDate: String!
+	shiftDate: DateTime!
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type PaginatedActiveShift {
 	data: [ActiveShiftEntity!]
 	page: Int!
 	totalCount: Int!
-}
-
-type HistoryShiftEntity {
-	id: String!
-	waiter: UserEntity
-	table: TableEntity
-	place: PlaceEntity
-	shiftDate: String!
 }
 
 type LanguageEntity {
@@ -462,16 +459,9 @@ input UserEntityInput {
 
 input ActiveShiftEntityInput {
 	waiter: UserEntityInput
-	table: TableEntityInput
+	tables: [TableEntityInput!]
 	place: PlaceEntityInput
-	shiftDate: String!
-}
-
-input HistoryShiftEntityInput {
-	waiter: UserEntityInput
-	table: TableEntityInput
-	place: PlaceEntityInput
-	shiftDate: String!
+	shiftDate: DateTime!
 }
 
 input PaymentSystemEntityInput {
@@ -543,6 +533,7 @@ type Mutation {
 	updateCompany(company: UpdateCompanyInput!): CompanyEntity!
 	deleteCompany(companyId: String!): String!
 	createShift(shift: CreateShitInput!): ActiveShiftEntity!
+	closeShift(shiftId: String!): String!
 	updateShift(shift: UpdateShitInput!): ActiveShiftEntity!
 	deleteShift(shiftId: String!): String!
 	createProduct(product: CreateProductInput!): ProductEntity!
@@ -657,10 +648,8 @@ input UpdateCompanyInput {
 }
 
 input CreateShitInput {
-	waiter: String
-	table: String
+	tables: [String!]!
 	place: String
-	shiftDate: [String!]
 }
 
 input UpdateShitInput {

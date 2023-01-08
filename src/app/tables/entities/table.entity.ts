@@ -38,6 +38,10 @@ export class TableEntity extends BaseEntity {
 	@JoinColumn()
 	file?: FileEntity;
 
+	// @Field(() => [ActiveShiftEntity], { nullable: true })
+	// @ManyToMany(() => ActiveShiftEntity, (shifts) => shifts.tables, { nullable: true })
+	// shifts?: ActiveShiftEntity[];
+
 	@Field(() => Boolean)
 	@Column("boolean", { default: false })
 	isHide: boolean;

@@ -1,5 +1,5 @@
 import { Field, InputType, ObjectType } from "@nestjs/graphql";
-import { Column, Entity, JoinColumn, OneToOne } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, OneToOne } from "typeorm";
 
 import { PlaceEntity } from "../../places/entities";
 import { BaseEntity } from "../../shared";
@@ -12,33 +12,25 @@ import { ACTIVE_SHIFTS } from "../constants";
 @InputType("ActiveShiftEntityInput")
 @Entity({ name: ACTIVE_SHIFTS })
 export class ActiveShiftEntity extends BaseEntity {
-	// @ApiProperty()
 	@Field(() => UserEntity, { nullable: true })
 	@OneToOne(() => UserEntity, { cascade: true, eager: true, nullable: true, createForeignKeyConstraints: false })
 	@JoinColumn()
 	waiter?: UserEntity;
 
-	// @ApiProperty()
-	@Field(() => TableEntity, { nullable: true })
-	@OneToOne(() => TableEntity, { cascade: true, eager: true, nullable: true })
-	@JoinColumn()
-	table?: TableEntity;
+	@Field(() => [TableEntity], { nullable: true })
+	@ManyToMany(() => TableEntity, { cascade: true, nullable: true })
+	@JoinTable()
+	tables?: TableEntity;
 
-	// @ApiProperty()
 	@Field(() => PlaceEntity, { nullable: true })
 	@OneToOne(() => PlaceEntity, { cascade: true, eager: true, nullable: true })
 	@JoinColumn()
 	place?: PlaceEntity;
 
-	// @ApiProperty()
-	// @Field(() => [ActiveOrderEntity], { nullable: true })
-	// @OneToMany(() => ActiveOrderEntity, (order) => order.shift, { nullable: true })
-	// orders: ActiveOrderEntity;
-
-	// @ApiProperty()
-	@Field(() => String)
+	@Field(() => Date)
 	@Column()
-	shiftDate: String;
+	@CreateDateColumn()
+	shiftDate: Date;
 }
 
 @ObjectType()

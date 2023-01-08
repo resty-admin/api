@@ -1,4 +1,5 @@
 import { Field, InputType } from "@nestjs/graphql";
+import { Transform } from "class-transformer";
 import { IsISO8601 } from "class-validator";
 
 import { IsOptional, IsString } from "../../shared";
@@ -32,13 +33,14 @@ export class CreateShiftDto {
 
 @InputType()
 export class CreateShitInput {
-	@Field(() => String, { nullable: true })
-	@IsOptional()
-	waiter?: string;
+	// @Field(() => String, { nullable: true })
+	// @IsOptional()
+	// waiter?: string;
 
-	@Field(() => String, { nullable: true })
+	@Field(() => [String])
 	@IsOptional()
-	table?: string;
+	@Transform(({ value }) => value.map((id) => ({ id })))
+	tables: string[];
 
 	@Field(() => String, { nullable: true })
 	@IsOptional()
@@ -49,8 +51,8 @@ export class CreateShitInput {
 	// @IsOptional()
 	// orders: string[];
 
-	@Field(() => [String], { nullable: true })
-	@IsOptional()
-	@IsISO8601()
-	shiftDate?: string;
+	// @Field(() => [String], { nullable: true })
+	// @IsOptional()
+	// @IsISO8601()
+	// shiftDate?: string;
 }
