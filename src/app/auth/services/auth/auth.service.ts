@@ -46,8 +46,8 @@ export class AuthService {
 		return this._jwtService.getAccessToken(me);
 	}
 
-	async updateMe(user: any) {
-		return this._usersService.updateUser(user.id, user);
+	async updateMe(updatedUser: any, userGql) {
+		return this._usersService.updateUser(userGql.id, updatedUser);
 	}
 
 	async deleteMe(id) {

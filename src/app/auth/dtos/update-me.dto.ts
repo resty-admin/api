@@ -4,9 +4,6 @@ import { IsOptional } from "../../shared";
 
 @InputType()
 export class UpdateMeInput {
-	@Field(() => String)
-	id: string;
-
 	@Field(() => String, { nullable: true })
 	@IsOptional()
 	name?: string;

@@ -21,13 +21,13 @@ export class AuthResolver {
 
 	@Mutation(() => UserEntity)
 	@UseGuards(GqlJwtGuard)
-	async updateMe(@Args("user") user: UpdateMeInput) {
-		return this._authService.updateMe(user);
+	async updateMe(@Args("user") user: UpdateMeInput, @UserGql() userGql: IUser) {
+		return this._authService.updateMe(user, userGql);
 	}
 
 	@Mutation(() => String)
 	@UseGuards(GqlJwtGuard)
-	async deleteMe(@Args("userId") userId: string) {
-		return this._authService.deleteMe(userId);
+	async deleteMe(@UserGql() userGql: IUser) {
+		return this._authService.deleteMe(userGql.id);
 	}
 }
