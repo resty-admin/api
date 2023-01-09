@@ -20,7 +20,7 @@ export class ActiveShiftEntity extends BaseEntity {
 	@Field(() => [TableEntity], { nullable: true })
 	@ManyToMany(() => TableEntity, { cascade: true, nullable: true })
 	@JoinTable()
-	tables?: TableEntity;
+	tables?: TableEntity[];
 
 	@Field(() => PlaceEntity, { nullable: true })
 	@ManyToOne(() => PlaceEntity, { cascade: true, eager: true, nullable: true, onDelete: "CASCADE" })

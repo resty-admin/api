@@ -1,9 +1,10 @@
 import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { Exclude } from "class-transformer";
-import { Column, Entity, ManyToMany, OneToMany } from "typeorm";
+import { Column, Entity, ManyToMany, ManyToOne, OneToMany } from "typeorm";
 
 import { CompanyEntity } from "../../companies/entities";
 import { ActiveOrderEntity } from "../../orders/entities";
+import { PlaceEntity } from "../../places/entities";
 import { BaseEntity } from "../../shared";
 import { Pagination } from "../../shared/entities/pagination.type";
 import { ThemeEnum, UserRoleEnum, UserStatusEnum } from "../../shared/enums";
@@ -67,23 +68,13 @@ export class UserEntity extends BaseEntity implements IUser {
 	@ManyToMany(() => ActiveOrderEntity, (order) => order.users, { nullable: true })
 	orders?: ActiveOrderEntity[];
 
-	// @ApiProperty()
+	@Field(() => PlaceEntity, { nullable: true })
+	@ManyToOne(() => PlaceEntity, (place) => place.employees, { nullable: true })
+	place?: PlaceEntity;
+
 	@Field(() => CompanyEntity, { nullable: true })
 	@OneToMany(() => CompanyEntity, (company) => company.employees, { nullable: true })
 	companies?: CompanyEntity;
-
-	// @Field(() => [UserToOrderEntity])
-	// @OneToMany(() => UserToOrderEntity, (uTo) => uTo.user)
-	// usersToOrders: UserToOrderEntity[];
-
-	// @OneToMany(() => UserToOrderEntity, (userToOrder) => userToOrder.user, { cascade: true })
-	// orders: IUserToOrder[];
-	//
-	// @OneToMany(() => ProductToOrderEntity, (productToOrder) => productToOrder.user, { cascade: true })
-	// products: IProductToOrder[];
-	//
-	// @OneToMany(() => UserToTableEntity, (table) => table.user, { cascade: true })
-	// tables: IUserToTable[];
 }
 
 @ObjectType()

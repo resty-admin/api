@@ -1,11 +1,13 @@
 import { HttpService } from "@nestjs/axios";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { CommandsEvents } from "src/app/shared/events";
 
+import { COMMAND_EMITTED } from "../../gateways/events";
 import { GatewaysService } from "../../gateways/services";
+import { ActiveOrderEntity } from "../../orders/entities";
 import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
+import { ActiveShiftEntity } from "../../shifts/entities";
 import { TablesService } from "../../tables/services";
 import type { CreateCommandDto, UpdateCommandDto } from "../dtos";
 import { CommandEntity } from "../entities";
@@ -14,17 +16,36 @@ import { CommandEntity } from "../entities";
 export class CommandsService {
 	constructor(
 		@InjectRepository(CommandEntity) private readonly _commandsRepository,
+		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository,
+		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository,
 		private readonly _tablesService: TablesService,
 		private readonly _httpService: HttpService,
 		private readonly _gatewaysService: GatewaysService
 	) {}
 
-	async emitCommand(body: any) {
-		const { id, table } = body;
-		const command = await this._commandsRepository.findOneById(id);
-		const tableEntity = await this._tablesService.getTable(table);
+	async emitCommand(commandId: string, tableId: string) {
+		const command = await this._commandsRepository.findOne({ where: { id: commandId } });
+		const waiters = [];
 
-		this._gatewaysService.emitEvent(CommandsEvents, { command, table: tableEntity });
+		const shifts: ActiveShiftEntity[] = await this._shiftsRepository.find({
+			where: {
+				tables: {
+					id: tableId
+				}
+			},
+			relations: ["waiter", "tables"]
+		});
+
+		const table = shifts[0].tables.find((el) => el.id === tableId);
+
+		console.log("shifts", shifts);
+		for (const shift of shifts) {
+			waiters.push(shift.waiter);
+		}
+
+		this._gatewaysService.emitEvent(COMMAND_EMITTED, { command, table, waiters });
+
+		return "emitted";
 	}
 
 	async getCommand(id: string) {

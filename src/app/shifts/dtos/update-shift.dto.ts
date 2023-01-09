@@ -23,7 +23,7 @@ export class UpdateShiftDto {
 	// @ApiProperty()
 	// @IsArray()
 	// @IsOptional()
-	// orders: string[];
+	// commands: string[];
 
 	// @ApiProperty()
 	@IsOptional()

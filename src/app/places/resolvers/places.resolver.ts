@@ -6,6 +6,7 @@ import { GqlJwtGuard } from "../../auth";
 import { RolesGuard } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
 import { CreatePlaceInput, UpdatePlaceInput } from "../dtos";
+import { AddEmployeeInput } from "../dtos/add-employee.dto";
 import { PaginatedPlace, PlaceEntity } from "../entities";
 import { PlacesService } from "../services";
 
@@ -41,5 +42,17 @@ export class PlacesResolver {
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
 	async deletePlace(@Args("placeId") id: string) {
 		return this._placesService.deletePlace(id);
+	}
+
+	@Mutation(() => PlaceEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	async addEmployeeToPlace(@Args("employeeData") employee: AddEmployeeInput) {
+		return this._placesService.addEmployeeToPlace(employee);
+	}
+
+	@Mutation(() => PlaceEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	async removeEmployeeFromPlace(@Args("employeeData") employee: AddEmployeeInput) {
+		return this._placesService.removeEmployeeFromPlace(employee);
 	}
 }

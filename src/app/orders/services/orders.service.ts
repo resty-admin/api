@@ -90,6 +90,15 @@ export class OrdersService {
 			for (const el of activeShifts) {
 				waiters.push(el.waiter);
 			}
+		} else {
+			const order: ActiveOrderEntity = await this._ordersRepository.findOne({
+				where: { id: savedOrder.id },
+				relations: ["place", "place.employees"]
+			});
+
+			for (const el of order.place.employees) {
+				waiters.push(el);
+			}
 		}
 
 		this._orderGateway.emitEvent(ORDER_CREATED, { savedOrder, waiters });
@@ -188,6 +197,14 @@ export class OrdersService {
 			console.log("e", error);
 			return "fuck!";
 		}
+	}
+
+	async addTableToOrder(orderId: string, tableId: string) {
+		return this._ordersRepository.save({ id: orderId, table: { id: tableId } });
+	}
+
+	async removeTableFrom(orderId: string) {
+		return this._ordersRepository.save({ id: orderId, table: null });
 	}
 
 	calculateTotalPrice(usersToOrders) {

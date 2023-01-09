@@ -20,7 +20,7 @@ import { MailsService } from "src/app/shared/mails";
 import { MessagesService } from "src/app/shared/messages";
 import { removeFirstSlash } from "src/app/shared/utils";
 
-// import { ActiveOrderEntity } from "../../../orders/entities";
+// import { ActiveOrderEntity } from "../../../commands/entities";
 import { UsersService } from "../../../users";
 import { UserEntity } from "../../../users/entities";
 

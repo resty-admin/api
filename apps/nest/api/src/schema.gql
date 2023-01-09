@@ -204,6 +204,7 @@ type PlaceEntity {
 	attrGroups: [AttributesGroupEntity!]!
 	orders: [ActiveOrderEntity!]
 	commands: [CommandEntity!]
+	employees: [UserEntity!]
 	isHide: Boolean!
 }
 
@@ -256,6 +257,7 @@ type UserEntity {
 	status: UserStatusEnum!
 	password: String
 	orders: [ActiveOrderEntity!]
+	place: PlaceEntity
 	companies: CompanyEntity
 }
 
@@ -427,6 +429,7 @@ input PlaceEntityInput {
 	attrGroups: [AttributesGroupEntityInput!]!
 	orders: [ActiveOrderEntityInput!]
 	commands: [CommandEntityInput!]
+	employees: [UserEntityInput!]
 	isHide: Boolean!
 }
 
@@ -454,6 +457,7 @@ input UserEntityInput {
 	status: UserStatusEnum!
 	password: String
 	orders: [ActiveOrderEntityInput!]
+	place: PlaceEntityInput
 	companies: CompanyEntityInput
 }
 
@@ -470,37 +474,38 @@ input PaymentSystemEntityInput {
 
 type Query {
 	attribute(id: String!): AttributesEntity!
-	attributes(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedAttributes!
+	attributes(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedAttributes!
 	attributeGroup(id: String!): AttributesGroupEntity!
-	attributeGroups(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedAttributeGroups!
+	attributeGroups(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedAttributeGroups!
 	accountingSystem(id: String!): AccountingSystemEntity!
-	accountingSystems(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedAccountingSystem!
+	accountingSystems(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedAccountingSystem!
 	paymentSystem(id: String!): PaymentSystemEntity!
-	paymentSystems(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedPaymentSystem!
+	paymentSystems(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedPaymentSystem!
 	order(id: String!): ActiveOrderEntity!
-	orders(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedActiveOrder!
+	orders(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedActiveOrder!
 	shift(id: String!): ActiveShiftEntity!
-	shifts(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedActiveShift!
+	shifts(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedActiveShift!
 	activeShift: ActiveShiftEntity!
 	company(id: String!): CompanyEntity!
-	companies(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedCompany!
+	companies(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedCompany!
 	language(id: String!): LanguageEntity!
-	languages(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): LanguageEntity!
+	languages(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): LanguageEntity!
 	product(id: String!): ProductEntity!
-	products(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedProduct!
+	products(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedProduct!
 	hall(id: String!): HallEntity!
-	halls(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedHall!
+	halls(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedHall!
 	getMe: AccessToken!
 	user(id: String!): UserEntity!
-	users(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedUser!
+	users(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedUser!
 	place(id: String!): PlaceEntity!
-	places(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedPlace!
+	places(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedPlace!
 	category(id: String!): CategoryEntity!
-	categories(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedCategory!
+	categories(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedCategory!
 	table(id: String!): TableEntity!
-	tables(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedTable!
+	tables(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedTable!
 	command(id: String!): CommandEntity!
-	commands(skip: Int! = 0, take: Int! = 25, filtersArgs: FiltersArgsDto): PaginatedCommand!
+	commands(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedCommand!
+	emitCommand(commandId: String!, tableId: String!): String!
 }
 
 input FiltersArgsDto {
@@ -529,6 +534,8 @@ type Mutation {
 	removeUserProductInOrder(userToOrderId: String!): String!
 	updateUserProductInOrder(userToOrder: UpdateUserToOrderInput!): ActiveOrderEntity!
 	addUserToOrder(code: Int!): ActiveOrderEntity!
+	addTableToOrder(orderId: String!, tableId: String!): ActiveOrderEntity!
+	removeTableFromOrder(orderId: String!): ActiveOrderEntity!
 	closeOrder(orderId: String!): String!
 	createShift(shift: CreateShiftInput!): ActiveShiftEntity!
 	closeShift(shiftId: String!): String!
@@ -551,6 +558,8 @@ type Mutation {
 	createPlace(place: CreatePlaceInput!): PlaceEntity!
 	updatePlace(place: UpdatePlaceInput!): PlaceEntity!
 	deletePlace(placeId: String!): String!
+	addEmployeeToPlace(employeeData: AddEmployeeInput!): PlaceEntity!
+	removeEmployeeFromPlace(employeeData: AddEmployeeInput!): PlaceEntity!
 	createCategory(category: CreateCategoryInput!): CategoryEntity!
 	updateCategory(category: UpdateCategoryInput!): CategoryEntity!
 	deleteCategory(categoryId: String!): String!
@@ -736,6 +745,11 @@ input UpdatePlaceInput {
 	weekDays: WorkingHoursInput
 	weekendDays: WorkingHoursInput
 	holidayDays: WorkingHoursInput
+}
+
+input AddEmployeeInput {
+	placeId: String!
+	userId: String!
 }
 
 input CreateCategoryInput {

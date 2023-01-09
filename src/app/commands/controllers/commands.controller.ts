@@ -1,17 +1,16 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Controller } from "@nestjs/common";
 
 import { COMMANDS } from "../constant";
-import { EmitCommandDto } from "../dtos";
 import { CommandsService } from "../services";
 
 @Controller(COMMANDS)
 export class CommandsController {
 	constructor(private readonly _commandsService: CommandsService) {}
 
-	@Post("/emit-command")
-	async emitCommand(@Body() body: EmitCommandDto) {
-		await this._commandsService.emitCommand(body);
-	}
+	// @Post("/emit-command")
+	// async emitCommand(@Body() body: EmitCommandDto) {
+	// 	await this._commandsService.emitCommand(body);
+	// }
 
 	// @Post()
 	// @ApiOperation({ summary: `Create command` })

@@ -65,7 +65,7 @@ export class CompaniesService {
 	async deleteCompany(id: string): Promise<string> {
 		const company: CompanyEntity = await this._companiesRepository.findOne({
 			where: { id },
-			relations: [...this.findOneRelations, "places.orders"]
+			relations: [...this.findOneRelations, "places.commands"]
 		});
 
 		const isActiveOrdersPresent = company.places.some((place) =>

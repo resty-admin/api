@@ -1,21 +1,18 @@
 import { ArgsType, Field, InputType, Int } from "@nestjs/graphql";
 
-import { IsOptional, IsString, Max, Min } from "../../shared";
+import { IsOptional, IsString, Max } from "../../shared";
 
 @ArgsType()
 export class PaginationArgsDto {
-	@Field(() => Int)
-	@Min(0)
-	skip = 0;
+	@Field(() => Int, { nullable: true, defaultValue: 0 })
+	skip?: number;
 
-	@Field(() => Int)
-	@Min(1)
+	@Field(() => Int, { nullable: true, defaultValue: 10 })
 	@Max(50)
-	take = 25;
+	take?: number;
 
-	@Field(() => FiltersArgsDto, { nullable: true })
+	@Field(() => [FiltersArgsDto], { nullable: true })
 	@IsOptional()
-	@IsString()
 	// @ApiProperty()
 	filtersArgs?: FiltersArgsDto[];
 }

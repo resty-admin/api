@@ -13,7 +13,7 @@ export interface IUser {
 	telegramId?: number;
 	verificationCode?: number;
 	status: UserStatusEnum;
-	// orders: IUserToOrder[];
+	// commands: IUserToOrder[];
 	// products: IProductToOrder[];
 	// tables: IUserToTable[];
 }

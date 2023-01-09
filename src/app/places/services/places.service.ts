@@ -5,18 +5,21 @@ import { CompanyEntity } from "../../companies/entities";
 import { getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import { OrderStatusEnum } from "../../shared/enums";
+import { UserEntity } from "../../users/entities";
 import type { CreatePlaceDto, UpdatePlaceDto } from "../dtos";
 import type { CreatePlaceInput, UpdatePlaceInput } from "../dtos";
+import type { AddEmployeeInput } from "../dtos/add-employee.dto";
 import { PlaceEntity } from "../entities";
 
 @Injectable()
 export class PlacesService {
-	private findRelations = ["company", "company.owner", "halls", "file"];
-	private findOneRelations = ["company", "company.owner", "halls", "file"];
+	private findRelations = ["company", "company.owner", "employees", "halls", "file"];
+	private findOneRelations = ["company", "company.owner", "employees", "halls", "file"];
 
 	constructor(
 		@InjectRepository(PlaceEntity) private readonly _placesRepository,
-		@InjectRepository(CompanyEntity) private readonly _companiesRepository
+		@InjectRepository(CompanyEntity) private readonly _companiesRepository,
+		@InjectRepository(UserEntity) private readonly _usersRepository
 	) {}
 
 	async getPlace(id: string) {
@@ -27,8 +30,10 @@ export class PlacesService {
 	}
 
 	async getPlaces({ take, skip, filtersArgs }: PaginationArgsDto) {
+		console.log("FILTERS", take, skip, filtersArgs);
 		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
+		console.log("findOptions", findOptions);
 		const [data, count] = await this._placesRepository.findAndCount({
 			where: findOptions.where,
 			relations: this.findRelations,
@@ -71,5 +76,32 @@ export class PlacesService {
 
 		await this._placesRepository.delete(id);
 		return `${id} deleted`;
+	}
+
+	async addEmployeeToPlace(employee: AddEmployeeInput) {
+		const place = await this._placesRepository.findOne({
+			where: {
+				id: employee.placeId
+			},
+			relations: ["employees"]
+		});
+
+		const user = await this._usersRepository.findOne({ where: { id: employee.userId } });
+
+		return this._placesRepository.save({ ...place, employees: [...(place.employees || []), { user }] });
+	}
+
+	async removeEmployeeFromPlace(employee: AddEmployeeInput) {
+		const place = await this._placesRepository.findOne({
+			where: {
+				id: employee.placeId
+			},
+			relations: ["employees"]
+		});
+
+		return this._placesRepository.save({
+			...place,
+			employees: place.employees.filter((el) => el.id !== employee.userId)
+		});
 	}
 }

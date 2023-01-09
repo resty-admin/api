@@ -23,7 +23,7 @@ export class CreateShiftDto {
 	// @ApiProperty()
 	// @IsArray()
 	// @IsOptional()
-	// orders: string[];
+	// commands: string[];
 
 	// @ApiProperty()
 	@IsOptional()
@@ -49,7 +49,7 @@ export class CreateShiftInput {
 	// @Field(() => [String])
 	// @IsArray()
 	// @IsOptional()
-	// orders: string[];
+	// commands: string[];
 
 	// @Field(() => [String], { nullable: true })
 	// @IsOptional()

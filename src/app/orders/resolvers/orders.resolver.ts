@@ -68,6 +68,18 @@ export class OrdersResolver {
 		return this._ordersService.addUserToOrder(code, user.id);
 	}
 
+	@Mutation(() => ActiveOrderEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.CLIENT, UserRoleEnum.ADMIN]))
+	async addTableToOrder(@Args("orderId") orderId: string, @Args("tableId") tableId: string) {
+		return this._ordersService.addTableToOrder(orderId, tableId);
+	}
+
+	@Mutation(() => ActiveOrderEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.CLIENT, UserRoleEnum.ADMIN]))
+	async removeTableFromOrder(@Args("orderId") orderId: string) {
+		return this._ordersService.removeTableFrom(orderId);
+	}
+
 	@Mutation(() => String)
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.CLIENT]))
 	async closeOrder(@Args("orderId") orderId: string) {

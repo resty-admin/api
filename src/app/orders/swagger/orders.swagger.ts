@@ -8,5 +8,5 @@ export function ordersSwagger(app: INestApplication) {
 	const document = SwaggerModule.createDocument(app, config, {
 		include: [OrdersModule]
 	});
-	SwaggerModule.setup("api/swagger/orders", app, document);
+	SwaggerModule.setup("api/swagger/commands", app, document);
 }
