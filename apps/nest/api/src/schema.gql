@@ -485,7 +485,7 @@ type Query {
 	orders(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedActiveOrder!
 	shift(id: String!): ActiveShiftEntity!
 	shifts(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedActiveShift!
-	activeShift: ActiveShiftEntity!
+	activeShift: ActiveShiftEntity
 	company(id: String!): CompanyEntity!
 	companies(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedCompany!
 	language(id: String!): LanguageEntity!
@@ -654,7 +654,7 @@ input CreateShiftInput {
 
 input UpdateShiftInput {
 	id: String!
-	tables: String
+	tables: [String!]
 }
 
 input CreateCompanyInput {

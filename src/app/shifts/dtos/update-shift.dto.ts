@@ -36,8 +36,8 @@ export class UpdateShiftInput {
 	@Field(() => String)
 	id: string;
 
-	@Field(() => String, { nullable: true })
+	@Field(() => [String], { nullable: true })
 	@Transform(({ value }) => value.map((id) => ({ id })))
 	@IsOptional()
-	tables?: string;
+	tables?: string[];
 }

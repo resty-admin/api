@@ -38,7 +38,7 @@ export class ShiftsResolver {
 		return this._shiftsService.closeShift(shiftId);
 	}
 
-	@Query(() => ActiveShiftEntity)
+	@Query(() => ActiveShiftEntity, { nullable: true })
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.WAITER]))
 	async activeShift(@UserGql() user: IUser) {
 		return this._shiftsService.getActiveShift(user.id);
