@@ -14,11 +14,11 @@ import { AuthService } from "../../services";
 export class AuthController {
 	constructor(private readonly _authService: AuthService) {}
 
-	@Get(AUTH_ENDPOINTS.GET_ME)
-	@UseGuards(JwtGuard)
-	async getMe(@User() user: IUser): Promise<IAccessToken> {
-		return this._authService.getMe(user);
-	}
+	// @Get(AUTH_ENDPOINTS.GET_ME)
+	// @UseGuards(JwtGuard)
+	// async getMe(@User() user: IUser): Promise<IAccessToken> {
+	// 	return this._authService.getMe(user);
+	// }
 
 	@Post(AUTH_ENDPOINTS.VERIFY_CODE)
 	@UseGuards(JwtGuard)

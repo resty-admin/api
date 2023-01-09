@@ -13,8 +13,8 @@ import { HistoryShiftEntity } from "../entities/history-shift.entity";
 
 @Injectable()
 export class ShiftsService {
-	private findRelations = ["tables", "tables.commands", "tables.hall", "waiter", "place"];
-	private findOneRelations = ["tables", "tables.commands", "tables.hall", "waiter", "place"];
+	private findRelations = ["tables", "tables.hall", "waiter", "place"];
+	private findOneRelations = ["tables", "tables.hall", "waiter", "place"];
 
 	constructor(
 		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository,

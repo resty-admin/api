@@ -25,6 +25,13 @@ export class AuthResolver {
 		return this._authService.updateMe(user, userGql);
 	}
 
+	// @Mutation(() => )
+	// @Post(AUTH_ENDPOINTS.VERIFY_CODE)
+	// @UseGuards(JwtGuard)
+	// async verifyCode(@User() user: IUser, @Body() body: VerifyCodeDto) {
+	// 	return this._authService.verifyCode(user, body);
+	// }
+
 	@Mutation(() => String)
 	@UseGuards(GqlJwtGuard)
 	async deleteMe(@UserGql() userGql: IUser) {
