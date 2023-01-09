@@ -160,14 +160,19 @@ type PaginatedActiveOrder {
 type HistoryOrderEntity {
 	id: String!
 	orderNumber: Int!
-	table: [String!]
-	users: [String!]!
+	table: JSONObject
+	users: [JSONObject!]!
 	type: OrderTypeEnum!
 	status: OrderStatusEnum!
-	place: String!
+	place: JSONObject!
 	totalPrice: Int
-	usersToOrders: [String!]!
+	usersToOrders: [JSONObject!]!
 }
+
+"""
+The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSONObject
 
 type PaginatedHistoryOrder {
 	data: [HistoryOrderEntity!]
@@ -570,6 +575,12 @@ type Mutation {
 	updateHall(hall: UpdateHallInput!): HallEntity!
 	deleteHall(hallId: String!): String!
 	updateMe(user: UpdateMeInput!): UserEntity!
+	verifyCode(code: VerifyCodeInput!): AccessToken!
+	signIn(body: SignInInput!): AccessToken!
+	signUp(body: SignUpInput!): AccessToken!
+	forgotPassword(body: ForgotPasswordInput!): String!
+	resetPassword(body: ResetPasswordInput!): AccessToken!
+	telegram(telegramUser: TelegramUserInput!): AccessToken!
 	deleteMe: String!
 	createUser(user: CreateUserInput!): UserEntity!
 	updateUser(user: UpdateUserInput!): UserEntity!
@@ -723,6 +734,43 @@ input UpdateMeInput {
 	name: String
 	email: String
 	tel: String
+}
+
+input VerifyCodeInput {
+	verificationCode: Int!
+}
+
+input SignInInput {
+	tel: String!
+	email: String!
+	password: String!
+}
+
+input SignUpInput {
+	tel: String!
+	email: String!
+	password: String!
+	role: UserRoleEnum!
+}
+
+input ForgotPasswordInput {
+	tel: String!
+	email: String!
+}
+
+input ResetPasswordInput {
+	password: String!
+}
+
+input TelegramUserInput {
+	id: String!
+	is_bot: Boolean!
+	first_name: String!
+	username: String
+	last_name: String
+	is_premium: Boolean
+	language_code: String
+	added_to_attachment_menu: Boolean
 }
 
 input CreateUserInput {

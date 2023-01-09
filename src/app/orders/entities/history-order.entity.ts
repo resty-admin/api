@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { GraphQLJSONObject } from "graphql-type-json";
 import { Column, Entity } from "typeorm";
 
 import { BaseEntity } from "../../shared";
@@ -19,8 +20,8 @@ export class HistoryOrderEntity extends BaseEntity {
 		default: () => `('${JSON.stringify({})}')`,
 		nullable: true
 	})
-	@Field(() => [String], { nullable: true })
-	table?: string;
+	@Field(() => GraphQLJSONObject, { nullable: true })
+	table?: object;
 
 	@Column({
 		type: "jsonb",
@@ -28,7 +29,7 @@ export class HistoryOrderEntity extends BaseEntity {
 		default: () => "'[]'",
 		nullable: true
 	})
-	@Field(() => [String])
+	@Field(() => [GraphQLJSONObject])
 	users: IUser[];
 
 	@Column("enum", { enum: OrderTypeEnum })
@@ -43,8 +44,8 @@ export class HistoryOrderEntity extends BaseEntity {
 		type: "json",
 		default: () => `('${JSON.stringify({})}')`
 	})
-	@Field(() => String)
-	place: string;
+	@Field(() => GraphQLJSONObject)
+	place: object;
 
 	@Column({ nullable: true })
 	@Field(() => Int, { nullable: true })
@@ -56,8 +57,8 @@ export class HistoryOrderEntity extends BaseEntity {
 		default: () => "'[]'",
 		nullable: true
 	})
-	@Field(() => [String])
-	usersToOrders?: string[];
+	@Field(() => [GraphQLJSONObject])
+	usersToOrders?: object[];
 }
 
 @ObjectType()
