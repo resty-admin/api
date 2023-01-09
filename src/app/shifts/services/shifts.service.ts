@@ -48,7 +48,7 @@ export class ShiftsService {
 	async getActiveShift(id: string) {
 		return this._shiftsRepository.findOne({
 			where: {
-				user: {
+				waiter: {
 					id
 				}
 			},
