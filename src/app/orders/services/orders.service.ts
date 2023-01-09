@@ -67,6 +67,22 @@ export class OrdersService {
 		};
 	}
 
+	async getHistoryOrders({ take, skip, filtersArgs }: PaginationArgsDto) {
+		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
+
+		const [data, count] = await this._historyOrderRepository.findAndCount({
+			where: findOptions.where,
+			take,
+			skip
+		});
+
+		return {
+			data,
+			totalCount: count,
+			page: skip / take + 1
+		};
+	}
+
 	async creatOrder(order: CreateOrderInput): Promise<ActiveOrderEntity> {
 		const savedOrder = await this._ordersRepository.save({
 			...order,

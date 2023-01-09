@@ -7,7 +7,7 @@ import { RolesGuard, UserGql } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
 import { IUser } from "../../shared/interfaces";
 import { CreateOrderInput, CreateUserToOrderInput, UpdateOrderInput, UpdateUserToOrderInput } from "../dtos";
-import { ActiveOrderEntity, PaginatedActiveOrder } from "../entities";
+import { ActiveOrderEntity, PaginatedActiveOrder, PaginatedHistoryOrder } from "../entities";
 import { OrdersService } from "../services";
 
 @Resolver(() => ActiveOrderEntity)
@@ -24,6 +24,12 @@ export class OrdersResolver {
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.CLIENT]))
 	async orders(@Args() args: PaginationArgsDto) {
 		return this._ordersService.getOrders(args);
+	}
+
+	@Query(() => PaginatedHistoryOrder)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.CLIENT]))
+	async historyOrders(@Args() args: PaginationArgsDto) {
+		return this._ordersService.getHistoryOrders(args);
 	}
 
 	@Mutation(() => ActiveOrderEntity)

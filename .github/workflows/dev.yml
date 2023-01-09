@@ -37,7 +37,7 @@ jobs:
 
             doctl registry login
             docker push $(echo $REGISTRY)/$(echo $API):latest
-            doctl registry garbage-collection start --include-untagged-manifests --force $(echo $REGISTRY)
+            doctl registry garbage-collection start --include-untagged-manifests --force
 
             cd /home/resty/k8s
             kubectl apply -f cloudflared.yaml

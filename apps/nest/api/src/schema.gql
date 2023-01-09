@@ -157,6 +157,24 @@ type PaginatedActiveOrder {
 	totalCount: Int!
 }
 
+type HistoryOrderEntity {
+	id: String!
+	orderNumber: Int!
+	table: [String!]
+	users: [String!]!
+	type: OrderTypeEnum!
+	status: OrderStatusEnum!
+	place: String!
+	totalPrice: Int
+	usersToOrders: [String!]!
+}
+
+type PaginatedHistoryOrder {
+	data: [HistoryOrderEntity!]
+	page: Int!
+	totalCount: Int!
+}
+
 type TableEntity {
 	id: String!
 	name: String!
@@ -483,6 +501,7 @@ type Query {
 	paymentSystems(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedPaymentSystem!
 	order(id: String!): ActiveOrderEntity!
 	orders(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedActiveOrder!
+	historyOrders(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedHistoryOrder!
 	shift(id: String!): ActiveShiftEntity!
 	shifts(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedActiveShift!
 	activeShift: ActiveShiftEntity
