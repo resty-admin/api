@@ -164,7 +164,7 @@ type HistoryOrderEntity {
 	users: [JSONObject!]!
 	type: OrderTypeEnum!
 	status: OrderStatusEnum!
-	place: JSONObject!
+	place: PlaceEntity!
 	totalPrice: Int
 	usersToOrders: [JSONObject!]!
 }
@@ -741,14 +741,14 @@ input VerifyCodeInput {
 }
 
 input SignInInput {
-	tel: String!
-	email: String!
+	tel: String
+	email: String
 	password: String!
 }
 
 input SignUpInput {
-	tel: String!
-	email: String!
+	tel: String
+	email: String
 	password: String!
 	role: UserRoleEnum!
 }

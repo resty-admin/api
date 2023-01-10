@@ -34,7 +34,6 @@ export class AuthResolver {
 	}
 
 	@Mutation(() => AccessToken)
-	@UseGuards(GqlJwtGuard)
 	async signIn(@Args("body") body: SignInInput) {
 		return this._authService.signIn(body);
 	}

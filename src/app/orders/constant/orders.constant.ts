@@ -1,2 +1,2 @@
-export const ACTIVE_ORDERS = "active-commands";
-export const HISTORY_ORDERS = "history-commands";
+export const ACTIVE_ORDERS = "active-orders";
+export const HISTORY_ORDERS = "history-orders";

@@ -28,12 +28,12 @@ export class SignUpDto {
 
 @InputType()
 export class SignUpInput {
-	@Field(() => String)
+	@Field(() => String, { nullable: true })
 	@ValidateIf(({ email }: SignInDto) => !email)
 	@IsString()
 	tel: string;
 
-	@Field(() => String)
+	@Field(() => String, { nullable: true })
 	@ValidateIf(({ tel }: SignInDto) => !tel)
 	@IsString()
 	email: string;

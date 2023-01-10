@@ -73,7 +73,8 @@ export class OrdersService {
 		const [data, count] = await this._historyOrderRepository.findAndCount({
 			where: findOptions.where,
 			take,
-			skip
+			skip,
+			relations: ["place"]
 		});
 
 		return {
@@ -205,8 +206,9 @@ export class OrdersService {
 		});
 
 		try {
-			await this._historyOrderRepository.save(order);
-			await this._ordersRepository.delete(order.id);
+			console.log("order", order);
+			await this._historyOrderRepository.save({ ...order, place: { id: order.place.id } });
+			// await this._ordersRepository.delete(order.id);
 
 			return "ARCHIVED";
 		} catch (error) {

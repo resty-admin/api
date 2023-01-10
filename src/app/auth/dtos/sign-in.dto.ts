@@ -22,13 +22,12 @@ export class SignInDto {
 
 @InputType()
 export class SignInInput {
-	@Field(() => String)
-	@ValidateIf(({ email }: SignInDto) => !email)
-	@IsString()
+	@Field(() => String, { nullable: true })
+	@ValidateIf(({ email }: SignInInput) => !email)
 	tel: string;
 
-	@Field(() => String)
-	@ValidateIf(({ tel }: SignInDto) => !tel)
+	@Field(() => String, { nullable: true })
+	@ValidateIf(({ tel }: SignInInput) => !tel)
 	@IsString()
 	email: string;
 

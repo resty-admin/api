@@ -1,7 +1,8 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { GraphQLJSONObject } from "graphql-type-json";
-import { Column, Entity } from "typeorm";
+import { Column, Entity, ManyToOne } from "typeorm";
 
+import { PlaceEntity } from "../../places/entities";
 import { BaseEntity } from "../../shared";
 import { Pagination } from "../../shared/entities/pagination.type";
 import { OrderStatusEnum, OrderTypeEnum } from "../../shared/enums";
@@ -40,12 +41,16 @@ export class HistoryOrderEntity extends BaseEntity {
 	@Field(() => OrderStatusEnum)
 	status: OrderStatusEnum;
 
-	@Column({
-		type: "json",
-		default: () => `('${JSON.stringify({})}')`
-	})
-	@Field(() => GraphQLJSONObject)
-	place: object;
+	// @Column({
+	// 	type: "json",
+	// 	default: () => `('${JSON.stringify({})}')`
+	// })
+	// @Field(() => GraphQLJSONObject)
+	// place: object;
+
+	@Field(() => PlaceEntity)
+	@ManyToOne(() => PlaceEntity, (place) => place.orders)
+	place: PlaceEntity;
 
 	@Column({ nullable: true })
 	@Field(() => Int, { nullable: true })
