@@ -1,10 +1,10 @@
 import { UseGuards } from "@nestjs/common";
-import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
 
 import { UserGql } from "../../shared";
 import { IUser } from "../../shared/interfaces";
 import { UserEntity } from "../../users/entities";
-import { ForgotPasswordInput, ResetPasswordInput, SignInInput, SignUpInput, VerifyCodeInput } from "../dtos";
+import { ForgotPasswordInput, ResetPasswordInput, SignInInput, SignUpInput } from "../dtos";
 import { TelegramUserInput } from "../dtos/telegram-user.dto";
 import { AccessToken } from "../dtos/token.dto";
 import { UpdateMeInput } from "../dtos/update-me.dto";
@@ -29,7 +29,7 @@ export class AuthResolver {
 
 	@Mutation(() => AccessToken)
 	@UseGuards(GqlJwtGuard)
-	async verifyCode(@UserGql() user: IUser, @Args("code") code: VerifyCodeInput) {
+	async verifyCode(@UserGql() user: IUser, @Args("code", { type: () => Int }) code: number) {
 		return this._authService.verifyCode(user, code);
 	}
 

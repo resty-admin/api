@@ -61,6 +61,7 @@
 		"cloudipsp-node-js-sdk": "^1.0.5",
 		"graphql": "^16.6.0",
 		"graphql-type-json": "^0.3.2",
+		"graphql-type-long": "^0.1.1",
 		"lodash": "^4.17.21",
 		"multer": "2.0.0-rc.4",
 		"nestjs-twilio": "^3.2.0",

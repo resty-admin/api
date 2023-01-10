@@ -554,9 +554,8 @@ type Mutation {
 	createOrder(order: CreateOrderInput!): ActiveOrderEntity!
 	updateOrder(order: UpdateOrderInput!): ActiveOrderEntity!
 	deleteOrder(orderId: String!): String!
-	addProductToOrder(orderId: String!, product: CreateUserToOrderInput!): ActiveOrderEntity!
-	removeUserProductInOrder(userToOrderId: String!): String!
-	updateUserProductInOrder(userToOrder: UpdateUserToOrderInput!): ActiveOrderEntity!
+	addProductToOrder(productToOrder: AddProductToOrderInput!): ActiveOrderEntity!
+	removeProductFromOrder(productFromOrder: RemoveProductFromOrderInput!): String!
 	addUserToOrder(code: Int!): ActiveOrderEntity!
 	addTableToOrder(orderId: String!, tableId: String!): ActiveOrderEntity!
 	removeTableFromOrder(orderId: String!): ActiveOrderEntity!
@@ -575,7 +574,7 @@ type Mutation {
 	updateHall(hall: UpdateHallInput!): HallEntity!
 	deleteHall(hallId: String!): String!
 	updateMe(user: UpdateMeInput!): UserEntity!
-	verifyCode(code: VerifyCodeInput!): AccessToken!
+	verifyCode(code: Int!): AccessToken!
 	signIn(body: SignInInput!): AccessToken!
 	signUp(body: SignUpInput!): AccessToken!
 	forgotPassword(body: ForgotPasswordInput!): String!
@@ -662,19 +661,16 @@ input UpdateOrderInput {
 	type: OrderTypeEnum
 }
 
-input CreateUserToOrderInput {
-	user: String!
-	product: String!
-	attributes: [String!]
-	count: Int!
+input AddProductToOrderInput {
+	orderId: String!
+	productId: String!
+	attrs: [String!]
 }
 
-input UpdateUserToOrderInput {
-	id: String!
-	user: String
-	product: String
-	attributes: [String!]
-	count: Int
+input RemoveProductFromOrderInput {
+	orderId: String!
+	productId: String!
+	attrs: [String!]
 }
 
 input CreateShiftInput {
@@ -736,10 +732,6 @@ input UpdateMeInput {
 	tel: String
 }
 
-input VerifyCodeInput {
-	verificationCode: Int!
-}
-
 input SignInInput {
 	tel: String
 	email: String
@@ -763,8 +755,8 @@ input ResetPasswordInput {
 }
 
 input TelegramUserInput {
-	id: String!
-	is_bot: Boolean!
+	id: ID!
+	is_bot: Boolean
 	first_name: String!
 	username: String
 	last_name: String

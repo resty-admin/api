@@ -4,11 +4,12 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import { ErrorsEnum } from "../../shared/enums";
+import type { IUser } from "../../shared/interfaces";
 import { ActiveShiftEntity } from "../../shifts/entities";
 import type { UpdateOrderDto } from "../dtos";
 import type { CreateOrderInput, UpdateOrderInput } from "../dtos";
-import type { CreateUserToOrderInput } from "../dtos";
-import type { UpdateUserToOrderInput } from "../dtos";
+import type { RemoveProductFromOrderInput } from "../dtos";
+import type { AddProductToOrderInput } from "../dtos/add-product-to-order.dto";
 import { ActiveOrderEntity, HistoryOrderEntity, UserToOrderEntity } from "../entities";
 import { OrdersGateway } from "../gateways";
 import { ORDER_CREATED } from "../gateways/events/order.event";
@@ -85,6 +86,7 @@ export class OrdersService {
 	}
 
 	async creatOrder(order: CreateOrderInput): Promise<ActiveOrderEntity> {
+		console.log("gere?");
 		const savedOrder = await this._ordersRepository.save({
 			...order,
 			code: Math.floor(Math.random() * 9999)
@@ -140,45 +142,78 @@ export class OrdersService {
 		return "DELETED";
 	}
 
-	async addProductToOrder(id: string, product: CreateUserToOrderInput): Promise<ActiveOrderEntity> {
-		const currOrder = await this._ordersRepository.findOne({ where: { id }, relations: this.findRelations });
-
-		const usersToOrders = [...(currOrder.usersToOrders?.length ? currOrder.usersToOrders : []), product];
-
-		await this._ordersRepository.save({
-			...currOrder,
-			usersToOrders
+	async addProductToOrder(productToOrder: AddProductToOrderInput, user: IUser) {
+		const order: ActiveOrderEntity = await this._ordersRepository.findOne({
+			where: {
+				id: productToOrder.orderId
+			},
+			relations: ["usersToOrders", "usersToOrders.product", "usersToOrders.attributes", "usersToOrders.user"]
 		});
 
-		const updatedOrder = await this._ordersRepository.findOne({ where: { id }, relations: this.findRelations });
+		const currProduct: UserToOrderEntity = order.usersToOrders.find((order) => {
+			const attrsForUpdateExist = productToOrder.attrs?.length > 0;
+			const attrsInCurrentOrderExist = order.attributes?.length > 0;
+			return (
+				order.user.id === user.id &&
+				order.product.id === productToOrder.productId &&
+				(attrsForUpdateExist && attrsInCurrentOrderExist
+					? order.attributes.filter((el) => productToOrder.attrs.includes(el.id)).length === productToOrder.attrs.length
+					: !attrsForUpdateExist)
+			);
+		});
 
-		return this._ordersRepository.save({
-			...updatedOrder,
-			totalPrice: this.calculateTotalPrice([...updatedOrder.usersToOrders])
+		if (currProduct) {
+			return this._userToOrderRepository.save({ ...currProduct, count: currProduct.count + 1 });
+		}
+
+		return this._userToOrderRepository.save({
+			order: {
+				id: productToOrder.orderId
+			},
+			product: {
+				id: productToOrder.productId
+			},
+			user: {
+				id: user.id
+			},
+			count: 1,
+			...(productToOrder.attrs?.length > 0 ? { attributes: productToOrder.attrs.map((id) => ({ id })) } : {})
 		});
 	}
 
-	async updateUserProductInOrder(product: UpdateUserToOrderInput) {
-		const currProduct = await this._userToOrderRepository.findOne({ where: { id: product.id }, relations: ["order"] });
-
-		const updatedProduct = currProduct.order.usersToOrders.find((el) => el.id === product.id);
-		const updatedProducts = [...currProduct.order.usersToOrders, { id: updatedProduct, ...product }];
-
-		await this._userToOrderRepository.save({ ...currProduct, product });
-		await this._ordersRepository.save({ ...currProduct.order, totalPrice: this.calculateTotalPrice(updatedProducts) });
-	}
-
-	async removeUserProductInOrder(userToOrderProductId: string) {
-		const order = await this._userToOrderRepository.findOne({
-			where: { id: userToOrderProductId },
-			relations: "order"
+	async removeProductFromOrder(productFromOrder: RemoveProductFromOrderInput, user: IUser) {
+		const order: ActiveOrderEntity = await this._ordersRepository.findOne({
+			where: {
+				id: productFromOrder.orderId,
+				usersToOrders: {
+					user: {
+						id: user.id
+					}
+				}
+			},
+			relations: ["usersToOrders", "usersToOrders.product", "usersToOrders.attributes", "usersToOrders.user"]
 		});
-		await this._userToOrderRepository.delete(userToOrderProductId);
 
-		const updatedProducts = order.usersToOrders.filter((el) => el !== userToOrderProductId);
+		const deleteProduct = order.usersToOrders.find(
+			(el) =>
+				el.user.id === user.id &&
+				el.product.id === productFromOrder.productId &&
+				(productFromOrder.attrs?.length > 0
+					? el.attributes?.filter((el) => productFromOrder.attrs.includes(el.id)).length ===
+					  productFromOrder.attrs.length
+					: el.attributes?.length === 0)
+		);
 
-		await this._ordersRepository.save({ ...order, totalPrice: this.calculateTotalPrice(updatedProducts) });
-		return "DELETED";
+		if (deleteProduct.count === 1) {
+			await this._userToOrderRepository.delete(deleteProduct.id);
+			return "PRODUCT DELETED";
+		}
+		await this._userToOrderRepository.save({
+			...deleteProduct,
+			count: deleteProduct.count - 1
+		});
+
+		return "PRODUCT COUNT DECREASED";
 	}
 
 	async addUserToOrder(code: number, userId: string) {

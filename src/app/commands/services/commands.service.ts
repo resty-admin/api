@@ -38,7 +38,6 @@ export class CommandsService {
 
 		const table = shifts[0].tables.find((el) => el.id === tableId);
 
-		console.log("shifts", shifts);
 		for (const shift of shifts) {
 			waiters.push(shift.waiter);
 		}

@@ -1,17 +1,17 @@
-import { Field, InputType } from "@nestjs/graphql";
-import { IsBoolean } from "class-validator";
+import { Field, ID, InputType } from "@nestjs/graphql";
 
-import { IsOptional, IsString } from "../../shared";
+// import GraphQLLong from 'graphql-type-long';
+import { IsNotEmpty, IsOptional, IsString } from "../../shared";
 import type { ITelegramUser } from "../../shared/interfaces";
 
 @InputType()
 export class TelegramUserInput implements ITelegramUser {
-	@Field(() => String)
-	@IsString()
+	@Field(() => ID)
+	@IsNotEmpty()
 	id: number;
 
-	@Field(() => Boolean)
-	@IsBoolean()
+	@Field(() => Boolean, { nullable: true })
+	@IsOptional()
 	is_bot: boolean;
 
 	@Field(() => String)

@@ -12,8 +12,7 @@ import type {
 	ISignIn,
 	ISignUp,
 	ITelegramUser,
-	IUser,
-	IVerifyCode
+	IUser
 } from "src/app/shared/interfaces";
 import { JwtService } from "src/app/shared/jwt";
 import { MailsService } from "src/app/shared/mails";
@@ -56,7 +55,6 @@ export class AuthService {
 	}
 
 	async deleteMe(id) {
-		console.log("id", id);
 		const user = await this._usersRepository.findOne({ where: { id }, relations: ["orders"] });
 
 		if (user.orders.length > 0) {
@@ -71,8 +69,8 @@ export class AuthService {
 		return "DELETED";
 	}
 
-	async verifyCode(user: IUser, body: IVerifyCode) {
-		const isVerified = Number(user?.verificationCode) === Number(body?.verificationCode);
+	async verifyCode(user: IUser, code: number) {
+		const isVerified = Number(user?.verificationCode) === Number(code);
 
 		if (!isVerified) {
 			throw new HttpException({ message: ErrorsEnum.InvalidVerificationCode }, HttpStatus.UNAUTHORIZED);
