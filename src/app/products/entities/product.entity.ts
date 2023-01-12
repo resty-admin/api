@@ -31,7 +31,7 @@ export class ProductEntity extends BaseEntity {
 	// }
 
 	// @ApiProperty()
-	@Field(() => CategoryEntity, { nullable: true })
+	@Field(() => CategoryEntity)
 	@ManyToOne(() => CategoryEntity, (category) => category.products, {
 		cascade: true,
 		onDelete: "CASCADE"
