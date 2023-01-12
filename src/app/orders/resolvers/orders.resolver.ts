@@ -63,7 +63,7 @@ export class OrdersResolver {
 		return this._ordersService.addProductToOrder(productToOrder, user);
 	}
 
-	@Mutation(() => String)
+	@Mutation(() => ActiveOrderEntity)
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.CLIENT]))
 	async removeProductFromOrder(
 		@Args("productFromOrder") productFromOrder: RemoveProductFromOrderInput,

@@ -43,7 +43,7 @@ type PaginatedCategory {
 type ProductEntity {
 	id: String!
 	name: String!
-	category: CategoryEntity
+	category: CategoryEntity!
 	description: String
 	price: Int!
 	file: FileEntity
@@ -369,7 +369,7 @@ input CategoryEntityInput {
 
 input ProductEntityInput {
 	name: String!
-	category: CategoryEntityInput
+	category: CategoryEntityInput!
 	description: String
 	price: Int!
 	file: FileEntityInput
@@ -555,7 +555,7 @@ type Mutation {
 	updateOrder(order: UpdateOrderInput!): ActiveOrderEntity!
 	deleteOrder(orderId: String!): String!
 	addProductToOrder(productToOrder: AddProductToOrderInput!): ActiveOrderEntity!
-	removeProductFromOrder(productFromOrder: RemoveProductFromOrderInput!): String!
+	removeProductFromOrder(productFromOrder: RemoveProductFromOrderInput!): ActiveOrderEntity!
 	addUserToOrder(code: Int!): ActiveOrderEntity!
 	addTableToOrder(orderId: String!, tableId: String!): ActiveOrderEntity!
 	removeTableFromOrder(orderId: String!): ActiveOrderEntity!

@@ -211,16 +211,14 @@ export class OrdersService {
 
 		if (deleteProduct.count === 1) {
 			await this._userToOrderRepository.delete(deleteProduct.id);
-			await this.updateOrderTotalPrice(order.id);
-			return "PRODUCT DELETED";
+			return this.updateOrderTotalPrice(order.id);
 		}
 		await this._userToOrderRepository.save({
 			...deleteProduct,
 			count: deleteProduct.count - 1
 		});
 
-		await this.updateOrderTotalPrice(order.id);
-		return "PRODUCT COUNT DECREASED";
+		return this.updateOrderTotalPrice(order.id);
 	}
 
 	async addUserToOrder(code: number, userId: string) {
