@@ -33,11 +33,10 @@ export class ProductEntity extends BaseEntity {
 	// @ApiProperty()
 	@Field(() => CategoryEntity, { nullable: true })
 	@ManyToOne(() => CategoryEntity, (category) => category.products, {
-		nullable: true,
 		cascade: true,
 		onDelete: "CASCADE"
 	})
-	category?: CategoryEntity;
+	category: CategoryEntity;
 
 	// @ApiProperty()
 	@Field(() => String, { nullable: true })

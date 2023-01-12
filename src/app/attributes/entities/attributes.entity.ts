@@ -17,14 +17,14 @@ export class AttributesEntity extends BaseEntity {
 	name: string;
 
 	@ApiProperty()
-	@Field(() => [AttributesGroupEntity], { nullable: true })
-	@ManyToMany(() => AttributesGroupEntity, (attrGroup) => attrGroup.attributes, { nullable: true, onDelete: "CASCADE" })
-	attributesGroup?: AttributesGroupEntity;
+	@Field(() => [AttributesGroupEntity])
+	@ManyToMany(() => AttributesGroupEntity, (attrGroup) => attrGroup.attributes, { onDelete: "CASCADE" })
+	attributesGroup: AttributesGroupEntity[];
 
 	@ApiProperty()
-	@Field(() => Int, { nullable: true })
+	@Field(() => Int)
 	@Column({ nullable: true })
-	price?: number;
+	price: number;
 }
 
 @ObjectType()

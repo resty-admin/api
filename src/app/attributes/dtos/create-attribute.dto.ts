@@ -1,4 +1,5 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
+import { Transform } from "class-transformer";
 
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from "../../shared";
 
@@ -23,4 +24,8 @@ export class CreateAttributeInput {
 	@Field(() => Int)
 	@IsNumber()
 	price: number;
+
+	@Field(() => [String])
+	@Transform(({ value }) => value.map((id) => ({ id })))
+	attributesGroup: string[];
 }
