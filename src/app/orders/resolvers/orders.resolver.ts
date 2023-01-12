@@ -35,8 +35,8 @@ export class OrdersResolver {
 
 	@Mutation(() => ActiveOrderEntity)
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.CLIENT]))
-	async createOrder(@Args("order") order: CreateOrderInput) {
-		return this._ordersService.creatOrder(order);
+	async createOrder(@Args("order") order: CreateOrderInput, @UserGql() user: IUser) {
+		return this._ordersService.creatOrder(order, user);
 	}
 
 	@Mutation(() => ActiveOrderEntity)

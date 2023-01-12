@@ -86,10 +86,10 @@ export class OrdersService {
 		};
 	}
 
-	async creatOrder(order: CreateOrderInput): Promise<ActiveOrderEntity> {
-		console.log("gere?");
+	async creatOrder(order: CreateOrderInput, user: IUser): Promise<ActiveOrderEntity> {
 		const savedOrder = await this._ordersRepository.save({
 			...order,
+			users: [{ id: user.id }],
 			code: Math.floor(Math.random() * 9999)
 		});
 

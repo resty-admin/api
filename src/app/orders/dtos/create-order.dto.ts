@@ -38,9 +38,9 @@ export class CreateOrderInput {
 	// @Field(() => Int)
 	// totalPrice: number;
 
-	@Field(() => [String], { nullable: true })
-	@Transform(({ value }) => value.map((id) => ({ id })))
-	users?: string[];
+	// @Field(() => [String], { nullable: true })
+	// @Transform(({ value }) => value.map((id) => ({ id })))
+	// users?: string[];
 	// @Field(() => [CreateUserToOrderInput], { nullable: true })
 	// @Transform(({ value }) =>
 	// 	value.map((el) => ({

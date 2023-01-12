@@ -652,7 +652,6 @@ input CreateOrderInput {
 	type: OrderTypeEnum!
 	place: String!
 	table: String
-	users: [String!]
 }
 
 input UpdateOrderInput {
