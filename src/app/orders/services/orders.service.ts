@@ -1,5 +1,6 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { GraphQLError } from "graphql/error";
 
 import { getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
@@ -231,7 +232,11 @@ export class OrdersService {
 		});
 
 		if (!currOrder) {
-			throw new HttpException({ message: ErrorsEnum.OrderByCodeNotExist }, HttpStatus.NOT_FOUND);
+			throw new GraphQLError(ErrorsEnum.OrderByCodeNotExist.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
 		}
 
 		return this._ordersRepository.save({

@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { GraphQLError } from "graphql/error";
 import { Random } from "random-js";
@@ -44,7 +44,11 @@ export class AuthService {
 		const me = await this._usersService.getUser({ id: user.id });
 
 		if (!me) {
-			throw new HttpException({ message: ErrorsEnum.UserNotExist }, HttpStatus.UNAUTHORIZED);
+			throw new GraphQLError(ErrorsEnum.UserNotExist.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
 		}
 
 		return this._jwtService.getAccessToken(me);
@@ -73,7 +77,11 @@ export class AuthService {
 		const isVerified = Number(user?.verificationCode) === Number(code);
 
 		if (!isVerified) {
-			throw new HttpException({ message: ErrorsEnum.InvalidVerificationCode }, HttpStatus.UNAUTHORIZED);
+			throw new GraphQLError(ErrorsEnum.InvalidVerificationCode.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
 		}
 
 		const verifiedUser = await this._usersService.updateUser(user.id, {
@@ -92,13 +100,21 @@ export class AuthService {
 		});
 
 		if (existedUser) {
-			throw new HttpException({ message: ErrorsEnum.UserAlreadyExist }, HttpStatus.UNAUTHORIZED);
+			throw new GraphQLError(ErrorsEnum.UserAlreadyExist.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
 		}
 
 		const isPasswordEncrypted = this._cryptoService.check(body.password);
 
 		if (!isPasswordEncrypted) {
-			throw new HttpException({ message: ErrorsEnum.InvalidEncryption }, HttpStatus.UNAUTHORIZED);
+			throw new GraphQLError(ErrorsEnum.InvalidEncryption.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
 		}
 
 		const verificationCode = this._random.integer(1000, 9999);
@@ -123,25 +139,41 @@ export class AuthService {
 		});
 
 		if (!existedUser) {
-			throw new HttpException({ message: ErrorsEnum.UserNotExist }, HttpStatus.UNAUTHORIZED);
+			throw new GraphQLError(ErrorsEnum.UserNotExist.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
 		}
 
 		const isPasswordEncrypted = this._cryptoService.check(body.password);
 
 		if (!isPasswordEncrypted) {
-			throw new HttpException({ message: ErrorsEnum.InvalidEncryption }, HttpStatus.UNAUTHORIZED);
+			throw new GraphQLError(ErrorsEnum.InvalidEncryption.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
 		}
 
 		const isPasswordCompared = this._cryptoService.compare(body.password, existedUser.password);
 
 		if (!isPasswordCompared) {
-			throw new HttpException({ message: ErrorsEnum.InvalidPassword }, HttpStatus.UNAUTHORIZED);
+			throw new GraphQLError(ErrorsEnum.InvalidPassword.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
 		}
 
 		const isUserVerified = existedUser.status === UserStatusEnum.NOT_VERIFIED;
 
 		if (isUserVerified) {
-			throw new HttpException({ message: ErrorsEnum.UserNotVerified }, HttpStatus.UNAUTHORIZED);
+			throw new GraphQLError(ErrorsEnum.UserNotVerified.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
 		}
 
 		return this._jwtService.getAccessToken(existedUser);
@@ -154,7 +186,11 @@ export class AuthService {
 		});
 
 		if (!existedUser) {
-			throw new HttpException({ message: ErrorsEnum.UserNotExist }, HttpStatus.UNAUTHORIZED);
+			throw new GraphQLError(ErrorsEnum.UserNotExist.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
 		}
 
 		const token = this._jwtService.getAccessToken(existedUser);
@@ -173,7 +209,11 @@ export class AuthService {
 		const isPasswordEncrypted = this._cryptoService.check(body.password);
 
 		if (!isPasswordEncrypted) {
-			throw new HttpException({ message: ErrorsEnum.InvalidEncryption }, HttpStatus.UNAUTHORIZED);
+			throw new GraphQLError(ErrorsEnum.InvalidEncryption.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
 		}
 
 		const updatedUser = await this._usersService.updateUser(user.id, body);
