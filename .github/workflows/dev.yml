@@ -38,9 +38,9 @@ jobs:
             doctl registry login
             docker push $(echo $REGISTRY)/$(echo $API):latest
             if doctl registry garbage-collection get-active; then
-              doctl registry garbage-collection start --include-untagged-manifests --force
-            else 
               echo "already running"
+            else
+              doctl registry garbage-collection start --include-untagged-manifests --force
             fi
             cd /home/resty/k8s
             kubectl apply -f cloudflared.yaml
