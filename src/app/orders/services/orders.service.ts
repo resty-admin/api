@@ -158,15 +158,17 @@ export class OrdersService {
 				order.product.id === productToOrder.productId &&
 				(attrsForUpdateExist && attrsInCurrentOrderExist
 					? order.attributes.filter((el) => productToOrder.attrs.includes(el.id)).length === productToOrder.attrs.length
-					: !attrsForUpdateExist)
+					: attrsForUpdateExist)
 			);
 		});
 
 		if (currProduct) {
-			return this._userToOrderRepository.save({ ...currProduct, count: currProduct.count + 1 });
+			const result = await this._userToOrderRepository.save({ ...currProduct, count: currProduct.count + 1 });
+			await this.updateOrderTotalPrice(order.id);
+			return result;
 		}
 
-		return this._userToOrderRepository.save({
+		const result = await this._userToOrderRepository.save({
 			order: {
 				id: productToOrder.orderId
 			},
@@ -179,6 +181,8 @@ export class OrdersService {
 			count: 1,
 			...(productToOrder.attrs?.length > 0 ? { attributes: productToOrder.attrs.map((id) => ({ id })) } : {})
 		});
+		await this.updateOrderTotalPrice(order.id);
+		return result;
 	}
 
 	async removeProductFromOrder(productFromOrder: RemoveProductFromOrderInput, user: IUser) {
@@ -206,6 +210,7 @@ export class OrdersService {
 
 		if (deleteProduct.count === 1) {
 			await this._userToOrderRepository.delete(deleteProduct.id);
+			await this.updateOrderTotalPrice(order.id);
 			return "PRODUCT DELETED";
 		}
 		await this._userToOrderRepository.save({
@@ -213,6 +218,7 @@ export class OrdersService {
 			count: deleteProduct.count - 1
 		});
 
+		await this.updateOrderTotalPrice(order.id);
 		return "PRODUCT COUNT DECREASED";
 	}
 
@@ -258,6 +264,20 @@ export class OrdersService {
 
 	async removeTableFrom(orderId: string) {
 		return this._ordersRepository.save({ id: orderId, table: null });
+	}
+
+	async updateOrderTotalPrice(id) {
+		const order: ActiveOrderEntity = await this._ordersRepository.findOne({
+			where: {
+				id
+			},
+			relations: ["usersToOrders", "usersToOrders.product", "usersToOrders.attributes", "usersToOrders.user"]
+		});
+
+		return this._ordersRepository.save({
+			...order,
+			totalPrice: this.calculateTotalPrice(order.usersToOrders)
+		});
 	}
 
 	calculateTotalPrice(usersToOrders) {
