@@ -1,4 +1,5 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
+import { Transform } from "class-transformer";
 import { IsUUID } from "class-validator";
 
 import { IsNotEmpty, IsOptional, IsString } from "../../shared";
@@ -24,4 +25,8 @@ export class UpdateAttributeInput {
 	@Field(() => Int, { nullable: true })
 	@IsOptional()
 	price?: number;
+
+	@Field(() => [String])
+	@Transform(({ value }) => value.map((id) => ({ id })))
+	attributesGroup: string[];
 }

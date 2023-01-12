@@ -82,8 +82,8 @@ type PaginatedAttributeGroups {
 type AttributesEntity {
 	id: String!
 	name: String!
-	attributesGroup: [AttributesGroupEntity!]
-	price: Int
+	attributesGroup: [AttributesGroupEntity!]!
+	price: Int!
 }
 
 type PaginatedAttributes {
@@ -388,8 +388,8 @@ input AttributesGroupEntityInput {
 
 input AttributesEntityInput {
 	name: String!
-	attributesGroup: [AttributesGroupEntityInput!]
-	price: Int
+	attributesGroup: [AttributesGroupEntityInput!]!
+	price: Int!
 }
 
 input CommandEntityInput {
@@ -603,12 +603,14 @@ type Mutation {
 input CreateAttributeInput {
 	name: String!
 	price: Int!
+	attributesGroup: [String!]!
 }
 
 input UpdateAttributeInput {
 	id: String!
 	name: String!
 	price: Int
+	attributesGroup: [String!]!
 }
 
 input CreateAttributeGroupInput {
