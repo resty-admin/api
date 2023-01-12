@@ -26,7 +26,8 @@ export class UpdateAttributeInput {
 	@IsOptional()
 	price?: number;
 
-	@Field(() => [String])
+	@Field(() => [String], { nullable: true })
+	@IsOptional()
 	@Transform(({ value }) => value.map((id) => ({ id })))
-	attributesGroup: string[];
+	attributesGroup?: string[];
 }

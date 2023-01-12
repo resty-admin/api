@@ -610,7 +610,7 @@ input UpdateAttributeInput {
 	id: String!
 	name: String!
 	price: Int
-	attributesGroup: [String!]!
+	attributesGroup: [String!]
 }
 
 input CreateAttributeGroupInput {
