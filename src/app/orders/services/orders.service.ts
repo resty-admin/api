@@ -1,5 +1,6 @@
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import * as console from "console";
 import { GraphQLError } from "graphql/error";
 
 import { getFindOptionsByFilters } from "../../shared/crud";
@@ -13,7 +14,7 @@ import type { RemoveProductFromOrderInput } from "../dtos";
 import type { AddProductToOrderInput } from "../dtos/add-product-to-order.dto";
 import { ActiveOrderEntity, HistoryOrderEntity, UserToOrderEntity } from "../entities";
 import { OrdersGateway } from "../gateways";
-import { ORDER_CREATED } from "../gateways/events/order.event";
+import { OrdersNotificationsService } from "./orders.notifications.service";
 
 @Injectable()
 export class OrdersService {
@@ -44,6 +45,8 @@ export class OrdersService {
 		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository,
 		@InjectRepository(UserToOrderEntity) private readonly _userToOrderRepository,
 		@InjectRepository(HistoryOrderEntity) private readonly _historyOrderRepository,
+		@Inject(forwardRef(() => OrdersNotificationsService))
+		private readonly _ordersNotificationService: OrdersNotificationsService,
 		private readonly _orderGateway: OrdersGateway
 	) {}
 
@@ -95,35 +98,7 @@ export class OrdersService {
 			code: Math.floor(Math.random() * 9999)
 		});
 
-		const isWaitersPresent = order.table;
-
-		const waiters = [];
-
-		if (isWaitersPresent) {
-			const activeShifts: ActiveShiftEntity[] = await this._shiftsRepository.find({
-				where: {
-					tables: {
-						id: (order.table as any).id
-					}
-				},
-				relations: ["tables", "waiter"]
-			});
-
-			for (const el of activeShifts) {
-				waiters.push(el.waiter);
-			}
-		} else {
-			const order: ActiveOrderEntity = await this._ordersRepository.findOne({
-				where: { id: savedOrder.id },
-				relations: ["place", "place.employees"]
-			});
-
-			for (const el of order.place.employees) {
-				waiters.push(el);
-			}
-		}
-
-		this._orderGateway.emitEvent(ORDER_CREATED, { savedOrder, waiters });
+		await this._ordersNotificationService.createOrderEvent(savedOrder.id);
 
 		return this._ordersRepository.findOne({
 			where: { id: savedOrder.id },
@@ -153,25 +128,27 @@ export class OrdersService {
 			relations: ["usersToOrders", "usersToOrders.product", "usersToOrders.attributes", "usersToOrders.user"]
 		});
 
-		const currProduct: UserToOrderEntity = order.usersToOrders.find((order) => {
-			const attrsForUpdateExist = productToOrder.attrs?.length > 0;
-			const attrsInCurrentOrderExist = order.attributes?.length > 0;
-			return (
-				order.user.id === user.id &&
-				order.product.id === productToOrder.productId &&
-				(attrsForUpdateExist && attrsInCurrentOrderExist
-					? order.attributes.filter((el) => productToOrder.attrs.includes(el.id)).length === productToOrder.attrs.length
-					: attrsForUpdateExist)
+		const currProduct = order.usersToOrders.find((userToOrder) => {
+			const isUserSame = userToOrder.user.id === user.id;
+			const isProductSame = userToOrder.product.id === productToOrder.productId;
+			const isAttributesLengthSame = (userToOrder.attributes || []).length === (productToOrder.attrs || []).length;
+			const isAttributesSame = (userToOrder.attributes || []).every((attribute) =>
+				(productToOrder.attrs || []).includes(attribute.id)
 			);
+
+			return isUserSame && isProductSame && isAttributesLengthSame && isAttributesSame;
 		});
 
 		if (currProduct) {
 			const result = await this._userToOrderRepository.save({ ...currProduct, count: currProduct.count + 1 });
+			await this._ordersNotificationService.addProductToOrderEvent(order.id, currProduct.id);
 			await this.updateOrderTotalPrice(order.id);
 			return result;
 		}
 
-		const result = await this._userToOrderRepository.save({
+		await this._ordersNotificationService.addProductToOrderEvent(order.id, productToOrder.productId);
+		await this.updateOrderTotalPrice(order.id);
+		return this._userToOrderRepository.save({
 			order: {
 				id: productToOrder.orderId
 			},
@@ -184,8 +161,6 @@ export class OrdersService {
 			count: 1,
 			...(productToOrder.attrs?.length > 0 ? { attributes: productToOrder.attrs.map((id) => ({ id })) } : {})
 		});
-		await this.updateOrderTotalPrice(order.id);
-		return result;
 	}
 
 	async removeProductFromOrder(productFromOrder: RemoveProductFromOrderInput, user: IUser) {
@@ -201,29 +176,43 @@ export class OrdersService {
 			relations: ["usersToOrders", "usersToOrders.product", "usersToOrders.attributes", "usersToOrders.user"]
 		});
 
-		const deleteProduct = order.usersToOrders.find(
-			(el) =>
-				el.user.id === user.id &&
-				el.product.id === productFromOrder.productId &&
-				(productFromOrder.attrs?.length > 0
-					? el.attributes?.filter((el) => productFromOrder.attrs.includes(el.id)).length ===
-					  productFromOrder.attrs.length
-					: el.attributes?.length === 0)
-		);
+		// const deleteProduct = order.usersToOrders.find(
+		// 	(el) =>
+		// 		el.user.id === user.id &&
+		// 		el.product.id === productFromOrder.productId &&
+		// 		(productFromOrder.attrs?.length > 0
+		// 			? el.attributes?.filter((el) => productFromOrder.attrs.includes(el.id)).length ===
+		// 			productFromOrder.attrs.length
+		// 			: el.attributes?.length === 0)
+		// );
+
+		const deleteProduct = order.usersToOrders.find((userToOrder) => {
+			const isUserSame = userToOrder.user.id === user.id;
+			const isProductSame = userToOrder.product.id === productFromOrder.productId;
+			const isAttributesLengthSame = (userToOrder.attributes || []).length === (productFromOrder.attrs || []).length;
+			const isAttributesSame = (userToOrder.attributes || []).every((attribute) =>
+				(productFromOrder.attrs || []).includes(attribute.id)
+			);
+
+			return isUserSame && isProductSame && isAttributesLengthSame && isAttributesSame;
+		});
 
 		if (deleteProduct.count === 1) {
 			await this._userToOrderRepository.delete(deleteProduct.id);
+			await this._ordersNotificationService.removeProductFromOrderEvent(order.id, deleteProduct.id);
+
 			return this.updateOrderTotalPrice(order.id);
 		}
 		await this._userToOrderRepository.save({
 			...deleteProduct,
 			count: deleteProduct.count - 1
 		});
+		await this._ordersNotificationService.removeProductFromOrderEvent(order.id, deleteProduct.id);
 
 		return this.updateOrderTotalPrice(order.id);
 	}
 
-	async addUserToOrder(code: number, userId: string) {
+	async addUserToOrder(code: number, user: IUser) {
 		const currOrder = await this._ordersRepository.findOne({
 			where: {
 				code
@@ -239,9 +228,11 @@ export class OrdersService {
 			});
 		}
 
+		await this._ordersNotificationService.addUserToOrderEvent(currOrder.id, user);
+
 		return this._ordersRepository.save({
 			...currOrder,
-			users: [...currOrder.users, { id: userId }]
+			users: [...currOrder.users, { id: user.id }]
 		});
 	}
 
@@ -252,9 +243,10 @@ export class OrdersService {
 		});
 
 		try {
-			console.log("order", order);
 			await this._historyOrderRepository.save({ ...order, place: { id: order.place.id } });
-			// await this._ordersRepository.delete(order.id);
+			await this._ordersRepository.delete(order.id);
+
+			await this._ordersNotificationService.closeOrderEvent(orderId);
 
 			return "ARCHIVED";
 		} catch (error) {
@@ -264,10 +256,12 @@ export class OrdersService {
 	}
 
 	async addTableToOrder(orderId: string, tableId: string) {
+		await this._ordersNotificationService.addTableToOrderEvent(orderId, tableId);
 		return this._ordersRepository.save({ id: orderId, table: { id: tableId } });
 	}
 
 	async removeTableFrom(orderId: string) {
+		await this._ordersNotificationService.removeTableFromOrderEvent(orderId);
 		return this._ordersRepository.save({ id: orderId, table: null });
 	}
 
