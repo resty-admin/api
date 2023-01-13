@@ -23,6 +23,7 @@ export class OrdersService {
 		"usersToOrders.product",
 		"usersToOrders.attributes",
 		"table",
+		"table.hall",
 		"place",
 		"users"
 	];
@@ -33,6 +34,7 @@ export class OrdersService {
 		"usersToOrders.product",
 		"usersToOrders.attributes",
 		"table",
+		"table.hall",
 		"place",
 		"users"
 	];
