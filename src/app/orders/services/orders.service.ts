@@ -141,7 +141,7 @@ export class OrdersService {
 
 		if (currProduct) {
 			const result = await this._userToOrderRepository.save({ ...currProduct, count: currProduct.count + 1 });
-			await this._ordersNotificationService.addProductToOrderEvent(order.id, currProduct.id);
+			await this._ordersNotificationService.addProductToOrderEvent(order.id, productToOrder.productId);
 			await this.updateOrderTotalPrice(order.id);
 			return result;
 		}

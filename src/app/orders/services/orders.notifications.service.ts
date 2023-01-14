@@ -44,6 +44,7 @@ export class OrdersNotificationsService {
 	async addProductToOrderEvent(orderId: string, productId: string) {
 		const order = await this._orderService.getOrder(orderId);
 		const product = await this._productService.getProduct(productId);
+		console.log("p", product);
 		const waiters = await this.buildWaitersList(orderId);
 
 		this._orderGateway.emitEvent(ORDERS_EVENTS.PRODUCT_ADDED, { order, waiters, product });
