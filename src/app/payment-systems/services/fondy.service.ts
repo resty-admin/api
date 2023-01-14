@@ -9,9 +9,8 @@ import { environment } from "../../../environments/environment";
 import { CompaniesService } from "../../companies/services";
 import { ActiveOrderEntity, UserToOrderEntity } from "../../orders/entities";
 import { OrderStatusEnum, ProductToOrderStatusEnum } from "../../shared/enums";
-import type { CreateFondyMerchantDto, CreatePaymentOrderLinkDto } from "../dtos";
+import type { CreatePaymentOrderLinkDto } from "../dtos";
 import { PaymentSystemEntity } from "../entities";
-import { FondyEntity } from "../entities/fondy.entity";
 
 @Injectable()
 export class FondyService {
@@ -23,12 +22,12 @@ export class FondyService {
 		@InjectRepository(UserToOrderEntity) private readonly _userToOrderRepository: Repository<UserToOrderEntity>,
 		private readonly _apiService: ApiService,
 		private readonly _cryptoService: CryptoService,
-		@InjectRepository(FondyEntity) private readonly _fondyRepository,
 		private readonly _companiesService: CompaniesService
 	) {
 		this.fondy = new CloudIpsp({
 			merchantId: 1_396_424,
-			secretKey: "test"
+			secretKey: "test",
+			protocol: "2.0"
 		});
 	}
 
@@ -51,22 +50,38 @@ export class FondyService {
 
 		const baseUrl = false && environment.production ? `https://dev-api.resty.od.ua` : `http://localhost:3000`;
 
+		const totalPrice =
+			10_000 *
+			usersToOrders.reduce(
+				(pre, curr) =>
+					pre +
+					curr.count *
+						((curr.attributes.length > 0 ? curr.attributes.reduce((pre, curr) => pre + curr.price, 0) : 0) +
+							curr.product.price),
+				0
+			);
+
+		const receivers = [
+			{
+				requisites: {
+					amount: totalPrice * 0.95,
+					merchant_id: 1_396_424
+				},
+				type: "merchant"
+			}
+		];
+
+		console.log("total", totalPrice);
 		const requestData = {
 			order_id: `${orderId}`,
 			order_desc: usersToOrders.reduce((pre, curr) => `${pre} ${curr.product.name} x${curr.count} ` + `\n`, ""),
 			currency: "UAH",
-			amount:
-				100 *
-				usersToOrders.reduce(
-					(pre, curr) =>
-						pre +
-						curr.count *
-							((curr.attributes.length > 0 ? curr.attributes.reduce((pre, curr) => pre + curr.price, 0) : 0) +
-								curr.product.price),
-					0
-				),
+			amount: totalPrice,
+			receivers,
 			response_url: `${baseUrl}/api/fondy/check`
 		};
+
+		console.log("requestDaa", requestData);
 
 		const result = await this.fondy.Checkout(requestData);
 
@@ -76,6 +91,8 @@ export class FondyService {
 				paymentLink: result.checkout_url
 			});
 		}
+
+		console.log("result", result);
 
 		return result.checkout_url;
 	}
@@ -115,16 +132,16 @@ export class FondyService {
 		console.log("body", body);
 	}
 
-	async createMerchant(createFondyMerchantDto: CreateFondyMerchantDto) {
-		const savedMerchant = await this._fondyRepository.save({
-			...createFondyMerchantDto,
-			company: { id: createFondyMerchantDto.company }
-		});
-
-		return this._fondyRepository.findOne({
-			where: { id: savedMerchant.id }
-		});
-	}
+	// async createMerchant(createFondyMerchantDto: CreateFondyMerchantDto) {
+	// 	const savedMerchant = await this._fondyRepository.save({
+	// 		...createFondyMerchantDto,
+	// 		company: { id: createFondyMerchantDto.company }
+	// 	});
+	//
+	// 	return this._fondyRepository.findOne({
+	// 		where: { id: savedMerchant.id }
+	// 	});
+	// }
 
 	async merchantInstance(userId: string) {
 		console.log("userid", userId);

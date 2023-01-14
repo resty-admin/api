@@ -6,10 +6,10 @@ export class CreateFondyMerchantDto {
 	@IsString()
 	merchantId: string;
 
-	@IsNotEmpty()
-	// @ApiProperty()
-	@IsString()
-	secretKey: string;
+	// @IsNotEmpty()
+	// // @ApiProperty()
+	// @IsString()
+	// secretKey: string;
 
 	@IsNotEmpty()
 	// @ApiProperty()

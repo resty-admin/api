@@ -8,6 +8,7 @@ import { CompanyEntity } from "../../companies/entities";
 import { FileEntity } from "../../files/entities";
 import { HallEntity } from "../../halls/entities";
 import { ActiveOrderEntity } from "../../orders/entities";
+import { PlaceToPaymentSystemEntity } from "../../payment-systems/entities/place-to-payment-system.entity";
 import { BaseEntity } from "../../shared/entities";
 import { Pagination } from "../../shared/entities/pagination.type";
 import { PlaceStatusEnum } from "../../shared/enums";
@@ -20,43 +21,35 @@ import { WorkingHoursDto } from "../dtos";
 @InputType("PlaceEntityInput")
 @Entity({ name: PLACES })
 export class PlaceEntity extends BaseEntity {
-	// @ApiProperty()
 	@Column()
 	@Field(() => String)
 	name: string;
 
-	// @ApiProperty()
 	@Field(() => CompanyEntity)
 	@ManyToOne(() => CompanyEntity, (company) => company.places, { cascade: true, onDelete: "CASCADE" })
 	company: CompanyEntity;
 
-	// @ApiProperty()
 	@Column({ nullable: true })
 	@Field(() => String, { nullable: true })
 	address?: string;
 
-	// @ApiProperty()
 	@Column("enum", { enum: PlaceStatusEnum, default: PlaceStatusEnum.CLOSED })
 	@Field(() => PlaceStatusEnum)
 	status: PlaceStatusEnum;
 
-	// @ApiProperty()
 	@Field(() => [HallEntity])
 	@OneToMany(() => HallEntity, (hall) => hall.place)
 	halls: HallEntity[];
 
-	// @ApiProperty()
 	@Field(() => [CategoryEntity], { nullable: true })
 	@OneToMany(() => CategoryEntity, (category) => category.place, { nullable: true })
 	categories?: CategoryEntity[];
 
-	// @ApiProperty()
 	@Field(() => FileEntity, { nullable: true })
 	@OneToOne(() => FileEntity, { cascade: true, eager: true, nullable: true })
 	@JoinColumn()
 	file?: IFile;
 
-	// @ApiProperty({ type: "json", default: { delivery: false, takeaway: true, booking: true, order: true } })
 	@Field(() => String)
 	@Column({
 		type: "json",
@@ -109,6 +102,10 @@ export class PlaceEntity extends BaseEntity {
 	@Field(() => Boolean)
 	@Column("boolean", { default: false })
 	isHide: boolean;
+
+	@Field(() => [PlaceToPaymentSystemEntity], { nullable: true })
+	@OneToMany(() => PlaceToPaymentSystemEntity, (pTp) => pTp.place, { nullable: true })
+	paymentSystems: PlaceToPaymentSystemEntity[];
 }
 
 @ObjectType()

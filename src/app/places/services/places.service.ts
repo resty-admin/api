@@ -13,8 +13,25 @@ import { PlaceEntity } from "../entities";
 
 @Injectable()
 export class PlacesService {
-	private findRelations = ["company", "company.owner", "employees", "halls", "file"];
-	private findOneRelations = ["company", "company.owner", "employees", "halls", "file"];
+	private findRelations = [
+		"company",
+		"company.owner",
+		"employees",
+		"halls",
+		"file",
+		"paymentSystems",
+		"paymentSystems.paymentSystem"
+	];
+
+	private findOneRelations = [
+		"company",
+		"company.owner",
+		"employees",
+		"halls",
+		"file",
+		"paymentSystems",
+		"paymentSystems.paymentSystem"
+	];
 
 	constructor(
 		@InjectRepository(PlaceEntity) private readonly _placesRepository,

@@ -29,10 +29,6 @@ export class UserToOrderEntity extends BaseEntity {
 	@ManyToOne(() => ActiveOrderEntity, (order) => order.usersToOrders, { onDelete: "CASCADE" })
 	order: ActiveOrderEntity;
 
-	// @Field(() => String)
-	// @Column()
-	// orderId: string;
-
 	@Field(() => Int)
 	@Column()
 	count: number;

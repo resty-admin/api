@@ -42,4 +42,10 @@ export class TablesResolver {
 	async deleteTable(@Args("tableId") id: string) {
 		return this._tablesService.deleteTable(id);
 	}
+
+	@Mutation(() => TableEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.CLIENT]))
+	async getTableByCode(@Args("code") code: string, @Args("placeId") placeId: string) {
+		return this._tablesService.getTableByCode(code, placeId);
+	}
 }

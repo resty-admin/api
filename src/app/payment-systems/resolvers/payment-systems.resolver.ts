@@ -6,7 +6,9 @@ import { GqlJwtGuard } from "../../auth";
 import { RolesGuard } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
 import { CreatePaymentSystemInput, UpdatePaymentSystemInput } from "../dtos";
+import { ConnectPaymentSystemToPlaceInput } from "../dtos/connect-payment-system-to-place.dto";
 import { PaginatedPaymentSystem, PaymentSystemEntity } from "../entities";
+import { PlaceToPaymentSystemEntity } from "../entities/place-to-payment-system.entity";
 import { PaymentSystemsService } from "../services";
 
 @Resolver(() => PaymentSystemEntity)
@@ -41,5 +43,11 @@ export class PaymentSystemsResolver {
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
 	async deletePaymentSystem(@Args("paymentSystemId") id: string) {
 		return this._paymentSystemService.deletePaymentSystem(id);
+	}
+
+	@Mutation(() => PlaceToPaymentSystemEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	async connectPaymentSystemToPlace(@Args("body") body: ConnectPaymentSystemToPlaceInput) {
+		return this._paymentSystemService.connectPaymentSystemToPlace(body);
 	}
 }

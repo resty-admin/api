@@ -18,13 +18,6 @@ type FileEntity {
 	url: String!
 }
 
-type FondyEntity {
-	id: String!
-	merchantId: String!
-	secretKey: String!
-	company: CompanyEntity!
-}
-
 type CategoryEntity {
 	id: String!
 	name: String!
@@ -211,6 +204,25 @@ type PaginatedHall {
 	totalCount: Int!
 }
 
+type PaymentSystemEntity {
+	id: String!
+	name: String!
+	configFields: JSONObject
+}
+
+type PaginatedPaymentSystem {
+	data: [PaymentSystemEntity!]
+	page: Int!
+	totalCount: Int!
+}
+
+type PlaceToPaymentSystemEntity {
+	id: String!
+	place: PlaceEntity!
+	paymentSystem: PaymentSystemEntity!
+	placeConfigFields: JSONObject
+}
+
 type PlaceEntity {
 	id: String!
 	name: String!
@@ -229,6 +241,7 @@ type PlaceEntity {
 	commands: [CommandEntity!]
 	employees: [UserEntity!]
 	isHide: Boolean!
+	paymentSystems: [PlaceToPaymentSystemEntity!]
 }
 
 enum PlaceStatusEnum {
@@ -250,7 +263,6 @@ type CompanyEntity {
 	employees: [UserEntity!]
 	status: CompanyStatusEnum!
 	logo: FileEntity
-	fondy: FondyEntity
 	isHide: Boolean!
 }
 
@@ -338,25 +350,8 @@ type LanguageEntity {
 	file: FileEntity!
 }
 
-type PaymentSystemEntity {
-	id: String!
-	name: String!
-}
-
-type PaginatedPaymentSystem {
-	data: [PaymentSystemEntity!]
-	page: Int!
-	totalCount: Int!
-}
-
 input FileEntityInput {
 	url: String!
-}
-
-input FondyEntityInput {
-	merchantId: String!
-	secretKey: String!
-	company: CompanyEntityInput!
 }
 
 input CategoryEntityInput {
@@ -437,6 +432,17 @@ input HallEntityInput {
 	isHide: Boolean!
 }
 
+input PaymentSystemEntityInput {
+	name: String!
+	configFields: JSONObject
+}
+
+input PlaceToPaymentSystemEntityInput {
+	place: PlaceEntityInput!
+	paymentSystem: PaymentSystemEntityInput!
+	placeConfigFields: JSONObject
+}
+
 input PlaceEntityInput {
 	name: String!
 	company: CompanyEntityInput!
@@ -454,6 +460,7 @@ input PlaceEntityInput {
 	commands: [CommandEntityInput!]
 	employees: [UserEntityInput!]
 	isHide: Boolean!
+	paymentSystems: [PlaceToPaymentSystemEntityInput!]
 }
 
 input CompanyEntityInput {
@@ -463,7 +470,6 @@ input CompanyEntityInput {
 	employees: [UserEntityInput!]
 	status: CompanyStatusEnum!
 	logo: FileEntityInput
-	fondy: FondyEntityInput
 	isHide: Boolean!
 }
 
@@ -489,10 +495,6 @@ input ActiveShiftEntityInput {
 	tables: [TableEntityInput!]
 	place: PlaceEntityInput
 	shiftDate: DateTime!
-}
-
-input PaymentSystemEntityInput {
-	name: String!
 }
 
 type Query {
@@ -551,6 +553,7 @@ type Mutation {
 	createPaymentSystem(paymentSystem: CreatePaymentSystemInput!): PaymentSystemEntity!
 	updatePaymentSystem(paymentSystem: UpdatePaymentSystemInput!): PaymentSystemEntity!
 	deletePaymentSystem(paymentSystemId: String!): String!
+	connectPaymentSystemToPlace(body: ConnectPaymentSystemToPlaceInput!): PlaceToPaymentSystemEntity!
 	createOrder(order: CreateOrderInput!): ActiveOrderEntity!
 	updateOrder(order: UpdateOrderInput!): ActiveOrderEntity!
 	deleteOrder(orderId: String!): String!
@@ -560,12 +563,15 @@ type Mutation {
 	addTableToOrder(orderId: String!, tableId: String!): ActiveOrderEntity!
 	removeTableFromOrder(orderId: String!): ActiveOrderEntity!
 	closeOrder(orderId: String!): String!
+	updateOrderStatus(orderId: String!, status: OrderStatusEnum!): ActiveOrderEntity!
+	updateUserProductToOrderStatus(userToOrderId: String!, productStatus: ProductToOrderStatusEnum!): UserToOrderEntity!
 	createProduct(product: CreateProductInput!): ProductEntity!
 	updateProduct(product: UpdateProductInput!): ProductEntity!
 	deleteProduct(productId: String!): String!
 	createTable(table: CreateTableInput!): TableEntity!
 	updateTable(table: UpdateTableInput!): TableEntity!
 	deleteTable(tableId: String!): String!
+	getTableByCode(code: String!, placeId: String!): TableEntity!
 	createShift(shift: CreateShiftInput!): ActiveShiftEntity!
 	closeShift(shiftId: String!): String!
 	updateShift(shift: UpdateShiftInput!): ActiveShiftEntity!
@@ -646,6 +652,12 @@ input CreatePaymentSystemInput {
 input UpdatePaymentSystemInput {
 	id: String!
 	name: String!
+}
+
+input ConnectPaymentSystemToPlaceInput {
+	place: String!
+	paymentSystem: String!
+	placeConfigFields: JSONObject!
 }
 
 input CreateOrderInput {

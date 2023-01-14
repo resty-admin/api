@@ -2,7 +2,6 @@ import { Field, InputType, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 
 import { FileEntity } from "../../files/entities";
-import { FondyEntity } from "../../payment-systems/entities/fondy.entity";
 import { PlaceEntity } from "../../places/entities";
 import { BaseEntity } from "../../shared";
 import { Pagination } from "../../shared/entities/pagination.type";
@@ -48,10 +47,10 @@ export class CompanyEntity extends BaseEntity {
 	logo?: IFile;
 
 	// @ApiProperty()
-	@Field(() => FondyEntity, { nullable: true })
-	@OneToOne(() => FondyEntity, { cascade: true, nullable: true })
-	@JoinColumn()
-	fondy: FondyEntity;
+	// @Field(() => FondyEntity, { nullable: true })
+	// @OneToOne(() => FondyEntity, { cascade: true, nullable: true })
+	// @JoinColumn()
+	// fondy: FondyEntity;
 
 	@Field(() => Boolean)
 	@Column("boolean", { default: false })

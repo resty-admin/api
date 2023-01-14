@@ -5,11 +5,16 @@ import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { CreatePaymentSystemDto, UpdatePaymentSystemDto } from "../dtos";
 import type { CreatePaymentSystemInput, UpdatePaymentSystemInput } from "../dtos";
+import type { ConnectPaymentSystemToPlaceInput } from "../dtos/connect-payment-system-to-place.dto";
 import { PaymentSystemEntity } from "../entities";
+import { PlaceToPaymentSystemEntity } from "../entities/place-to-payment-system.entity";
 
 @Injectable()
 export class PaymentSystemsService {
-	constructor(@InjectRepository(PaymentSystemEntity) private readonly _paymentSystemRepository) {}
+	constructor(
+		@InjectRepository(PaymentSystemEntity) private readonly _paymentSystemRepository,
+		@InjectRepository(PlaceToPaymentSystemEntity) private readonly _paymentSystemToPlaceRepository
+	) {}
 
 	async getPaymentSystem(id: string) {
 		return this._paymentSystemRepository.findOne({
@@ -53,5 +58,9 @@ export class PaymentSystemsService {
 	async deletePaymentSystem(id: string): Promise<string> {
 		await this._paymentSystemRepository.delete(id);
 		return "DELETED";
+	}
+
+	async connectPaymentSystemToPlace(body: ConnectPaymentSystemToPlaceInput) {
+		return this._paymentSystemToPlaceRepository.save({ ...body });
 	}
 }

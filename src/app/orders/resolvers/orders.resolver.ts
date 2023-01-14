@@ -1,6 +1,6 @@
 import { UseGuards } from "@nestjs/common";
 import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { UserRoleEnum } from "src/app/shared/enums";
+import { OrderStatusEnum, ProductToOrderStatusEnum, UserRoleEnum } from "src/app/shared/enums";
 
 import { GqlJwtGuard } from "../../auth";
 import { RolesGuard, UserGql } from "../../shared";
@@ -8,7 +8,7 @@ import { PaginationArgsDto } from "../../shared/dtos";
 import { IUser } from "../../shared/interfaces";
 import { CreateOrderInput, RemoveProductFromOrderInput, UpdateOrderInput } from "../dtos";
 import { AddProductToOrderInput } from "../dtos/add-product-to-order.dto";
-import { ActiveOrderEntity, PaginatedActiveOrder, PaginatedHistoryOrder } from "../entities";
+import { ActiveOrderEntity, PaginatedActiveOrder, PaginatedHistoryOrder, UserToOrderEntity } from "../entities";
 import { OrdersService } from "../services";
 
 @Resolver(() => ActiveOrderEntity)
@@ -94,5 +94,23 @@ export class OrdersResolver {
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.CLIENT]))
 	async closeOrder(@Args("orderId") orderId: string) {
 		return this._ordersService.closeOrder(orderId);
+	}
+
+	@Mutation(() => ActiveOrderEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.CLIENT, UserRoleEnum.WAITER]))
+	async updateOrderStatus(
+		@Args("orderId") orderId: string,
+		@Args("status", { type: () => OrderStatusEnum }) status: OrderStatusEnum
+	) {
+		return this._ordersService.updateOrderStatus(orderId, status);
+	}
+
+	@Mutation(() => UserToOrderEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.CLIENT, UserRoleEnum.WAITER]))
+	async updateUserProductToOrderStatus(
+		@Args("userToOrderId") uToId: string,
+		@Args("productStatus", { type: () => ProductToOrderStatusEnum }) status: ProductToOrderStatusEnum
+	) {
+		return this._ordersService.updateUserProductToOrderStatus(uToId, status);
 	}
 }

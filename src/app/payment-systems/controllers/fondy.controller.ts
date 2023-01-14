@@ -5,7 +5,7 @@ import { Response } from "express";
 import { environment } from "../../../environments/environment";
 import { JwtGuard } from "../../auth";
 import { FONDY } from "../constant";
-import { CreateFondyMerchantDto, CreatePaymentOrderLinkDto } from "../dtos";
+import { CreatePaymentOrderLinkDto } from "../dtos";
 import { FondyService } from "../services/fondy.service";
 
 @Controller(FONDY)
@@ -29,14 +29,14 @@ export class FondyController {
 	// 	return this._fondyService.verifyOrder(id);
 	// }
 
-	@Post("new-merchant")
-	@ApiOperation({ summary: "Add new fondy merchant" })
-	@ApiCreatedResponse({
-		description: "Merchant has been created."
-	})
-	async addMerchant(@Body() createFondyMerchantDto: CreateFondyMerchantDto) {
-		return this._fondyService.createMerchant(createFondyMerchantDto);
-	}
+	// @Post("new-merchant")
+	// @ApiOperation({ summary: "Add new fondy merchant" })
+	// @ApiCreatedResponse({
+	// 	description: "Merchant has been created."
+	// })
+	// async addMerchant(@Body() createFondyMerchantDto: CreateFondyMerchantDto) {
+	// 	return this._fondyService.createMerchant(createFondyMerchantDto);
+	// }
 
 	@Post("create-payment-link")
 	@ApiOperation({ summary: "Create payment link" })

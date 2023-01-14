@@ -5,6 +5,7 @@ import { GraphQLError } from "graphql/error";
 
 import { getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
+import type { OrderStatusEnum, ProductToOrderStatusEnum } from "../../shared/enums";
 import { ErrorsEnum } from "../../shared/enums";
 import type { IUser } from "../../shared/interfaces";
 import { ActiveShiftEntity } from "../../shifts/entities";
@@ -176,16 +177,6 @@ export class OrdersService {
 			relations: ["usersToOrders", "usersToOrders.product", "usersToOrders.attributes", "usersToOrders.user"]
 		});
 
-		// const deleteProduct = order.usersToOrders.find(
-		// 	(el) =>
-		// 		el.user.id === user.id &&
-		// 		el.product.id === productFromOrder.productId &&
-		// 		(productFromOrder.attrs?.length > 0
-		// 			? el.attributes?.filter((el) => productFromOrder.attrs.includes(el.id)).length ===
-		// 			productFromOrder.attrs.length
-		// 			: el.attributes?.length === 0)
-		// );
-
 		const deleteProduct = order.usersToOrders.find((userToOrder) => {
 			const isUserSame = userToOrder.user.id === user.id;
 			const isProductSame = userToOrder.product.id === productFromOrder.productId;
@@ -277,6 +268,16 @@ export class OrdersService {
 			...order,
 			totalPrice: this.calculateTotalPrice(order.usersToOrders)
 		});
+	}
+
+	async updateOrderStatus(orderId: string, status: OrderStatusEnum) {
+		const order = await this.getOrder(orderId);
+		return this._ordersRepository.save({ ...order, status });
+	}
+
+	async updateUserProductToOrderStatus(uToId: string, status: ProductToOrderStatusEnum) {
+		const uTo = await this._userToOrderRepository.findOne({ where: { id: uToId } });
+		return this._userToOrderRepository.save({ ...uTo, status });
 	}
 
 	calculateTotalPrice(usersToOrders) {

@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { GraphQLError } from "graphql/error";
 
 import { ActiveOrderEntity } from "../../orders/entities";
 import { getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
-import { OrderStatusEnum } from "../../shared/enums";
-import type { CreateTableDto, UpdateTableDto } from "../dtos";
-import type { CreateTableInput, UpdateTableInput } from "../dtos";
+import { ErrorsEnum, OrderStatusEnum, OrderTypeEnum } from "../../shared/enums";
+import type { CreateTableDto, CreateTableInput, UpdateTableDto, UpdateTableInput } from "../dtos";
 import { TableEntity } from "../entities";
 
 @Injectable()
@@ -78,5 +78,46 @@ export class TablesService {
 
 		await this._tablesRepository.delete(id);
 		return `${id} deleted`;
+	}
+
+	async getTableByCode(code: string, placeId: string) {
+		const table = await this._tablesRepository.findOne({
+			where: {
+				code,
+				hall: {
+					place: {
+						id: placeId
+					}
+				}
+			},
+			relations: ["hall", "hall.place"]
+		});
+
+		if (!table) {
+			throw new GraphQLError(ErrorsEnum.IncorrectTableCode.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
+
+		const activeOrder: ActiveOrderEntity = await this._ordersRepository.findOne({
+			where: {
+				table: {
+					id: table.id
+				}
+			},
+			relations: ["table"]
+		});
+
+		if (activeOrder && activeOrder.type === OrderTypeEnum.IN_PLACE) {
+			throw new GraphQLError(ErrorsEnum.ActiveOrderWithTableExist.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
+
+		return table;
 	}
 }

@@ -21,5 +21,7 @@ export enum ErrorsEnum {
 	IsArray = 1019,
 	OrderByCodeNotExist = 1020,
 	ActiveShiftExist = 1021,
-	ActiveOrderExist = 1022
+	ActiveOrderExist = 1022,
+	IncorrectTableCode = 1023,
+	ActiveOrderWithTableExist = 1024
 }
