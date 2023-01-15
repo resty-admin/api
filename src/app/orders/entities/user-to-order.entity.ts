@@ -4,7 +4,7 @@ import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from "typeorm";
 import { AttributesEntity } from "../../attributes/entities";
 import { ProductEntity } from "../../products/entities";
 import { BaseEntity } from "../../shared";
-import { ProductToOrderStatusEnum } from "../../shared/enums";
+import { ProductToOrderPaidStatusEnum, ProductToOrderStatusEnum } from "../../shared/enums";
 import { UserEntity } from "../../users/entities";
 import { ActiveOrderEntity } from "./active-order.entity";
 
@@ -37,7 +37,7 @@ export class UserToOrderEntity extends BaseEntity {
 	@Column("enum", { enum: ProductToOrderStatusEnum, default: ProductToOrderStatusEnum.ADDED })
 	status: ProductToOrderStatusEnum;
 
-	@Field({ nullable: true })
-	@Column({ nullable: true })
-	paymentLink?: string;
+	@Field(() => ProductToOrderPaidStatusEnum)
+	@Column("enum", { enum: ProductToOrderPaidStatusEnum, default: ProductToOrderPaidStatusEnum.NOT_PAID })
+	paidStatus: ProductToOrderPaidStatusEnum;
 }

@@ -37,7 +37,7 @@ export class ActiveOrderEntity extends BaseEntity {
 	type: OrderTypeEnum;
 
 	@Field(() => OrderStatusEnum)
-	@Column("enum", { enum: OrderStatusEnum, default: OrderStatusEnum.OPENED })
+	@Column("enum", { enum: OrderStatusEnum, default: OrderStatusEnum.CREATED })
 	status: OrderStatusEnum;
 
 	@Field(() => PlaceEntity)

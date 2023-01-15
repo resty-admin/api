@@ -38,14 +38,13 @@ jobs:
             doctl registry login
 
             isDisabled=true
-            while $do; do
-            do=false
+            while $isDisabled; do
             if doctl registry garbage-collection get-active; then
-              docker push $(echo $REGISTRY)/$(echo $NGX_ADMIN):latest
+              echo "already running"
+            else
+              docker push $(echo $REGISTRY)/$(echo $API):latest
               doctl registry garbage-collection start --include-untagged-manifests --force
               isDisabled=false
-            else 
-              echo "already running"
             fi
             done
 

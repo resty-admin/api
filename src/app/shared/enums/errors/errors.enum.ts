@@ -23,5 +23,6 @@ export enum ErrorsEnum {
 	ActiveShiftExist = 1021,
 	ActiveOrderExist = 1022,
 	IncorrectTableCode = 1023,
-	ActiveOrderWithTableExist = 1024
+	ActiveOrderWithTableExist = 1024,
+	NoActiveProductsExist = 1025
 }

@@ -106,15 +106,20 @@ type UserToOrderEntity {
 	order: ActiveOrderEntity!
 	count: Int!
 	status: ProductToOrderStatusEnum!
-	paymentLink: String
+	paidStatus: ProductToOrderPaidStatusEnum!
 }
 
 enum ProductToOrderStatusEnum {
 	ADDED
-	REQUESTED_TO_CONFIRM
-	CONFIRMED
-	REQUESTED_TO_PAY
+	WAITING_FOR_APPROVE
+	REJECTED
+	APPROVED
+}
+
+enum ProductToOrderPaidStatusEnum {
 	PAID
+	NOT_PAID
+	WAITING
 }
 
 type ActiveOrderEntity {
@@ -138,10 +143,9 @@ enum OrderTypeEnum {
 }
 
 enum OrderStatusEnum {
-	OPENED
+	CREATED
+	CANCEL
 	CLOSED
-	UNPAID
-	PAID
 }
 
 type PaginatedActiveOrder {
@@ -400,7 +404,7 @@ input UserToOrderEntityInput {
 	order: ActiveOrderEntityInput!
 	count: Int!
 	status: ProductToOrderStatusEnum!
-	paymentLink: String
+	paidStatus: ProductToOrderPaidStatusEnum!
 }
 
 input ActiveOrderEntityInput {
@@ -559,12 +563,15 @@ type Mutation {
 	deleteOrder(orderId: String!): String!
 	addProductToOrder(productToOrder: AddProductToOrderInput!): ActiveOrderEntity!
 	removeProductFromOrder(productFromOrder: RemoveProductFromOrderInput!): ActiveOrderEntity!
+	rejectProductsInOrder(productToOrderIds: [String!]!): [UserToOrderEntity!]!
+	approveProductsInOrder(productToOrderIds: [String!]!): [UserToOrderEntity!]!
+	setManualPayForProductsInOrder(productToOrderIds: [String!]!): [UserToOrderEntity!]!
 	addUserToOrder(code: Int!): ActiveOrderEntity!
 	addTableToOrder(orderId: String!, tableId: String!): ActiveOrderEntity!
 	removeTableFromOrder(orderId: String!): ActiveOrderEntity!
+	confirmOrder(orderId: String!): ActiveOrderEntity!
 	closeOrder(orderId: String!): String!
-	updateOrderStatus(orderId: String!, status: OrderStatusEnum!): ActiveOrderEntity!
-	updateUserProductToOrderStatus(userToOrderId: String!, productStatus: ProductToOrderStatusEnum!): UserToOrderEntity!
+	cancelOrder(orderId: String!): String!
 	createProduct(product: CreateProductInput!): ProductEntity!
 	updateProduct(product: UpdateProductInput!): ProductEntity!
 	deleteProduct(productId: String!): String!

@@ -5,6 +5,7 @@ import { ProductsService } from "../../products/services";
 import type { IUser } from "../../shared/interfaces";
 import { ActiveShiftEntity } from "../../shifts/entities";
 import { TablesService } from "../../tables/services";
+import type { UserToOrderEntity } from "../entities";
 import { ActiveOrderEntity } from "../entities";
 import { OrdersGateway } from "../gateways";
 import { ORDERS_EVENTS } from "../gateways/events/order.event";
@@ -34,28 +35,37 @@ export class OrdersNotificationsService {
 		this._orderGateway.emitEvent(ORDERS_EVENTS.CLOSED, { order, waiters });
 	}
 
+	async cancelOrderEvent(order: ActiveOrderEntity) {
+		this._orderGateway.emitEvent(ORDERS_EVENTS.CANCELED, { order });
+	}
+
+	async rejectOrderEvent(order: ActiveOrderEntity, pTos: UserToOrderEntity[]) {
+		this._orderGateway.emitEvent(ORDERS_EVENTS.REJECTED, { order, pTos });
+	}
+
+	async approveOrderEvent(order: ActiveOrderEntity, pTos: UserToOrderEntity[]) {
+		this._orderGateway.emitEvent(ORDERS_EVENTS.APPROVED, { order, pTos });
+	}
+
+	async confirmOrderEvent(orderId: string) {
+		const order = await this._orderService.getOrder(orderId);
+		const waiters = await this.buildWaitersList(orderId);
+
+		this._orderGateway.emitEvent(ORDERS_EVENTS.CONFIRM, { order, waiters });
+	}
+
+	async waitingForManualPayOrderEvent(orderId: string) {
+		const order = await this._orderService.getOrder(orderId);
+		const waiters = await this.buildWaitersList(orderId);
+
+		this._orderGateway.emitEvent(ORDERS_EVENTS.WAITING_FOR_MANUAL_PAY, { order, waiters });
+	}
+
 	async addUserToOrderEvent(orderId: string, user: IUser) {
 		const order = await this._orderService.getOrder(orderId);
 		const waiters = await this.buildWaitersList(orderId);
 
 		this._orderGateway.emitEvent(ORDERS_EVENTS.USER_ADDED, { order, waiters, user });
-	}
-
-	async addProductToOrderEvent(orderId: string, productId: string) {
-		const order = await this._orderService.getOrder(orderId);
-		const product = await this._productService.getProduct(productId);
-		console.log("p", product);
-		const waiters = await this.buildWaitersList(orderId);
-
-		this._orderGateway.emitEvent(ORDERS_EVENTS.PRODUCT_ADDED, { order, waiters, product });
-	}
-
-	async removeProductFromOrderEvent(orderId: string, productId: string) {
-		const order = await this._orderService.getOrder(orderId);
-		const product = await this._productService.getProduct(productId);
-		const waiters = await this.buildWaitersList(orderId);
-
-		this._orderGateway.emitEvent(ORDERS_EVENTS.PRODUCT_REMOVED, { order, waiters, product });
 	}
 
 	async addTableToOrderEvent(orderId: string, tableId: string) {

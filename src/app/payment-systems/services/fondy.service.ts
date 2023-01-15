@@ -8,13 +8,14 @@ import { In, Repository } from "typeorm";
 import { environment } from "../../../environments/environment";
 import { CompaniesService } from "../../companies/services";
 import { ActiveOrderEntity, UserToOrderEntity } from "../../orders/entities";
-import { OrderStatusEnum, ProductToOrderStatusEnum } from "../../shared/enums";
+import { ProductToOrderPaidStatusEnum } from "../../shared/enums";
 import type { CreatePaymentOrderLinkDto } from "../dtos";
 import { PaymentSystemEntity } from "../entities";
 
 @Injectable()
 export class FondyService {
 	readonly fondy;
+	orderId: string;
 
 	constructor(
 		@InjectRepository(PaymentSystemEntity) private readonly _paymentSystemRepository,
@@ -44,10 +45,6 @@ export class FondyService {
 			relations: ["product", "user", "order", "attributes"]
 		});
 
-		if (usersToOrders.length > 0 && usersToOrders[0].paymentLink) {
-			return usersToOrders[0].paymentLink;
-		}
-
 		const baseUrl = false && environment.production ? `https://dev-api.resty.od.ua` : `http://localhost:3000`;
 
 		const totalPrice =
@@ -71,9 +68,10 @@ export class FondyService {
 			}
 		];
 
-		console.log("total", totalPrice);
+		this.orderId = `${orderId}_${users.reduce((pre, curr) => `${pre}${curr}$`, "$")}_${new Date().toISOString()}`;
+
 		const requestData = {
-			order_id: `${orderId}`,
+			order_id: this.orderId,
 			order_desc: usersToOrders.reduce((pre, curr) => `${pre} ${curr.product.name} x${curr.count} ` + `\n`, ""),
 			currency: "UAH",
 			amount: totalPrice,
@@ -81,29 +79,24 @@ export class FondyService {
 			response_url: `${baseUrl}/api/fondy/check`
 		};
 
-		console.log("requestDaa", requestData);
-
 		const result = await this.fondy.Checkout(requestData);
-
-		for (const el of usersToOrders) {
-			await this._userToOrderRepository.save({
-				id: el.id,
-				paymentLink: result.checkout_url
-			});
-		}
-
-		console.log("result", result);
-
 		return result.checkout_url;
 	}
 
-	async verifyOrder(body) {
-		const [orderId, userId] = body.order_id.split("_");
+	async verifyOrder(_) {
+		const successStatus = (await this.fondy.Status({ order_id: this.orderId })).response_status === "success";
+
+		if (!successStatus) {
+			return;
+		}
+		const [orderId] = this.orderId.split("_");
+
+		const users = this.orderId.match(/(?<=\$)(.*?)(?=\$)/g);
 
 		const usersToOrders = await this._userToOrderRepository.find({
 			where: {
 				user: {
-					id: userId
+					id: In(users)
 				},
 				order: {
 					id: orderId
@@ -115,21 +108,21 @@ export class FondyService {
 		for (const el of usersToOrders) {
 			await this._userToOrderRepository.save({
 				id: el.id,
-				status: ProductToOrderStatusEnum.PAID
+				paidStatus: ProductToOrderPaidStatusEnum.PAID
 			});
 		}
 
-		const order = await this._ordersRepository.findOne({ where: { id: orderId }, relations: ["usersToOrders"] });
-
-		const allProductsPaid = order.usersToOrders.every((el) => el.status === ProductToOrderStatusEnum.PAID);
-
-		if (allProductsPaid) {
-			await this._ordersRepository.save({
-				...order,
-				status: OrderStatusEnum.PAID
-			});
-		}
-		console.log("body", body);
+		// const order = await this._ordersRepository.findOne({ where: { id: orderId }, relations: ["usersToOrders"] });
+		//
+		// const allProductsPaid = order.usersToOrders.every((el) => el.status === ProductToOrderStatusEnum.ADDED);
+		//
+		// if (allProductsPaid) {
+		// 	await this._ordersRepository.save({
+		// 		...order,
+		// 		status: OrderStatusEnum.CLOSED
+		// 	});
+		// }
+		// console.log("body", body);
 	}
 
 	// async createMerchant(createFondyMerchantDto: CreateFondyMerchantDto) {
@@ -143,8 +136,8 @@ export class FondyService {
 	// 	});
 	// }
 
-	async merchantInstance(userId: string) {
-		console.log("userid", userId);
-		// const user = this._companiesService.getCompany();
-	}
+	// async merchantInstance(userId: string) {
+	// 	console.log("userid", userId);
+	// 	// const user = this._companiesService.getCompany();
+	// }
 }
