@@ -20,7 +20,7 @@ export class FondyService {
 	constructor(
 		@InjectRepository(PaymentSystemEntity) private readonly _paymentSystemRepository,
 		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository: Repository<ActiveOrderEntity>,
-		@InjectRepository(ProductToOrderEntity) private readonly _userToOrderRepository: Repository<ProductToOrderEntity>,
+		@InjectRepository(ProductToOrderEntity) private readonly productToOrderRepository: Repository<ProductToOrderEntity>,
 		private readonly _apiService: ApiService,
 		private readonly _cryptoService: CryptoService,
 		private readonly _companiesService: CompaniesService
@@ -33,7 +33,7 @@ export class FondyService {
 	}
 
 	async createPaymentOrderLink({ users, orderId }: CreatePaymentOrderLinkDto) {
-		const usersToOrders = await this._userToOrderRepository.find({
+		const usersToOrders = await this.productToOrderRepository.find({
 			where: {
 				user: {
 					id: In(users)
@@ -93,7 +93,7 @@ export class FondyService {
 
 		const users = this.orderId.match(/(?<=\$)(.*?)(?=\$)/g);
 
-		const usersToOrders = await this._userToOrderRepository.find({
+		const usersToOrders = await this.productToOrderRepository.find({
 			where: {
 				user: {
 					id: In(users)
@@ -106,7 +106,7 @@ export class FondyService {
 		});
 
 		for (const el of usersToOrders) {
-			await this._userToOrderRepository.save({
+			await this.productToOrderRepository.save({
 				id: el.id,
 				paidStatus: ProductToOrderPaidStatusEnum.PAID
 			});

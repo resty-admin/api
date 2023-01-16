@@ -14,7 +14,7 @@ export class ProductToOrderService {
 	constructor(
 		private readonly _ordersService: OrdersService,
 		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository,
-		@InjectRepository(ProductToOrderEntity) private readonly _userToOrderRepository,
+		@InjectRepository(ProductToOrderEntity) private readonly productToOrderRepository,
 		private readonly _ordersNotificationService: OrdersNotificationsService
 	) {}
 
@@ -39,13 +39,13 @@ export class ProductToOrderService {
 		});
 
 		if (currProduct) {
-			const result = await this._userToOrderRepository.save({ ...currProduct, count: currProduct.count + 1 });
+			const result = await this.productToOrderRepository.save({ ...currProduct, count: currProduct.count + 1 });
 			await this.updateOrderTotalPrice(order.id);
 			return result;
 		}
 
 		await this.updateOrderTotalPrice(order.id);
-		return this._userToOrderRepository.save({
+		return this.productToOrderRepository.save({
 			order: {
 				id: productToOrder.orderId
 			},
@@ -86,11 +86,11 @@ export class ProductToOrderService {
 		});
 
 		if (deleteProduct.count === 1) {
-			await this._userToOrderRepository.delete(deleteProduct.id);
+			await this.productToOrderRepository.delete(deleteProduct.id);
 
 			return this.updateOrderTotalPrice(order.id);
 		}
-		await this._userToOrderRepository.save({
+		await this.productToOrderRepository.save({
 			...deleteProduct,
 			count: deleteProduct.count - 1
 		});
@@ -113,7 +113,7 @@ export class ProductToOrderService {
 	}
 
 	async rejectProductInOrder(productToOrderIds: string[]) {
-		const pTos = await this._userToOrderRepository.find({
+		const pTos = await this.productToOrderRepository.find({
 			where: {
 				id: In(productToOrderIds)
 			}
@@ -121,11 +121,11 @@ export class ProductToOrderService {
 
 		const updatedPtos = pTos.map((el) => ({ ...el, status: ProductToOrderStatusEnum.REJECTED }));
 		await this._ordersNotificationService.rejectOrderEvent(pTos[0].order, updatedPtos);
-		return this._userToOrderRepository.save(updatedPtos);
+		return this.productToOrderRepository.save(updatedPtos);
 	}
 
 	async approveProductInOrder(productToOrderIds: string[]) {
-		const pTos = await this._userToOrderRepository.find({
+		const pTos = await this.productToOrderRepository.find({
 			where: {
 				id: In(productToOrderIds)
 			}
@@ -133,11 +133,11 @@ export class ProductToOrderService {
 
 		const updatedPtos = pTos.map((el) => ({ ...el, status: ProductToOrderStatusEnum.APPROVED }));
 		await this._ordersNotificationService.approveOrderEvent(pTos[0].order, updatedPtos);
-		return this._userToOrderRepository.save(updatedPtos);
+		return this.productToOrderRepository.save(updatedPtos);
 	}
 
 	async setManualPayForProductsInOrder(productToOrderIds: string[]) {
-		const pTos = await this._userToOrderRepository.find({
+		const pTos = await this.productToOrderRepository.find({
 			where: {
 				id: In(productToOrderIds)
 			}
@@ -145,11 +145,11 @@ export class ProductToOrderService {
 
 		const updatedPtos = pTos.map((el) => ({ ...el, paidStatus: ProductToOrderPaidStatusEnum.WAITING }));
 		await this._ordersNotificationService.waitingForManualPayOrderEvent(pTos[0].order.id);
-		return this._userToOrderRepository.save(updatedPtos);
+		return this.productToOrderRepository.save(updatedPtos);
 	}
 
 	async setPaidStatusForProductsInOrder(productToOrderIds: string[]) {
-		const pTos = await this._userToOrderRepository.find({
+		const pTos = await this.productToOrderRepository.find({
 			where: {
 				id: In(productToOrderIds)
 			}
@@ -157,7 +157,7 @@ export class ProductToOrderService {
 
 		const updatedPtos = pTos.map((el) => ({ ...el, paidStatus: ProductToOrderPaidStatusEnum.PAID }));
 		await this._ordersNotificationService.waitingForManualPayOrderEvent(pTos[0].order.id);
-		return this._userToOrderRepository.save(updatedPtos);
+		return this.productToOrderRepository.save(updatedPtos);
 	}
 
 	calculateTotalPrice(usersToOrders) {

@@ -41,7 +41,7 @@ export class OrdersService {
 	constructor(
 		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository,
 		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository,
-		@InjectRepository(ProductToOrderEntity) private readonly _userToOrderRepository,
+		@InjectRepository(ProductToOrderEntity) private readonly productToOrderRepository,
 		@InjectRepository(HistoryOrderEntity) private readonly _historyOrderRepository,
 		@Inject(forwardRef(() => OrdersNotificationsService))
 		private readonly _ordersNotificationService: OrdersNotificationsService,
@@ -167,7 +167,7 @@ export class OrdersService {
 	}
 
 	async confirmOrder(orderId, user) {
-		const productsToOrders: ProductToOrderEntity[] = await this._userToOrderRepository.find({
+		const productsToOrders: ProductToOrderEntity[] = await this.productToOrderRepository.find({
 			where: {
 				order: {
 					id: orderId
