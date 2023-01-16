@@ -66,7 +66,7 @@ export class ProductEntity extends BaseEntity {
 
 	// @Field(() => [ProductToOrderEntity])
 	// @OneToMany(() => ProductToOrderEntity, (uTo) => uTo.product)
-	// usersToOrders: ProductToOrderEntity[];
+	// productsToOrders: ProductToOrderEntity[];
 }
 
 @ObjectType()

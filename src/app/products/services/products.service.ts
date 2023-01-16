@@ -64,11 +64,11 @@ export class ProductsService {
 	async deleteProduct(id: string): Promise<string> {
 		const orders: ActiveOrderEntity[] = await this._ordersRepository.find({
 			where: {
-				usersToOrders: {
+				productsToOrders: {
 					product: { id }
 				}
 			},
-			relations: ["usersToOrders", "usersToOrders.product"]
+			relations: ["productsToOrders", "productsToOrders.product"]
 		});
 
 		const isActiveOrdersPresent = orders.some((el) => el.status !== OrderStatusEnum.CLOSED);

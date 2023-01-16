@@ -50,5 +50,5 @@ export class CreateOrderInput {
 	// 		attributes: el.attributes?.map((el) => ({ id: el })) || null
 	// 	}))
 	// )
-	// usersToOrders?: CreateUserToOrderInput[];
+	// productsToOrders?: CreateUserToOrderInput[];
 }

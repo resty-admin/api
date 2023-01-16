@@ -63,13 +63,13 @@ export class CategoriesService {
 	async deleteCategory(id: string): Promise<string> {
 		const orders: ActiveOrderEntity[] = await this._ordersRepository.find({
 			where: {
-				usersToOrders: {
+				productsToOrders: {
 					product: {
 						category: { id }
 					}
 				}
 			},
-			relations: ["usersToOrders", "usersToOrders.product", "usersToOrders.product.category"]
+			relations: ["productsToOrders", "productsToOrders.product", "productsToOrders.product.category"]
 		});
 
 		const isActiveOrdersPresent = orders.some((el) => el.status !== OrderStatusEnum.CLOSED);

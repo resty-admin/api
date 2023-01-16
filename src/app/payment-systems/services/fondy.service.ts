@@ -33,7 +33,7 @@ export class FondyService {
 	}
 
 	async createPaymentOrderLink({ users, orderId }: CreatePaymentOrderLinkDto) {
-		const usersToOrders = await this.productToOrderRepository.find({
+		const productsToOrders = await this.productToOrderRepository.find({
 			where: {
 				user: {
 					id: In(users)
@@ -49,7 +49,7 @@ export class FondyService {
 
 		const totalPrice =
 			10_000 *
-			usersToOrders.reduce(
+			productsToOrders.reduce(
 				(pre, curr) =>
 					pre +
 					curr.count *
@@ -72,7 +72,7 @@ export class FondyService {
 
 		const requestData = {
 			order_id: this.orderId,
-			order_desc: usersToOrders.reduce((pre, curr) => `${pre} ${curr.product.name} x${curr.count} ` + `\n`, ""),
+			order_desc: productsToOrders.reduce((pre, curr) => `${pre} ${curr.product.name} x${curr.count} ` + `\n`, ""),
 			currency: "UAH",
 			amount: totalPrice,
 			receivers,
@@ -93,7 +93,7 @@ export class FondyService {
 
 		const users = this.orderId.match(/(?<=\$)(.*?)(?=\$)/g);
 
-		const usersToOrders = await this.productToOrderRepository.find({
+		const productsToOrders = await this.productToOrderRepository.find({
 			where: {
 				user: {
 					id: In(users)
@@ -105,16 +105,16 @@ export class FondyService {
 			relations: ["product", "user", "order"]
 		});
 
-		for (const el of usersToOrders) {
+		for (const el of productsToOrders) {
 			await this.productToOrderRepository.save({
 				id: el.id,
 				paidStatus: ProductToOrderPaidStatusEnum.PAID
 			});
 		}
 
-		// const order = await this._ordersRepository.findOne({ where: { id: orderId }, relations: ["usersToOrders"] });
+		// const order = await this._ordersRepository.findOne({ where: { id: orderId }, relations: ["productsToOrders"] });
 		//
-		// const allProductsPaid = order.usersToOrders.every((el) => el.status === ProductToOrderStatusEnum.ADDED);
+		// const allProductsPaid = order.productsToOrders.every((el) => el.status === ProductToOrderStatusEnum.ADDED);
 		//
 		// if (allProductsPaid) {
 		// 	await this._ordersRepository.save({

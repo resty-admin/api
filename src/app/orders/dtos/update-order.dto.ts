@@ -50,5 +50,5 @@ export class UpdateOrderInput {
 	// 		attributes: el.attributes?.map((el) => ({ id: el })) || null
 	// 	}))
 	// )
-	// usersToOrders?: UpdateUserToOrderInput[];
+	// productsToOrders?: UpdateUserToOrderInput[];
 }

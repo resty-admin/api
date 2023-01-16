@@ -23,7 +23,12 @@ export class ProductToOrderService {
 			where: {
 				id: productToOrder.orderId
 			},
-			relations: ["usersToOrders", "usersToOrders.product", "usersToOrders.attributes", "usersToOrders.user"]
+			relations: [
+				"productsToOrders",
+				"productsToOrders.product",
+				"productsToOrders.attributes",
+				"productsToOrders.user"
+			]
 		});
 
 		const currProduct = order.productsToOrders.find((userToOrder) => {
@@ -65,13 +70,18 @@ export class ProductToOrderService {
 		const order: ActiveOrderEntity = await this._ordersRepository.findOne({
 			where: {
 				id: productFromOrder.orderId,
-				usersToOrders: {
+				productsToOrders: {
 					user: {
 						id: user.id
 					}
 				}
 			},
-			relations: ["usersToOrders", "usersToOrders.product", "usersToOrders.attributes", "usersToOrders.user"]
+			relations: [
+				"productsToOrders",
+				"productsToOrders.product",
+				"productsToOrders.attributes",
+				"productsToOrders.user"
+			]
 		});
 
 		const deleteProduct = order.productsToOrders.find((userToOrder) => {
@@ -103,7 +113,12 @@ export class ProductToOrderService {
 			where: {
 				id
 			},
-			relations: ["usersToOrders", "usersToOrders.product", "usersToOrders.attributes", "usersToOrders.user"]
+			relations: [
+				"productsToOrders",
+				"productsToOrders.product",
+				"productsToOrders.attributes",
+				"productsToOrders.user"
+			]
 		});
 
 		return this._ordersRepository.save({
@@ -160,10 +175,10 @@ export class ProductToOrderService {
 		return this.productToOrderRepository.save(updatedPtos);
 	}
 
-	calculateTotalPrice(usersToOrders) {
+	calculateTotalPrice(productsToOrders) {
 		return (
 			100 *
-			usersToOrders.reduce(
+			productsToOrders.reduce(
 				(pre, curr) =>
 					pre +
 					curr.count *

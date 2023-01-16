@@ -63,7 +63,7 @@ export class HistoryOrderEntity extends BaseEntity {
 		nullable: true
 	})
 	@Field(() => [GraphQLJSONObject])
-	usersToOrders?: object[];
+	productsToOrders?: object[];
 }
 
 @ObjectType()

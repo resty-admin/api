@@ -17,10 +17,10 @@ import { OrdersNotificationsService } from "./orders.notifications.service";
 @Injectable()
 export class OrdersService {
 	private findRelations = [
-		"usersToOrders",
-		"usersToOrders.user",
-		"usersToOrders.product",
-		"usersToOrders.attributes",
+		"productsToOrders",
+		"productsToOrders.user",
+		"productsToOrders.product",
+		"productsToOrders.attributes",
 		"table",
 		"table.hall",
 		"place",
@@ -28,10 +28,10 @@ export class OrdersService {
 	];
 
 	private findOneRelations = [
-		"usersToOrders",
-		"usersToOrders.user",
-		"usersToOrders.product",
-		"usersToOrders.attributes",
+		"productsToOrders",
+		"productsToOrders.user",
+		"productsToOrders.product",
+		"productsToOrders.attributes",
 		"table",
 		"table.hall",
 		"place",
@@ -192,7 +192,7 @@ export class OrdersService {
 			status: ProductToOrderStatusEnum.WAITING_FOR_APPROVE
 		}));
 		await this._ordersNotificationService.confirmOrderEvent(orderId);
-		return this._ordersRepository.save({ ...productsToOrders[0].order, usersToOrders: updatedOrders });
+		return this._ordersRepository.save({ ...productsToOrders[0].order, productsToOrders: updatedOrders });
 	}
 
 	async archiveOrder(order: ActiveOrderEntity) {
