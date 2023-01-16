@@ -9,9 +9,9 @@ import { UserEntity } from "../../users/entities";
 import { ActiveOrderEntity } from "./active-order.entity";
 
 @ObjectType()
-@InputType("UserToOrderEntityInput")
-@Entity({ name: "user-to-order" })
-export class UserToOrderEntity extends BaseEntity {
+@InputType("ProductToOrderEntityInput")
+@Entity({ name: "product-to-order" })
+export class ProductToOrderEntity extends BaseEntity {
 	@Field(() => UserEntity)
 	@ManyToOne(() => UserEntity, { onDelete: "CASCADE" })
 	user: UserEntity;
@@ -26,7 +26,7 @@ export class UserToOrderEntity extends BaseEntity {
 	attributes?: AttributesEntity[];
 
 	@Field(() => ActiveOrderEntity)
-	@ManyToOne(() => ActiveOrderEntity, (order) => order.usersToOrders, { onDelete: "CASCADE" })
+	@ManyToOne(() => ActiveOrderEntity, (order) => order.productsToOrders, { onDelete: "CASCADE" })
 	order: ActiveOrderEntity;
 
 	@Field(() => Int)

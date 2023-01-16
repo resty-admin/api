@@ -5,7 +5,7 @@ import { ProductsService } from "../../products/services";
 import type { IUser } from "../../shared/interfaces";
 import { ActiveShiftEntity } from "../../shifts/entities";
 import { TablesService } from "../../tables/services";
-import type { UserToOrderEntity } from "../entities";
+import type { ProductToOrderEntity } from "../entities";
 import { ActiveOrderEntity } from "../entities";
 import { OrdersGateway } from "../gateways";
 import { ORDERS_EVENTS } from "../gateways/events/order.event";
@@ -39,11 +39,11 @@ export class OrdersNotificationsService {
 		this._orderGateway.emitEvent(ORDERS_EVENTS.CANCELED, { order });
 	}
 
-	async rejectOrderEvent(order: ActiveOrderEntity, pTos: UserToOrderEntity[]) {
+	async rejectOrderEvent(order: ActiveOrderEntity, pTos: ProductToOrderEntity[]) {
 		this._orderGateway.emitEvent(ORDERS_EVENTS.REJECTED, { order, pTos });
 	}
 
-	async approveOrderEvent(order: ActiveOrderEntity, pTos: UserToOrderEntity[]) {
+	async approveOrderEvent(order: ActiveOrderEntity, pTos: ProductToOrderEntity[]) {
 		this._orderGateway.emitEvent(ORDERS_EVENTS.APPROVED, { order, pTos });
 	}
 
@@ -74,6 +74,16 @@ export class OrdersNotificationsService {
 		const waiters = await this.buildWaitersList(orderId);
 
 		this._orderGateway.emitEvent(ORDERS_EVENTS.TABLE_ADDED, { order, waiters, table });
+	}
+
+	async approveTableInOrderEvent(orderId) {
+		const order = await this._orderService.getOrder(orderId);
+		this._orderGateway.emitEvent(ORDERS_EVENTS.TABLE_APPROVED, { order });
+	}
+
+	async rejectTableInOrderEvent(orderId) {
+		const order = await this._orderService.getOrder(orderId);
+		this._orderGateway.emitEvent(ORDERS_EVENTS.TABLE_REJECTED, { order });
 	}
 
 	async removeTableFromOrderEvent(orderId: string) {

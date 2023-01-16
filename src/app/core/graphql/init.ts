@@ -11,6 +11,8 @@ import {
 	UserStatusEnum
 } from "src/app/shared/enums";
 
+import { TableStatusEnum } from "../../shared/enums/orders/table-status.enum";
+
 export function initGraphql() {
 	registerEnumType(UserRoleEnum, { name: "UserRoleEnum" });
 	registerEnumType(UserStatusEnum, { name: "UserStatusEnum" });
@@ -21,4 +23,5 @@ export function initGraphql() {
 	registerEnumType(AttributeGroupTypeEnum, { name: "AttributeGroupTypeEnum" });
 	registerEnumType(ProductToOrderStatusEnum, { name: "ProductToOrderStatusEnum" });
 	registerEnumType(ProductToOrderPaidStatusEnum, { name: "ProductToOrderPaidStatusEnum" });
+	registerEnumType(TableStatusEnum, { name: "TableStatusEnum" });
 }

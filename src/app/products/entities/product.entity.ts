@@ -64,9 +64,9 @@ export class ProductEntity extends BaseEntity {
 	@Column("boolean", { default: false })
 	isHide: boolean;
 
-	// @Field(() => [UserToOrderEntity])
-	// @OneToMany(() => UserToOrderEntity, (uTo) => uTo.product)
-	// usersToOrders: UserToOrderEntity[];
+	// @Field(() => [ProductToOrderEntity])
+	// @OneToMany(() => ProductToOrderEntity, (uTo) => uTo.product)
+	// usersToOrders: ProductToOrderEntity[];
 }
 
 @ObjectType()

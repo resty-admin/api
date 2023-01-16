@@ -7,7 +7,7 @@ import { In, Repository } from "typeorm";
 
 import { environment } from "../../../environments/environment";
 import { CompaniesService } from "../../companies/services";
-import { ActiveOrderEntity, UserToOrderEntity } from "../../orders/entities";
+import { ActiveOrderEntity, ProductToOrderEntity } from "../../orders/entities";
 import { ProductToOrderPaidStatusEnum } from "../../shared/enums";
 import type { CreatePaymentOrderLinkDto } from "../dtos";
 import { PaymentSystemEntity } from "../entities";
@@ -20,7 +20,7 @@ export class FondyService {
 	constructor(
 		@InjectRepository(PaymentSystemEntity) private readonly _paymentSystemRepository,
 		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository: Repository<ActiveOrderEntity>,
-		@InjectRepository(UserToOrderEntity) private readonly _userToOrderRepository: Repository<UserToOrderEntity>,
+		@InjectRepository(ProductToOrderEntity) private readonly _userToOrderRepository: Repository<ProductToOrderEntity>,
 		private readonly _apiService: ApiService,
 		private readonly _cryptoService: CryptoService,
 		private readonly _companiesService: CompaniesService

@@ -8,7 +8,7 @@ import { PaginationArgsDto } from "../../shared/dtos";
 import { IUser } from "../../shared/interfaces";
 import { CreateOrderInput, RemoveProductFromOrderInput, UpdateOrderInput } from "../dtos";
 import { AddProductToOrderInput } from "../dtos/add-product-to-order.dto";
-import { ActiveOrderEntity, PaginatedActiveOrder, PaginatedHistoryOrder, UserToOrderEntity } from "../entities";
+import { ActiveOrderEntity, PaginatedActiveOrder, PaginatedHistoryOrder, ProductToOrderEntity } from "../entities";
 import { OrdersService, ProductToOrderService } from "../services";
 
 @Resolver(() => ActiveOrderEntity)
@@ -75,24 +75,32 @@ export class OrdersResolver {
 		return this._productToOrderService.removeProductFromOrder(productFromOrder, user);
 	}
 
-	@Mutation(() => [UserToOrderEntity])
+	@Mutation(() => [ProductToOrderEntity])
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.CLIENT, UserRoleEnum.WAITER]))
 	async rejectProductsInOrder(@Args("productToOrderIds", { type: () => [String] }) productToOrderIds: string[]) {
 		return this._productToOrderService.rejectProductInOrder(productToOrderIds);
 	}
 
-	@Mutation(() => [UserToOrderEntity])
+	@Mutation(() => [ProductToOrderEntity])
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.CLIENT, UserRoleEnum.WAITER]))
 	async approveProductsInOrder(@Args("productToOrderIds", { type: () => [String] }) productToOrderIds: string[]) {
 		return this._productToOrderService.approveProductInOrder(productToOrderIds);
 	}
 
-	@Mutation(() => [UserToOrderEntity])
+	@Mutation(() => [ProductToOrderEntity])
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.CLIENT, UserRoleEnum.WAITER]))
 	async setManualPayForProductsInOrder(
 		@Args("productToOrderIds", { type: () => [String] }) productToOrderIds: string[]
 	) {
 		return this._productToOrderService.setManualPayForProductsInOrder(productToOrderIds);
+	}
+
+	@Mutation(() => [ProductToOrderEntity])
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.CLIENT, UserRoleEnum.WAITER]))
+	async setPaidStatusForProductsInOrder(
+		@Args("productToOrderIds", { type: () => [String] }) productToOrderIds: string[]
+	) {
+		return this._productToOrderService.setPaidStatusForProductsInOrder(productToOrderIds);
 	}
 
 	@Mutation(() => ActiveOrderEntity)
@@ -105,6 +113,18 @@ export class OrdersResolver {
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.CLIENT, UserRoleEnum.ADMIN]))
 	async addTableToOrder(@Args("orderId") orderId: string, @Args("tableId") tableId: string) {
 		return this._ordersService.addTableToOrder(orderId, tableId);
+	}
+
+	@Mutation(() => ActiveOrderEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.CLIENT, UserRoleEnum.ADMIN]))
+	async approveTableInOrder(@Args("orderId") orderId: string) {
+		return this._ordersService.approveTableInOrder(orderId);
+	}
+
+	@Mutation(() => ActiveOrderEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.CLIENT, UserRoleEnum.ADMIN]))
+	async rejectTableInOrder(@Args("orderId") orderId: string) {
+		return this._ordersService.rejectTableInOrder(orderId);
 	}
 
 	@Mutation(() => ActiveOrderEntity)

@@ -5,10 +5,11 @@ import { PlaceEntity } from "../../places/entities";
 import { BaseEntity } from "../../shared";
 import { Pagination } from "../../shared/entities/pagination.type";
 import { OrderStatusEnum, OrderTypeEnum } from "../../shared/enums";
+import { TableStatusEnum } from "../../shared/enums/orders/table-status.enum";
 import { TableEntity } from "../../tables/entities";
 import { UserEntity } from "../../users/entities";
 import { ACTIVE_ORDERS } from "../constant";
-import { UserToOrderEntity } from "./user-to-order.entity";
+import { ProductToOrderEntity } from "./product-to-order.entity";
 
 @ObjectType()
 @InputType("ActiveOrderEntityInput")
@@ -26,6 +27,10 @@ export class ActiveOrderEntity extends BaseEntity {
 	@Field(() => TableEntity, { nullable: true })
 	@ManyToOne(() => TableEntity, (table) => table.orders, { nullable: true })
 	table?: TableEntity;
+
+	@Field(() => TableStatusEnum)
+	@Column("enum", { enum: TableStatusEnum, default: TableStatusEnum.EMPTY })
+	tableStatus: TableStatusEnum;
 
 	@Field(() => [UserEntity], { nullable: true })
 	@ManyToMany(() => UserEntity, (user) => user.orders, { nullable: true })
@@ -48,9 +53,17 @@ export class ActiveOrderEntity extends BaseEntity {
 	@Column("int", { nullable: true })
 	totalPrice?: number;
 
-	@Field(() => [UserToOrderEntity], { nullable: true })
-	@OneToMany(() => UserToOrderEntity, (uTo) => uTo.order, { nullable: true, cascade: true })
-	usersToOrders?: UserToOrderEntity[];
+	@Field(() => [ProductToOrderEntity], { nullable: true })
+	@OneToMany(() => ProductToOrderEntity, (pTo) => pTo.order, { nullable: true, cascade: true })
+	productsToOrders?: ProductToOrderEntity[];
+
+	@Field(() => Date)
+	@Column()
+	createdAt: Date;
+
+	@Field(() => Date)
+	@Column()
+	startDate: Date;
 }
 
 @ObjectType()

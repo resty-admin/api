@@ -5,11 +5,12 @@ import { GraphQLError } from "graphql/error";
 
 import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
-import { ErrorsEnum, OrderStatusEnum, ProductToOrderStatusEnum } from "../../shared/enums";
+import { ErrorsEnum, OrderStatusEnum, OrderTypeEnum, ProductToOrderStatusEnum } from "../../shared/enums";
+import { TableStatusEnum } from "../../shared/enums/orders/table-status.enum";
 import type { IUser } from "../../shared/interfaces";
 import { ActiveShiftEntity } from "../../shifts/entities";
 import type { CreateOrderInput, UpdateOrderDto, UpdateOrderInput } from "../dtos";
-import { ActiveOrderEntity, HistoryOrderEntity, UserToOrderEntity } from "../entities";
+import { ActiveOrderEntity, HistoryOrderEntity, ProductToOrderEntity } from "../entities";
 import { OrdersGateway } from "../gateways";
 import { OrdersNotificationsService } from "./orders.notifications.service";
 
@@ -40,7 +41,7 @@ export class OrdersService {
 	constructor(
 		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository,
 		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository,
-		@InjectRepository(UserToOrderEntity) private readonly _userToOrderRepository,
+		@InjectRepository(ProductToOrderEntity) private readonly _userToOrderRepository,
 		@InjectRepository(HistoryOrderEntity) private readonly _historyOrderRepository,
 		@Inject(forwardRef(() => OrdersNotificationsService))
 		private readonly _ordersNotificationService: OrdersNotificationsService,
@@ -89,9 +90,13 @@ export class OrdersService {
 	}
 
 	async creatOrder(order: CreateOrderInput, user: IUser): Promise<ActiveOrderEntity> {
-		const savedOrder = await this._ordersRepository.save({
+		const date = new Date();
+
+		const savedOrder: ActiveOrderEntity = await this._ordersRepository.save({
 			...order,
 			users: [{ id: user.id }],
+			createdAt: date,
+			startDate: date,
 			code: Math.floor(Math.random() * 9999)
 		});
 
@@ -162,7 +167,7 @@ export class OrdersService {
 	}
 
 	async confirmOrder(orderId, user) {
-		const productsToOrders: UserToOrderEntity[] = await this._userToOrderRepository.find({
+		const productsToOrders: ProductToOrderEntity[] = await this._userToOrderRepository.find({
 			where: {
 				order: {
 					id: orderId
@@ -204,8 +209,38 @@ export class OrdersService {
 	}
 
 	async addTableToOrder(orderId: string, tableId: string) {
+		const order: ActiveOrderEntity = await this.getOrder(orderId);
+
+		const inValidOrderDate =
+			order.type !== OrderTypeEnum.IN_PLACE &&
+			order.startDate.getMilliseconds() - new Date().getMilliseconds() > 60_000;
+		if (inValidOrderDate) {
+			throw new GraphQLError(ErrorsEnum.InvalidOrderDate.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
+
 		await this._ordersNotificationService.addTableToOrderEvent(orderId, tableId);
-		return this._ordersRepository.save({ id: orderId, table: { id: tableId } });
+		return this._ordersRepository.save({
+			id: orderId,
+			table: { id: tableId },
+			tableStatus:
+				order.type === OrderTypeEnum.IN_PLACE ? TableStatusEnum.APPROVED : TableStatusEnum.WAITING_FOR_APPROVE
+		});
+	}
+
+	async approveTableInOrder(orderId: string) {
+		await this._ordersNotificationService.approveTableInOrderEvent(orderId);
+
+		return this._ordersRepository.save({ id: orderId, tableStatus: TableStatusEnum.APPROVED });
+	}
+
+	async rejectTableInOrder(orderId: string) {
+		await this._ordersNotificationService.rejectTableInOrderEvent(orderId);
+
+		return this._ordersRepository.save({ id: orderId, tableStatus: TableStatusEnum.REJECTED });
 	}
 
 	async removeTableFrom(orderId: string) {

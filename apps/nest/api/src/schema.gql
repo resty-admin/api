@@ -98,7 +98,7 @@ type PaginatedCommand {
 	totalCount: Int!
 }
 
-type UserToOrderEntity {
+type ProductToOrderEntity {
 	id: String!
 	user: UserEntity!
 	product: ProductEntity!
@@ -127,12 +127,22 @@ type ActiveOrderEntity {
 	code: Int!
 	orderNumber: Int!
 	table: TableEntity
+	tableStatus: TableStatusEnum!
 	users: [UserEntity!]
 	type: OrderTypeEnum!
 	status: OrderStatusEnum!
 	place: PlaceEntity!
 	totalPrice: Int
-	usersToOrders: [UserToOrderEntity!]
+	productsToOrders: [ProductToOrderEntity!]
+	createdAt: DateTime!
+	startDate: DateTime!
+}
+
+enum TableStatusEnum {
+	EMPTY
+	WAITING_FOR_APPROVE
+	REJECTED
+	APPROVED
 }
 
 enum OrderTypeEnum {
@@ -147,6 +157,11 @@ enum OrderStatusEnum {
 	CANCEL
 	CLOSED
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type PaginatedActiveOrder {
 	data: [ActiveOrderEntity!]
@@ -337,11 +352,6 @@ type ActiveShiftEntity {
 	shiftDate: DateTime!
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
 type PaginatedActiveShift {
 	data: [ActiveShiftEntity!]
 	page: Int!
@@ -397,7 +407,7 @@ input CommandEntityInput {
 	description: String!
 }
 
-input UserToOrderEntityInput {
+input ProductToOrderEntityInput {
 	user: UserEntityInput!
 	product: ProductEntityInput!
 	attributes: [AttributesEntityInput!]
@@ -411,12 +421,15 @@ input ActiveOrderEntityInput {
 	code: Int!
 	orderNumber: Int!
 	table: TableEntityInput
+	tableStatus: TableStatusEnum!
 	users: [UserEntityInput!]
 	type: OrderTypeEnum!
 	status: OrderStatusEnum!
 	place: PlaceEntityInput!
 	totalPrice: Int
-	usersToOrders: [UserToOrderEntityInput!]
+	productsToOrders: [ProductToOrderEntityInput!]
+	createdAt: DateTime!
+	startDate: DateTime!
 }
 
 input TableEntityInput {
@@ -563,11 +576,14 @@ type Mutation {
 	deleteOrder(orderId: String!): String!
 	addProductToOrder(productToOrder: AddProductToOrderInput!): ActiveOrderEntity!
 	removeProductFromOrder(productFromOrder: RemoveProductFromOrderInput!): ActiveOrderEntity!
-	rejectProductsInOrder(productToOrderIds: [String!]!): [UserToOrderEntity!]!
-	approveProductsInOrder(productToOrderIds: [String!]!): [UserToOrderEntity!]!
-	setManualPayForProductsInOrder(productToOrderIds: [String!]!): [UserToOrderEntity!]!
+	rejectProductsInOrder(productToOrderIds: [String!]!): [ProductToOrderEntity!]!
+	approveProductsInOrder(productToOrderIds: [String!]!): [ProductToOrderEntity!]!
+	setManualPayForProductsInOrder(productToOrderIds: [String!]!): [ProductToOrderEntity!]!
+	setPaidStatusForProductsInOrder(productToOrderIds: [String!]!): [ProductToOrderEntity!]!
 	addUserToOrder(code: Int!): ActiveOrderEntity!
 	addTableToOrder(orderId: String!, tableId: String!): ActiveOrderEntity!
+	approveTableInOrder(orderId: String!): ActiveOrderEntity!
+	rejectTableInOrder(orderId: String!): ActiveOrderEntity!
 	removeTableFromOrder(orderId: String!): ActiveOrderEntity!
 	confirmOrder(orderId: String!): ActiveOrderEntity!
 	closeOrder(orderId: String!): String!

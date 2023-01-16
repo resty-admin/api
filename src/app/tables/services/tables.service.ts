@@ -101,7 +101,7 @@ export class TablesService {
 			});
 		}
 
-		const activeOrder: ActiveOrderEntity = await this._ordersRepository.findOne({
+		const activeOrders: ActiveOrderEntity[] = await this._ordersRepository.find({
 			where: {
 				table: {
 					id: table.id
@@ -110,14 +110,25 @@ export class TablesService {
 			relations: ["table"]
 		});
 
-		if (activeOrder && activeOrder.type === OrderTypeEnum.IN_PLACE) {
-			throw new GraphQLError(ErrorsEnum.ActiveOrderWithTableExist.toString(), {
+		if (activeOrders.length === 0) {
+			return table;
+		}
+
+		const inPlaceActiveOrder = activeOrders.some((el) => el.type === OrderTypeEnum.IN_PLACE);
+		const closeReserve = activeOrders.some((el) => {
+			const currDate = new Date().getMilliseconds();
+			const ONE_HOUR = 3_600_000;
+			const orderStartTime = el.startDate.getMilliseconds();
+
+			return orderStartTime - currDate < ONE_HOUR;
+		});
+
+		if (inPlaceActiveOrder || closeReserve) {
+			throw new GraphQLError(ErrorsEnum.ActiveInPlaceOrderWithTableExist.toString(), {
 				extensions: {
 					code: 500
 				}
 			});
 		}
-
-		return table;
 	}
 }

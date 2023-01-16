@@ -5,7 +5,7 @@ import { In } from "typeorm";
 import { ProductToOrderPaidStatusEnum, ProductToOrderStatusEnum } from "../../shared/enums";
 import type { IUser } from "../../shared/interfaces";
 import type { AddProductToOrderInput, RemoveProductFromOrderInput } from "../dtos";
-import { ActiveOrderEntity, UserToOrderEntity } from "../entities";
+import { ActiveOrderEntity, ProductToOrderEntity } from "../entities";
 import { OrdersNotificationsService } from "./orders.notifications.service";
 import { OrdersService } from "./orders.service";
 
@@ -14,7 +14,7 @@ export class ProductToOrderService {
 	constructor(
 		private readonly _ordersService: OrdersService,
 		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository,
-		@InjectRepository(UserToOrderEntity) private readonly _userToOrderRepository,
+		@InjectRepository(ProductToOrderEntity) private readonly _userToOrderRepository,
 		private readonly _ordersNotificationService: OrdersNotificationsService
 	) {}
 
@@ -26,15 +26,16 @@ export class ProductToOrderService {
 			relations: ["usersToOrders", "usersToOrders.product", "usersToOrders.attributes", "usersToOrders.user"]
 		});
 
-		const currProduct = order.usersToOrders.find((userToOrder) => {
+		const currProduct = order.productsToOrders.find((userToOrder) => {
 			const isUserSame = userToOrder.user.id === user.id;
 			const isProductSame = userToOrder.product.id === productToOrder.productId;
+			const isStatusNotPaid = userToOrder.paidStatus === ProductToOrderPaidStatusEnum.NOT_PAID;
 			const isAttributesLengthSame = (userToOrder.attributes || []).length === (productToOrder.attrs || []).length;
 			const isAttributesSame = (userToOrder.attributes || []).every((attribute) =>
 				(productToOrder.attrs || []).includes(attribute.id)
 			);
 
-			return isUserSame && isProductSame && isAttributesLengthSame && isAttributesSame;
+			return isUserSame && isStatusNotPaid && isProductSame && isAttributesLengthSame && isAttributesSame;
 		});
 
 		if (currProduct) {
@@ -73,7 +74,7 @@ export class ProductToOrderService {
 			relations: ["usersToOrders", "usersToOrders.product", "usersToOrders.attributes", "usersToOrders.user"]
 		});
 
-		const deleteProduct = order.usersToOrders.find((userToOrder) => {
+		const deleteProduct = order.productsToOrders.find((userToOrder) => {
 			const isUserSame = userToOrder.user.id === user.id;
 			const isProductSame = userToOrder.product.id === productFromOrder.productId;
 			const isAttributesLengthSame = (userToOrder.attributes || []).length === (productFromOrder.attrs || []).length;
@@ -107,7 +108,7 @@ export class ProductToOrderService {
 
 		return this._ordersRepository.save({
 			...order,
-			totalPrice: this.calculateTotalPrice(order.usersToOrders)
+			totalPrice: this.calculateTotalPrice(order.productsToOrders)
 		});
 	}
 
@@ -143,6 +144,18 @@ export class ProductToOrderService {
 		});
 
 		const updatedPtos = pTos.map((el) => ({ ...el, paidStatus: ProductToOrderPaidStatusEnum.WAITING }));
+		await this._ordersNotificationService.waitingForManualPayOrderEvent(pTos[0].order.id);
+		return this._userToOrderRepository.save(updatedPtos);
+	}
+
+	async setPaidStatusForProductsInOrder(productToOrderIds: string[]) {
+		const pTos = await this._userToOrderRepository.find({
+			where: {
+				id: In(productToOrderIds)
+			}
+		});
+
+		const updatedPtos = pTos.map((el) => ({ ...el, paidStatus: ProductToOrderPaidStatusEnum.PAID }));
 		await this._ordersNotificationService.waitingForManualPayOrderEvent(pTos[0].order.id);
 		return this._userToOrderRepository.save(updatedPtos);
 	}

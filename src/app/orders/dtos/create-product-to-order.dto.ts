@@ -4,7 +4,7 @@ import { Transform } from "class-transformer";
 import { IsNumber } from "../../shared";
 
 @InputType()
-export class CreateUserToOrderInput {
+export class CreateProductToOrderInput {
 	@Field(() => String)
 	@Transform(({ value }) => ({ id: value }))
 	user: String;
