@@ -9,8 +9,8 @@ import { environment } from "../../../environments/environment";
 import { CompaniesService } from "../../companies/services";
 import { ActiveOrderEntity, ProductToOrderEntity } from "../../orders/entities";
 import { ProductToOrderPaidStatusEnum } from "../../shared/enums";
-import type { CreatePaymentOrderLinkDto } from "../dtos";
 import { PaymentSystemEntity } from "../entities";
+import { PlaceToPaymentSystemEntity } from "../entities/place-to-payment-system.entity";
 
 @Injectable()
 export class FondyService {
@@ -19,6 +19,7 @@ export class FondyService {
 
 	constructor(
 		@InjectRepository(PaymentSystemEntity) private readonly _paymentSystemRepository,
+		@InjectRepository(PlaceToPaymentSystemEntity) private readonly _paymentPlaceRepository,
 		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository: Repository<ActiveOrderEntity>,
 		@InjectRepository(ProductToOrderEntity) private readonly productToOrderRepository: Repository<ProductToOrderEntity>,
 		private readonly _apiService: ApiService,
@@ -32,17 +33,12 @@ export class FondyService {
 		});
 	}
 
-	async createPaymentOrderLink({ users, orderId }: CreatePaymentOrderLinkDto) {
+	async createPaymentOrderLink(pTos: string[]) {
 		const productsToOrders = await this.productToOrderRepository.find({
 			where: {
-				user: {
-					id: In(users)
-				},
-				order: {
-					id: orderId
-				}
+				id: In(pTos)
 			},
-			relations: ["product", "user", "order", "attributes"]
+			relations: ["product", "order", "order.users", "order.place", "attributes"]
 		});
 
 		const baseUrl = false && environment.production ? `https://dev-api.resty.od.ua` : `http://localhost:3000`;
@@ -58,11 +54,17 @@ export class FondyService {
 				0
 			);
 
+		const [{ order }] = productsToOrders;
+		const orderId = order.id;
+		const users = order.users.map((el) => el.id);
+		const merchant = await this.getMerchantByPlace(order.place.id);
+
+		// 1_396_4247
 		const receivers = [
 			{
 				requisites: {
 					amount: totalPrice * 0.95,
-					merchant_id: 1_396_424
+					merchant_id: (merchant.placeConfigFields as any).merchantId
 				},
 				type: "merchant"
 			}
@@ -111,33 +113,15 @@ export class FondyService {
 				paidStatus: ProductToOrderPaidStatusEnum.PAID
 			});
 		}
-
-		// const order = await this._ordersRepository.findOne({ where: { id: orderId }, relations: ["productsToOrders"] });
-		//
-		// const allProductsPaid = order.productsToOrders.every((el) => el.status === ProductToOrderStatusEnum.ADDED);
-		//
-		// if (allProductsPaid) {
-		// 	await this._ordersRepository.save({
-		// 		...order,
-		// 		status: OrderStatusEnum.CLOSED
-		// 	});
-		// }
-		// console.log("body", body);
 	}
 
-	// async createMerchant(createFondyMerchantDto: CreateFondyMerchantDto) {
-	// 	const savedMerchant = await this._fondyRepository.save({
-	// 		...createFondyMerchantDto,
-	// 		company: { id: createFondyMerchantDto.company }
-	// 	});
-	//
-	// 	return this._fondyRepository.findOne({
-	// 		where: { id: savedMerchant.id }
-	// 	});
-	// }
-
-	// async merchantInstance(userId: string) {
-	// 	console.log("userid", userId);
-	// 	// const user = this._companiesService.getCompany();
-	// }
+	async getMerchantByPlace(placeId: string): Promise<PlaceToPaymentSystemEntity> {
+		return this._paymentPlaceRepository.findOne({
+			where: {
+				place: {
+					id: placeId
+				}
+			}
+		});
+	}
 }

@@ -365,6 +365,10 @@ type LanguageEntity {
 	file: FileEntity!
 }
 
+type FondyLink {
+	link: String!
+}
+
 input FileEntityInput {
 	url: String!
 }
@@ -579,6 +583,7 @@ type Mutation {
 	updatePaymentSystem(paymentSystem: UpdatePaymentSystemInput!): PaymentSystemEntity!
 	deletePaymentSystem(paymentSystemId: String!): String!
 	connectPaymentSystemToPlace(body: ConnectPaymentSystemToPlaceInput!): PlaceToPaymentSystemEntity!
+	createPaymentOrderLink(productsToOrders: [String!]!): FondyLink!
 	createOrder(order: CreateOrderInput!): ActiveOrderEntity!
 	updateOrder(order: UpdateOrderInput!): ActiveOrderEntity!
 	deleteOrder(orderId: String!): String!
