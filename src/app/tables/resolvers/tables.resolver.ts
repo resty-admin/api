@@ -6,6 +6,7 @@ import { RolesGuard } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
 import { UserRoleEnum } from "../../shared/enums";
 import { CreateTableInput, UpdateTableInput } from "../dtos";
+import { IsTableAvailableInput } from "../dtos/is-table-available.dto";
 import { PaginatedTable, TableEntity } from "../entities";
 import { TablesService } from "../services";
 
@@ -47,5 +48,11 @@ export class TablesResolver {
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.CLIENT]))
 	async getTableByCode(@Args("code") code: string, @Args("placeId") placeId: string) {
 		return this._tablesService.getTableByCode(code, placeId);
+	}
+
+	@Query(() => TableEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.CLIENT]))
+	async isTableAvailableForReserve(@Args("body") body: IsTableAvailableInput) {
+		return this._tablesService.isTableAvailableForReserve(body.tableId, body.date);
 	}
 }

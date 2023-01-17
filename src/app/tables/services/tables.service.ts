@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { GraphQLError } from "graphql/error";
+import { Between, In } from "typeorm";
 
 import { ActiveOrderEntity } from "../../orders/entities";
 import { getFindOptionsByFilters } from "../../shared/crud";
@@ -130,5 +131,32 @@ export class TablesService {
 				}
 			});
 		}
+	}
+
+	async isTableAvailableForReserve(tableId: string, date: Date) {
+		const ONE_HOUR_S = 3600;
+		const minFreeDate = new Date((date.getTime() / 1000 - ONE_HOUR_S) * 1000);
+		const maxFreeDate = new Date((date.getTime() / 1000 + ONE_HOUR_S) * 1000);
+
+		const activeOrders: ActiveOrderEntity[] = await this._ordersRepository.find({
+			where: {
+				table: {
+					id: tableId
+				},
+				type: In([OrderTypeEnum.IN_PLACE, OrderTypeEnum.RESERVE]),
+				startDate: Between(minFreeDate, maxFreeDate)
+			},
+			relations: ["table"]
+		});
+
+		if (activeOrders.length === 0) {
+			return this.getTable(tableId);
+		}
+
+		throw new GraphQLError(ErrorsEnum.TableAlreadyReserved.toString(), {
+			extensions: {
+				code: 500
+			}
+		});
 	}
 }

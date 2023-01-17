@@ -64,6 +64,10 @@ export class ActiveOrderEntity extends BaseEntity {
 	@Field(() => Date)
 	@Column()
 	startDate: Date;
+
+	@Field(() => String, { nullable: true })
+	@Column({ nullable: true })
+	comments?: string;
 }
 
 @ObjectType()

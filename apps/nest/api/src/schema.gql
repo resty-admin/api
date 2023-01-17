@@ -136,6 +136,7 @@ type ActiveOrderEntity {
 	productsToOrders: [ProductToOrderEntity!]
 	createdAt: DateTime!
 	startDate: DateTime!
+	comments: String
 }
 
 enum TableStatusEnum {
@@ -430,6 +431,7 @@ input ActiveOrderEntityInput {
 	productsToOrders: [ProductToOrderEntityInput!]
 	createdAt: DateTime!
 	startDate: DateTime!
+	comments: String
 }
 
 input TableEntityInput {
@@ -530,6 +532,7 @@ type Query {
 	products(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedProduct!
 	table(id: String!): TableEntity!
 	tables(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedTable!
+	isTableAvailableForReserve(body: IsTableAvailableInput!): TableEntity!
 	shift(id: String!): ActiveShiftEntity!
 	shifts(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedActiveShift!
 	activeShift: ActiveShiftEntity
@@ -555,6 +558,11 @@ input FiltersArgsDto {
 	key: String!
 	operator: String!
 	value: String!
+}
+
+input IsTableAvailableInput {
+	tableId: String!
+	date: DateTime!
 }
 
 type Mutation {
@@ -687,6 +695,7 @@ input CreateOrderInput {
 	type: OrderTypeEnum!
 	place: String!
 	table: String
+	comments: String
 }
 
 input UpdateOrderInput {

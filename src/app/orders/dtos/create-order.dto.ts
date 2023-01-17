@@ -35,20 +35,7 @@ export class CreateOrderInput {
 	@Transform(({ value }) => ({ id: value }))
 	table?: string;
 
-	// @Field(() => Int)
-	// totalPrice: number;
-
-	// @Field(() => [String], { nullable: true })
-	// @Transform(({ value }) => value.map((id) => ({ id })))
-	// users?: string[];
-	// @Field(() => [CreateUserToOrderInput], { nullable: true })
-	// @Transform(({ value }) =>
-	// 	value.map((el) => ({
-	// 		...el,
-	// 		user: { id: el.user },
-	// 		product: { id: el.product },
-	// 		attributes: el.attributes?.map((el) => ({ id: el })) || null
-	// 	}))
-	// )
-	// productsToOrders?: CreateUserToOrderInput[];
+	@Field(() => String, { nullable: true })
+	@IsOptional()
+	comments?: string;
 }
