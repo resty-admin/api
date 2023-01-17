@@ -1,6 +1,6 @@
 import { UseGuards } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { UserRoleEnum } from "src/app/shared/enums";
+import { PlaceVerificationStatusEnum, UserRoleEnum } from "src/app/shared/enums";
 
 import { GqlJwtGuard } from "../../auth";
 import { RolesGuard } from "../../shared";
@@ -54,5 +54,14 @@ export class PlacesResolver {
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
 	async removeEmployeeFromPlace(@Args("employeeData") employee: AddEmployeeInput) {
 		return this._placesService.removeEmployeeFromPlace(employee);
+	}
+
+	@Mutation(() => Boolean)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	async updatePlaceVerification(
+		@Args("placeId") placeId: string,
+		@Args("status", { type: () => PlaceVerificationStatusEnum }) status: PlaceVerificationStatusEnum
+	) {
+		return this._placesService.updatePlaceVerification(placeId, status);
 	}
 }

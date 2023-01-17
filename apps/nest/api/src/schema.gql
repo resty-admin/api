@@ -249,6 +249,7 @@ type PlaceEntity {
 	company: CompanyEntity!
 	address: String
 	status: PlaceStatusEnum!
+	verificationStatus: PlaceVerificationStatusEnum!
 	halls: [HallEntity!]!
 	categories: [CategoryEntity!]
 	file: FileEntity
@@ -267,6 +268,11 @@ type PlaceEntity {
 enum PlaceStatusEnum {
 	OPENED
 	CLOSED
+}
+
+enum PlaceVerificationStatusEnum {
+	VERIFIED
+	NOT_VERIFIED
 }
 
 type PaginatedPlace {
@@ -317,8 +323,8 @@ type UserEntity {
 }
 
 enum UserRoleEnum {
-	ROOT
 	ADMIN
+	MANAGER
 	HOSTESS
 	WAITER
 	HOOKAH
@@ -471,6 +477,7 @@ input PlaceEntityInput {
 	company: CompanyEntityInput!
 	address: String
 	status: PlaceStatusEnum!
+	verificationStatus: PlaceVerificationStatusEnum!
 	halls: [HallEntityInput!]!
 	categories: [CategoryEntityInput!]
 	file: FileEntityInput
@@ -634,6 +641,7 @@ type Mutation {
 	deletePlace(placeId: String!): String!
 	addEmployeeToPlace(employeeData: AddEmployeeInput!): PlaceEntity!
 	removeEmployeeFromPlace(employeeData: AddEmployeeInput!): PlaceEntity!
+	updatePlaceVerification(placeId: String!, status: PlaceVerificationStatusEnum!): Boolean!
 	createCategory(category: CreateCategoryInput!): CategoryEntity!
 	updateCategory(category: UpdateCategoryInput!): CategoryEntity!
 	deleteCategory(categoryId: String!): String!

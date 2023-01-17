@@ -44,13 +44,11 @@ export class ProductToOrderService {
 		});
 
 		if (currProduct) {
-			const result = await this.productToOrderRepository.save({ ...currProduct, count: currProduct.count + 1 });
-			await this.updateOrderTotalPrice(order.id);
-			return result;
+			await this.productToOrderRepository.save({ ...currProduct, count: currProduct.count + 1 });
+			return this.updateOrderTotalPrice(order.id);
 		}
 
-		await this.updateOrderTotalPrice(order.id);
-		return this.productToOrderRepository.save({
+		await this.productToOrderRepository.save({
 			order: {
 				id: productToOrder.orderId
 			},
@@ -64,6 +62,8 @@ export class ProductToOrderService {
 			count: 1,
 			...(productToOrder.attrs?.length > 0 ? { attributes: productToOrder.attrs.map((id) => ({ id })) } : {})
 		});
+
+		return this.updateOrderTotalPrice(order.id);
 	}
 
 	async removeProductFromOrder(productFromOrder: RemoveProductFromOrderInput, user: IUser) {

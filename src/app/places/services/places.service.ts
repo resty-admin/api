@@ -4,6 +4,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { CompanyEntity } from "../../companies/entities";
 import { getFindOptionsByFilters } from "../../shared/crud";
 import type { PaginationArgsDto } from "../../shared/dtos";
+import type { PlaceVerificationStatusEnum } from "../../shared/enums";
 import { OrderStatusEnum } from "../../shared/enums";
 import { UserEntity } from "../../users/entities";
 import type { CreatePlaceDto, UpdatePlaceDto } from "../dtos";
@@ -120,5 +121,15 @@ export class PlacesService {
 			...place,
 			employees: place.employees.filter((el) => el.id !== employee.userId)
 		});
+	}
+
+	async updatePlaceVerification(placeId: string, status: PlaceVerificationStatusEnum) {
+		const place: PlaceEntity = await this._placesRepository.findOne({
+			where: {
+				id: placeId
+			}
+		});
+
+		return this._placesRepository.save({ ...place, verificationStatus: status });
 	}
 }

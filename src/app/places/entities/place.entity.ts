@@ -11,7 +11,7 @@ import { ActiveOrderEntity } from "../../orders/entities";
 import { PlaceToPaymentSystemEntity } from "../../payment-systems/entities/place-to-payment-system.entity";
 import { BaseEntity } from "../../shared/entities";
 import { Pagination } from "../../shared/entities/pagination.type";
-import { PlaceStatusEnum } from "../../shared/enums";
+import { PlaceStatusEnum, PlaceVerificationStatusEnum } from "../../shared/enums";
 import { IFile } from "../../shared/interfaces";
 import { UserEntity } from "../../users/entities";
 import { PLACES } from "../constant";
@@ -36,6 +36,10 @@ export class PlaceEntity extends BaseEntity {
 	@Column("enum", { enum: PlaceStatusEnum, default: PlaceStatusEnum.CLOSED })
 	@Field(() => PlaceStatusEnum)
 	status: PlaceStatusEnum;
+
+	@Column("enum", { enum: PlaceVerificationStatusEnum, default: PlaceVerificationStatusEnum.NOT_VERIFIED })
+	@Field(() => PlaceVerificationStatusEnum)
+	verificationStatus: PlaceVerificationStatusEnum;
 
 	@Field(() => [HallEntity])
 	@OneToMany(() => HallEntity, (hall) => hall.place)
