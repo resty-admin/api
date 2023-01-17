@@ -189,7 +189,7 @@ export class OrdersService {
 
 		const updatedOrders = productsToOrders.map((el) => ({
 			...el,
-			status: ProductToOrderStatusEnum.WAITING_FOR_APPROVE
+			status: el.status === ProductToOrderStatusEnum.ADDED ? ProductToOrderStatusEnum.WAITING_FOR_APPROVE : el.status
 		}));
 		await this._ordersNotificationService.confirmOrderEvent(orderId);
 		return this._ordersRepository.save({ ...productsToOrders[0].order, productsToOrders: updatedOrders });

@@ -34,13 +34,13 @@ export class ProductToOrderService {
 		const currProduct = order.productsToOrders.find((userToOrder) => {
 			const isUserSame = userToOrder.user.id === user.id;
 			const isProductSame = userToOrder.product.id === productToOrder.productId;
-			const isStatusNotPaid = userToOrder.paidStatus === ProductToOrderPaidStatusEnum.NOT_PAID;
+			const isStatusAdded = userToOrder.status === ProductToOrderStatusEnum.ADDED;
 			const isAttributesLengthSame = (userToOrder.attributes || []).length === (productToOrder.attrs || []).length;
 			const isAttributesSame = (userToOrder.attributes || []).every((attribute) =>
 				(productToOrder.attrs || []).includes(attribute.id)
 			);
 
-			return isUserSame && isStatusNotPaid && isProductSame && isAttributesLengthSame && isAttributesSame;
+			return isUserSame && isStatusAdded && isProductSame && isAttributesLengthSame && isAttributesSame;
 		});
 
 		if (currProduct) {
@@ -155,7 +155,8 @@ export class ProductToOrderService {
 		const pTos = await this.productToOrderRepository.find({
 			where: {
 				id: In(productToOrderIds)
-			}
+			},
+			relations: ["order"]
 		});
 
 		const updatedPtos = pTos.map((el) => ({ ...el, paidStatus: ProductToOrderPaidStatusEnum.WAITING }));
@@ -167,7 +168,8 @@ export class ProductToOrderService {
 		const pTos = await this.productToOrderRepository.find({
 			where: {
 				id: In(productToOrderIds)
-			}
+			},
+			relations: ["order"]
 		});
 
 		const updatedPtos = pTos.map((el) => ({ ...el, paidStatus: ProductToOrderPaidStatusEnum.PAID }));
