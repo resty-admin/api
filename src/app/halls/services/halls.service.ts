@@ -2,10 +2,9 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
 import { ActiveOrderEntity } from "../../orders/entities";
-import { getFindOptionsByFilters } from "../../shared/crud";
+import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import { OrderStatusEnum } from "../../shared/enums";
-import type { CreateHallDto, UpdateHallDto } from "../dtos";
 import type { CreateHallInput, UpdateHallInput } from "../dtos";
 import { HallEntity } from "../entities";
 
@@ -43,7 +42,7 @@ export class HallsService {
 		};
 	}
 
-	async createHall(hall: CreateHallDto | CreateHallInput): Promise<HallEntity> {
+	async createHall(hall: CreateHallInput): Promise<HallEntity> {
 		const savedHall = await this._hallsRepository.save({ ...hall, place: { id: hall.place } });
 
 		return this._hallsRepository.findOne({
@@ -51,7 +50,7 @@ export class HallsService {
 		});
 	}
 
-	async updateHall(id: string, hall: UpdateHallDto | UpdateHallInput): Promise<HallEntity> {
+	async updateHall(id: string, hall: UpdateHallInput): Promise<HallEntity> {
 		this._hallsRepository.save({ id, ...hall });
 
 		return this._hallsRepository.findOne({

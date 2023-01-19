@@ -2,21 +2,6 @@ import { Field, InputType } from "@nestjs/graphql";
 
 import { IsOptional, IsString } from "../../shared";
 
-export class UpdateCommandDto {
-	@IsString()
-	@IsOptional()
-	// @ApiProperty()
-	name?: string;
-
-	@IsString()
-	@IsOptional()
-	place?: string;
-
-	@IsString()
-	@IsOptional()
-	description?: string;
-}
-
 @InputType()
 export class UpdateCommandInput {
 	@Field(() => String)

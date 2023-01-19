@@ -9,7 +9,7 @@ import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import { ActiveShiftEntity } from "../../shifts/entities";
 import { TablesService } from "../../tables/services";
-import type { CreateCommandDto, UpdateCommandDto } from "../dtos";
+import type { CreateCommandInput, UpdateCommandInput } from "../dtos";
 import { CommandEntity } from "../entities";
 
 @Injectable()
@@ -69,7 +69,7 @@ export class CommandsService {
 		};
 	}
 
-	async createCommand(command: CreateCommandDto): Promise<CommandEntity> {
+	async createCommand(command: CreateCommandInput): Promise<CommandEntity> {
 		const savedCommand = await this._commandsRepository.save(command);
 
 		return this._commandsRepository.findOne({
@@ -77,7 +77,7 @@ export class CommandsService {
 		});
 	}
 
-	async updateCommand(id: string, command: UpdateCommandDto): Promise<CommandEntity> {
+	async updateCommand(id: string, command: UpdateCommandInput): Promise<CommandEntity> {
 		return this._commandsRepository.save({ id, ...command });
 	}
 

@@ -1,38 +1,18 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
 
-import { IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "../../shared";
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "../../shared";
 import { AttributeGroupTypeEnum } from "../../shared/enums";
-
-export class CreateAttributeGroupDto {
-	@IsString()
-	@IsNotEmpty()
-	// @ApiProperty()
-	name: string;
-
-	@IsString()
-	// @ApiProperty()
-	@IsNotEmpty()
-	place: string;
-
-	@IsOptional()
-	@IsArray()
-	attributes?: string[];
-
-	@IsEnum(AttributeGroupTypeEnum)
-	type: AttributeGroupTypeEnum;
-
-	@IsNumber()
-	maxItemsForPick: number;
-}
 
 @InputType()
 export class CreateAttributeGroupInput {
 	@Field(() => String)
 	@IsString()
+	@IsNotEmpty()
 	name: string;
 
 	@Field(() => String)
 	@IsString()
+	@IsNotEmpty()
 	place: string;
 
 	@Field(() => [String], { nullable: true })
@@ -41,9 +21,11 @@ export class CreateAttributeGroupInput {
 
 	@Field(() => AttributeGroupTypeEnum)
 	@IsEnum(AttributeGroupTypeEnum)
+	@IsNotEmpty()
 	type: AttributeGroupTypeEnum;
 
 	@Field(() => Int)
 	@IsNumber()
+	@IsNotEmpty()
 	maxItemsForPick: number;
 }

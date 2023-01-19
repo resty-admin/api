@@ -3,25 +3,11 @@ import { Transform } from "class-transformer";
 
 import { IsNotEmpty, IsOptional, IsString } from "../../shared";
 
-export class CreateTableDto {
-	@IsString()
-	@IsNotEmpty()
-	// @ApiProperty()
-	name: string;
-
-	@IsString()
-	@IsOptional()
-	// @ApiProperty()
-	hall: string;
-
-	// @ApiProperty()
-	@IsOptional()
-	file: string;
-}
-
 @InputType()
 export class CreateTableInput {
 	@Field(() => String)
+	@IsString()
+	@IsNotEmpty()
 	name: string;
 
 	@Field(() => Int, { nullable: true })
@@ -29,6 +15,8 @@ export class CreateTableInput {
 	code?: number;
 
 	@Field(() => String)
+	@IsString()
+	@IsNotEmpty()
 	hall: string;
 
 	@Field(() => String, { nullable: true })

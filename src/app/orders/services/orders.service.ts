@@ -9,7 +9,7 @@ import { ErrorsEnum, OrderStatusEnum, OrderTypeEnum, ProductToOrderStatusEnum } 
 import { TableStatusEnum } from "../../shared/enums/orders/table-status.enum";
 import type { IUser } from "../../shared/interfaces";
 import { ActiveShiftEntity } from "../../shifts/entities";
-import type { CreateOrderInput, UpdateOrderDto, UpdateOrderInput } from "../dtos";
+import type { CreateOrderInput, UpdateOrderInput } from "../dtos";
 import { ActiveOrderEntity, HistoryOrderEntity, ProductToOrderEntity } from "../entities";
 import { OrdersGateway } from "../gateways";
 import { OrdersNotificationsService } from "./orders.notifications.service";
@@ -108,7 +108,7 @@ export class OrdersService {
 		});
 	}
 
-	async updateOrder(id: string, order: UpdateOrderDto | UpdateOrderInput): Promise<ActiveOrderEntity> {
+	async updateOrder(id: string, order: UpdateOrderInput): Promise<ActiveOrderEntity> {
 		await this._ordersRepository.save({ id, ...order });
 
 		return this._ordersRepository.findOne({

@@ -1,5 +1,6 @@
 import { ApolloDriver } from "@nestjs/apollo";
 import { ApolloServerPluginLandingPageLocalDefault } from "apollo-server-core";
+import type { GraphQLError, GraphQLFormattedError } from "graphql/error";
 
 import { AccountingSystemsModule } from "../../accounting-systems/accounting-systems.module";
 import { AttributesModule } from "../../attributes/attributes.module";
@@ -43,6 +44,17 @@ export const GRAPHQL_CONFIG = {
 		AuthModule
 	],
 	context: ({ req }) => ({ req }),
+	formatError: (error: GraphQLError) => {
+		const validationPipeErrors = (error as any).extensions.response?.message;
+		const graphqlError = (error as any).extensions.exception?.message;
+		const graphQLFormattedError: GraphQLFormattedError = {
+			extensions: {
+				codes: [...(validationPipeErrors || []), graphqlError].filter((el) => el) as any
+			},
+			message: error.message
+		};
+		return graphQLFormattedError;
+	},
 	driver: ApolloDriver,
 	playground: false,
 	plugins: [ApolloServerPluginLandingPageLocalDefault()]

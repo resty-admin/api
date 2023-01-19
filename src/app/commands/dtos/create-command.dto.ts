@@ -1,20 +1,6 @@
 import { Field, InputType } from "@nestjs/graphql";
 
-import { IsNotEmpty, IsString } from "../../shared";
-
-export class CreateCommandDto {
-	@IsString()
-	@IsNotEmpty()
-	// @ApiProperty()
-	name: string;
-
-	@IsString()
-	@IsNotEmpty()
-	place: string;
-
-	@IsString()
-	description: string;
-}
+import { IsString } from "../../shared";
 
 @InputType()
 export class CreateCommandInput {

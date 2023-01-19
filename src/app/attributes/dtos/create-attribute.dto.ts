@@ -1,31 +1,23 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
 import { Transform } from "class-transformer";
 
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from "../../shared";
-
-export class CreateAttributeDto {
-	@IsString()
-	@IsNotEmpty()
-	// @ApiProperty()
-	name: string;
-
-	@IsNumber()
-	@IsOptional()
-	// @ApiProperty()
-	price: number;
-}
+import { IsArray, IsNotEmpty, IsNumber, IsString } from "../../shared";
 
 @InputType()
 export class CreateAttributeInput {
 	@Field(() => String)
 	@IsString()
+	@IsNotEmpty()
 	name: string;
 
 	@Field(() => Int)
 	@IsNumber()
+	@IsNotEmpty()
 	price: number;
 
 	@Field(() => [String])
 	@Transform(({ value }) => value.map((id) => ({ id })))
+	@IsArray()
+	@IsNotEmpty()
 	attributesGroup: string[];
 }

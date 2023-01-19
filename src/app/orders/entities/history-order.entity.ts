@@ -41,13 +41,6 @@ export class HistoryOrderEntity extends BaseEntity {
 	@Field(() => OrderStatusEnum)
 	status: OrderStatusEnum;
 
-	// @Column({
-	// 	type: "json",
-	// 	default: () => `('${JSON.stringify({})}')`
-	// })
-	// @Field(() => GraphQLJSONObject)
-	// place: object;
-
 	@Field(() => PlaceEntity)
 	@ManyToOne(() => PlaceEntity, (place) => place.orders)
 	place: PlaceEntity;

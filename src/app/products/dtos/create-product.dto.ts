@@ -1,47 +1,18 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { Transform } from "class-transformer";
-import { IsArray } from "class-validator";
 
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from "../../shared";
-import { IFile } from "../../shared/interfaces";
-
-export class CreateProductDto {
-	@IsString()
-	@IsNotEmpty()
-	// @ApiProperty()
-	name: string;
-
-	@IsString()
-	@IsNotEmpty()
-	// @ApiProperty()
-	category: string;
-
-	@IsString()
-	@IsOptional()
-	// @ApiProperty()
-	description: string;
-
-	@IsNumber()
-	@IsOptional()
-	// @ApiProperty()
-	price: number;
-
-	// @ApiProperty()
-	@IsOptional()
-	file: IFile;
-
-	// @ApiProperty()
-	@IsOptional()
-	@IsArray()
-	attrsGroups: string[];
-}
+import { IsNotEmpty, IsOptional, IsString } from "../../shared";
 
 @InputType()
 export class CreateProductInput {
 	@Field(() => String)
+	@IsString()
+	@IsNotEmpty()
 	name: string;
 
 	@Field(() => String)
+	@IsString()
+	@IsNotEmpty()
 	category: string;
 
 	@Field(() => String, { nullable: true })

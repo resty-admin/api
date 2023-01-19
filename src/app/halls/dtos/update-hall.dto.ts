@@ -1,24 +1,19 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { Transform } from "class-transformer";
-import { IFile } from "src/app/shared/interfaces";
+import { IsUUID } from "class-validator";
 
 import { IsNotEmpty, IsOptional, IsString } from "../../shared";
-
-export class UpdateHallDto {
-	@IsString()
-	@IsNotEmpty()
-	name: string;
-
-	@IsOptional()
-	file: IFile;
-}
 
 @InputType()
 export class UpdateHallInput {
 	@Field(() => String)
+	@IsUUID()
+	@IsNotEmpty()
 	id: string;
 
 	@Field(() => String)
+	@IsString()
+	@IsNotEmpty()
 	name: string;
 
 	@Field(() => String, { nullable: true })

@@ -2,10 +2,9 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
 import { ActiveOrderEntity } from "../../orders/entities";
-import { getFindOptionsByFilters } from "../../shared/crud";
+import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import { OrderStatusEnum } from "../../shared/enums";
-import type { CreateCategoryDto, UpdateCategoryDto } from "../dtos";
 import type { CreateCategoryInput, UpdateCategoryInput } from "../dtos";
 import { CategoryEntity } from "../entities";
 
@@ -43,7 +42,7 @@ export class CategoriesService {
 		};
 	}
 
-	async createCategory(category: CreateCategoryDto | CreateCategoryInput): Promise<CategoryEntity> {
+	async createCategory(category: CreateCategoryInput): Promise<CategoryEntity> {
 		const savedCategory = await this._categoriesRepository.save({ ...category, place: { id: category.place } });
 
 		return this._categoriesRepository.findOne({
@@ -51,7 +50,7 @@ export class CategoriesService {
 		});
 	}
 
-	async updateCategory(id: string, category: UpdateCategoryDto | UpdateCategoryInput): Promise<CategoryEntity> {
+	async updateCategory(id: string, category: UpdateCategoryInput): Promise<CategoryEntity> {
 		await this._categoriesRepository.save({ id, ...category });
 
 		return this._categoriesRepository.findOne({

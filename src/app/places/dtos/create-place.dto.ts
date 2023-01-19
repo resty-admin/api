@@ -6,56 +6,19 @@ import { IsNotEmpty, IsObject, IsOptional, IsString } from "../../shared";
 import { IsMap } from "../../shared/validators/is-map.validator";
 import { WorkingHoursDto, WorkingHoursInput } from "./date-types.dto";
 
-export class CreatePlaceDto {
-	@IsString()
-	@IsNotEmpty()
-	// @ApiProperty()
-	name: string;
-
-	@IsString()
-	@IsNotEmpty()
-	// @ApiProperty()
-	address: string;
-
-	@IsString()
-	@IsNotEmpty()
-	// @ApiProperty()
-	company: string;
-
-	// @ApiProperty()
-	@IsOptional()
-	file: string;
-
-	@IsObject()
-	@IsOptional()
-	@ValidateNested()
-	@Type(() => WorkingHoursDto)
-	weekDays: WorkingHoursDto;
-
-	@IsObject()
-	@IsOptional()
-	@ValidateNested()
-	@Type(() => WorkingHoursDto)
-	weekendDays: WorkingHoursDto;
-
-	// @ApiProperty()
-	@IsOptional()
-	@IsMap([isISO8601], [])
-	@ValidateNested()
-	@Type(() => WorkingHoursDto)
-	holidayDays: Map<Date, WorkingHoursDto>;
-}
-
 @InputType()
 export class CreatePlaceInput {
 	@Field(() => String)
+	@IsString()
+	@IsNotEmpty()
 	name: string;
 
 	@Field(() => String, { nullable: true })
-	// @IsOptional()
 	address?: string;
 
 	@Field(() => String)
+	@IsString()
+	@IsNotEmpty()
 	company: string;
 
 	@Field(() => String, { nullable: true })

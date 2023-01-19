@@ -1,5 +1,4 @@
 import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
-import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity, ManyToMany } from "typeorm";
 
 import { BaseEntity } from "../../shared";
@@ -12,16 +11,13 @@ import { AttributesGroupEntity } from "./attributes-group.entity";
 @Entity({ name: ATTRIBUTES })
 export class AttributesEntity extends BaseEntity {
 	@Column()
-	@ApiProperty()
 	@Field(() => String)
 	name: string;
 
-	@ApiProperty()
 	@Field(() => [AttributesGroupEntity])
 	@ManyToMany(() => AttributesGroupEntity, (attrGroup) => attrGroup.attributes, { onDelete: "CASCADE" })
 	attributesGroup: AttributesGroupEntity[];
 
-	@ApiProperty()
 	@Field(() => Int)
 	@Column({ nullable: true })
 	price: number;

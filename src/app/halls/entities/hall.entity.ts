@@ -14,22 +14,18 @@ import { HALLS } from "../constant";
 @Entity({ name: HALLS })
 export class HallEntity extends BaseEntity {
 	@Column()
-	// @ApiProperty()
 	@Field(() => String)
 	name: string;
 
 	@ManyToOne(() => PlaceEntity, (place) => place.halls, { cascade: true, onDelete: "CASCADE" })
 	@Field(() => PlaceEntity)
-	// @ApiProperty()
 	place: PlaceEntity;
 
-	// @ApiProperty()
 	@Field(() => FileEntity, { nullable: true })
 	@OneToOne(() => FileEntity, { cascade: true, eager: true, nullable: true })
 	@JoinColumn()
 	file?: IFile;
 
-	// @ApiProperty()
 	@Field(() => [TableEntity], { nullable: true })
 	@OneToMany(() => TableEntity, (table) => table.hall, { nullable: true })
 	tables?: TableEntity[];

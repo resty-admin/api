@@ -2,10 +2,9 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
 import { ActiveOrderEntity } from "../../orders/entities";
-import { getFindOptionsByFilters } from "../../shared/crud";
+import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import { OrderStatusEnum } from "../../shared/enums";
-import type { CreateProductDto, UpdateProductDto } from "../dtos";
 import type { CreateProductInput, UpdateProductInput } from "../dtos";
 import { ProductEntity } from "../entities";
 
@@ -43,7 +42,7 @@ export class ProductsService {
 		};
 	}
 
-	async createProduct(product: CreateProductDto | CreateProductInput): Promise<ProductEntity> {
+	async createProduct(product: CreateProductInput): Promise<ProductEntity> {
 		const savedProduct = await this._productsRepository.save({
 			...product,
 			category: { id: product.category },
@@ -55,7 +54,7 @@ export class ProductsService {
 		});
 	}
 
-	async updateProduct(id: string, user: UpdateProductDto | UpdateProductInput): Promise<ProductEntity> {
+	async updateProduct(id: string, user: UpdateProductInput): Promise<ProductEntity> {
 		await this._productsRepository.save({ id, ...user });
 
 		return this._productsRepository.findOne({ where: { id }, relations: this.findOneRelations });

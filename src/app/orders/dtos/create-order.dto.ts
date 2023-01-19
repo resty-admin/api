@@ -2,23 +2,7 @@ import { Field, InputType } from "@nestjs/graphql";
 import { Transform } from "class-transformer";
 import { OrderTypeEnum } from "src/app/shared/enums";
 
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "../../shared";
-
-export class CreateOrderDto {
-	@IsEnum(OrderTypeEnum)
-	@IsNotEmpty()
-	// @ApiProperty()
-	type: OrderTypeEnum;
-
-	@IsString()
-	@IsNotEmpty()
-	// @ApiProperty()
-	place: string;
-
-	@IsNumber()
-	@IsNotEmpty()
-	totalPrice: number;
-}
+import { IsEnum, IsOptional } from "../../shared";
 
 @InputType()
 export class CreateOrderInput {

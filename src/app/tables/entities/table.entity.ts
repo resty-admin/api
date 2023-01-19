@@ -13,34 +13,25 @@ import { TABLES } from "../constant";
 @Entity({ name: TABLES })
 export class TableEntity extends BaseEntity {
 	@Column()
-	// @ApiProperty()
 	@Field(() => String)
 	name: string;
 
-	// @ApiProperty()
 	@Column("int")
 	@Field(() => Int)
 	code: number;
 
-	// @ApiProperty()
 	@Field(() => HallEntity)
 	@ManyToOne(() => HallEntity, (hall) => hall.tables, { onDelete: "CASCADE" })
 	hall: HallEntity;
 
-	// @ApiProperty()
 	@Field(() => [ActiveOrderEntity], { nullable: true })
 	@OneToMany(() => ActiveOrderEntity, (order) => order.table, { cascade: true, nullable: true })
 	orders?: ActiveOrderEntity[];
 
-	// @ApiProperty()
 	@Field(() => FileEntity, { nullable: true })
 	@OneToOne(() => FileEntity, { cascade: true, eager: true, nullable: true })
 	@JoinColumn()
 	file?: FileEntity;
-
-	// @Field(() => [ActiveShiftEntity], { nullable: true })
-	// @ManyToMany(() => ActiveShiftEntity, (shifts) => shifts.tables, { nullable: true })
-	// shifts?: ActiveShiftEntity[];
 
 	@Field(() => Boolean)
 	@Column("boolean", { default: false })

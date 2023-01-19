@@ -1,5 +1,4 @@
 import { Field, InputType, ObjectType } from "@nestjs/graphql";
-import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 
 import { FileEntity } from "../../files/entities";
@@ -16,20 +15,16 @@ import { CATEGORIES } from "../constants";
 export class CategoryEntity extends BaseEntity {
 	@Field(() => String)
 	@Column({ default: "" })
-	@ApiProperty()
 	name: string;
 
-	@ApiProperty()
 	@Field(() => PlaceEntity)
 	@ManyToOne(() => PlaceEntity, (place) => place.categories, { onDelete: "CASCADE" })
 	place: PlaceEntity;
 
-	@ApiProperty()
 	@Field(() => [ProductEntity], { nullable: true })
 	@OneToMany(() => ProductEntity, (product) => product.category, { nullable: true })
 	products?: ProductEntity[];
 
-	@ApiProperty()
 	@Field(() => FileEntity, { nullable: true })
 	@OneToOne(() => FileEntity, { cascade: true, eager: true, nullable: true })
 	@JoinColumn()
@@ -38,9 +33,6 @@ export class CategoryEntity extends BaseEntity {
 	@Field(() => Boolean)
 	@Column("boolean", { default: false })
 	isHide: boolean;
-
-	// @OneToMany(() => ProductEntity, (product) => product.category)
-	// products: IProduct[];
 }
 
 @ObjectType()

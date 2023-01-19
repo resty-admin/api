@@ -14,13 +14,13 @@ export class AccountingSystemsResolver {
 	constructor(private readonly _accountingSystemService: AccountingSystemsService) {}
 
 	@Query(() => AccountingSystemEntity)
-	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
 	async accountingSystem(@Args("id", { type: () => String }) id: string) {
 		return this._accountingSystemService.getAccountingSystem(id);
 	}
 
 	@Query(() => PaginatedAccountingSystem)
-	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
 	async accountingSystems(@Args() args: PaginationArgsDto) {
 		return this._accountingSystemService.getAccountingSystems(args);
 	}

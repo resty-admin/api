@@ -9,21 +9,6 @@ import { HISTORY_SHIFTS } from "../constants";
 
 @Entity({ name: HISTORY_SHIFTS })
 export class HistoryShiftEntity extends BaseEntity {
-	// @Column({
-	// 	type: "json",
-	// 	default: () => `('${JSON.stringify({})}')`,
-	// 	nullable: true
-	// })
-	// table?: string;
-	//
-	// @Column({
-	// 	type: "jsonb",
-	// 	array: false,
-	// 	default: () => "'[]'",
-	// 	nullable: true
-	// })
-	// users: IUser[];
-
 	@Column({
 		type: "json",
 		default: () => `('${JSON.stringify({})}')`,

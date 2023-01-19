@@ -1,23 +1,17 @@
 import { Field, InputType } from "@nestjs/graphql";
-import { ApiProperty } from "@nestjs/swagger";
 import { IsUUID } from "class-validator";
 
-import { IsNotEmpty, IsOptional, IsString } from "../../shared";
-
-export class UpdateAccountingSystemDto {
-	@IsNotEmpty()
-	@ApiProperty()
-	@IsString()
-	@IsOptional()
-	name: string;
-}
+import { IsNotEmpty, IsString } from "../../shared";
 
 @InputType()
 export class UpdateAccountingSystemInput {
 	@Field(() => String)
 	@IsUUID()
+	@IsNotEmpty()
 	id: string;
 
 	@Field(() => String)
+	@IsString()
+	@IsNotEmpty()
 	name: string;
 }

@@ -15,22 +15,9 @@ import { PRODUCTS } from "../constant";
 @Entity({ name: PRODUCTS })
 export class ProductEntity extends BaseEntity {
 	@Column()
-	// @ApiProperty()
 	@Field(() => String)
 	name: string;
 
-	// @ApiProperty()
-	// @Field(() => String)
-	// @Column()
-	// slug: string;
-
-	// @BeforeInsert()
-	// private updateSlug() {
-	// 	const cyrillicToTranslit = new (CyrillicToTranslit as any)();
-	// 	this.slug = cyrillicToTranslit.transform(this.name, "_").toLowerCase();
-	// }
-
-	// @ApiProperty()
 	@Field(() => CategoryEntity)
 	@ManyToOne(() => CategoryEntity, (category) => category.products, {
 		cascade: true,
@@ -38,12 +25,10 @@ export class ProductEntity extends BaseEntity {
 	})
 	category: CategoryEntity;
 
-	// @ApiProperty()
 	@Field(() => String, { nullable: true })
 	@Column({ default: "", nullable: true })
 	description?: string;
 
-	// @ApiProperty()
 	@Field(() => Int)
 	@Column({ default: 0 })
 	price: number;
@@ -63,10 +48,6 @@ export class ProductEntity extends BaseEntity {
 	@Field(() => Boolean)
 	@Column("boolean", { default: false })
 	isHide: boolean;
-
-	// @Field(() => [ProductToOrderEntity])
-	// @OneToMany(() => ProductToOrderEntity, (uTo) => uTo.product)
-	// productsToOrders: ProductToOrderEntity[];
 }
 
 @ObjectType()

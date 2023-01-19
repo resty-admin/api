@@ -5,12 +5,10 @@ import { IsNotEmpty, IsNumber, IsString } from "../../shared";
 export class WorkingHoursDto {
 	@IsNumber()
 	@IsNotEmpty()
-	// @ApiProperty()
 	start: number;
 
 	@IsNumber()
 	@IsNotEmpty()
-	// @ApiProperty()
 	end: number;
 }
 

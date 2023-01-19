@@ -11,13 +11,11 @@ import { COMMANDS } from "../constant";
 @InputType("CommandEntityInput")
 export class CommandEntity extends BaseEntity {
 	@Column()
-	// @ApiProperty()
 	@Field(() => String)
 	name: string;
 
 	@ManyToOne(() => PlaceEntity, (place) => place.commands, { cascade: true })
 	@Field(() => PlaceEntity)
-	// @ApiProperty()
 	place: PlaceEntity;
 
 	@Column()

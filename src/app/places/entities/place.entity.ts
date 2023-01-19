@@ -61,7 +61,6 @@ export class PlaceEntity extends BaseEntity {
 	})
 	a11y: any;
 
-	// @ApiProperty({ type: "json", default: { start: null, end: null } })
 	@Field(() => String)
 	@Column({
 		type: "json",
@@ -69,7 +68,6 @@ export class PlaceEntity extends BaseEntity {
 	})
 	weekDays: WorkingHoursDto;
 
-	// @ApiProperty({ type: "json", default: { start: null, end: null } })
 	@Field(() => String)
 	@Column({
 		type: "json",
@@ -77,7 +75,6 @@ export class PlaceEntity extends BaseEntity {
 	})
 	weekendDays: WorkingHoursDto;
 
-	// @ApiProperty({ type: "json", default: {} })
 	@Field(() => String)
 	@Column({
 		type: "json",
@@ -87,10 +84,8 @@ export class PlaceEntity extends BaseEntity {
 
 	@OneToMany(() => AttributesGroupEntity, (attrGroups) => attrGroups.place, { nullable: true })
 	@Field(() => [AttributesGroupEntity])
-	// @ApiProperty()
 	attrGroups?: AttributesGroupEntity[];
 
-	// @ApiProperty()
 	@Field(() => [ActiveOrderEntity], { nullable: true })
 	@OneToMany(() => ActiveOrderEntity, (order) => order.place, { nullable: true })
 	orders?: ActiveOrderEntity[];

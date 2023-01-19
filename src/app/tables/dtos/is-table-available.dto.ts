@@ -9,7 +9,6 @@ export class IsTableAvailableInput {
 	tableId: string;
 
 	@Field(() => Date)
-	// @IsISO8601()
 	@IsDate()
 	date: Date;
 }

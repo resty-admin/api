@@ -1,19 +1,27 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import type { IUser } from "src/app/shared/interfaces";
+import type { FindOptionsWhere } from "typeorm";
 import { Repository } from "typeorm";
-import type { FindOptionsWhere } from "typeorm/find-options/FindOptionsWhere";
 
 import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
+import type { FiltersArgsDto } from "../../shared/dtos";
 import { UserEntity } from "../entities";
 
 @Injectable()
 export class UsersService {
 	constructor(@InjectRepository(UserEntity) private readonly _userRepository: Repository<UserEntity>) {}
 
-	async getUser(where: FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[]) {
-		return this._userRepository.findOne({ where });
+	async getUser(where: FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[], filtersArgs?: FiltersArgsDto[]) {
+		const findOptions = filtersArgs?.length > 0 ? getFindOptionsByFilters(filtersArgs) : ([] as any);
+
+		return this._userRepository.findOne({
+			where: {
+				...(where || []),
+				...findOptions.where
+			}
+		});
 	}
 
 	async getUsers({ take, skip, filtersArgs }: PaginationArgsDto) {

@@ -3,7 +3,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 
 import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
-import type { UpdateAttributeDto } from "../dtos";
 import type { CreateAttributeInput, UpdateAttributeInput } from "../dtos";
 import { AttributesEntity } from "../entities";
 
@@ -41,10 +40,7 @@ export class AttributesService {
 		});
 	}
 
-	async updateAttribute(
-		id: string,
-		attributeDto: UpdateAttributeDto | UpdateAttributeInput
-	): Promise<AttributesEntity> {
+	async updateAttribute(id: string, attributeDto: UpdateAttributeInput): Promise<AttributesEntity> {
 		return this._attributesRepository.save({ id, ...attributeDto });
 	}
 

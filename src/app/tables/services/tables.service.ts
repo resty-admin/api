@@ -4,10 +4,10 @@ import { GraphQLError } from "graphql/error";
 import { Between, In } from "typeorm";
 
 import { ActiveOrderEntity } from "../../orders/entities";
-import { getFindOptionsByFilters } from "../../shared/crud";
+import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import { ErrorsEnum, OrderStatusEnum, OrderTypeEnum } from "../../shared/enums";
-import type { CreateTableDto, CreateTableInput, UpdateTableDto, UpdateTableInput } from "../dtos";
+import type { CreateTableInput, UpdateTableInput } from "../dtos";
 import { TableEntity } from "../entities";
 
 @Injectable()
@@ -44,7 +44,7 @@ export class TablesService {
 		};
 	}
 
-	async createTable(table: CreateTableDto | CreateTableInput): Promise<TableEntity> {
+	async createTable(table: CreateTableInput): Promise<TableEntity> {
 		const savedTable = await this._tablesRepository.save({ ...table, hall: { id: table.hall } });
 
 		return this._tablesRepository.findOne({
@@ -52,7 +52,7 @@ export class TablesService {
 		});
 	}
 
-	async updateTable(id: string, table: UpdateTableDto | UpdateTableInput): Promise<TableEntity> {
+	async updateTable(id: string, table: UpdateTableInput): Promise<TableEntity> {
 		await this._tablesRepository.save({ id, ...table });
 
 		return this._tablesRepository.findOne({

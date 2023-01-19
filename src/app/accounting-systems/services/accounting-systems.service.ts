@@ -4,7 +4,8 @@ import { Repository } from "typeorm";
 
 import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
-import type { CreateAccountingSystemDto, UpdateAccountingSystemDto } from "../dtos";
+import type { CreateAccountingSystemInput } from "../dtos";
+import type { UpdateAccountingSystemInput } from "../dtos";
 import { AccountingSystemEntity } from "../entities";
 
 @Injectable()
@@ -36,7 +37,7 @@ export class AccountingSystemsService {
 		};
 	}
 
-	async creatAccountingSystem(accountingSystemDto: CreateAccountingSystemDto): Promise<AccountingSystemEntity> {
+	async creatAccountingSystem(accountingSystemDto: CreateAccountingSystemInput): Promise<AccountingSystemEntity> {
 		const savedOrder = await this._accountingSystemRepository.save(accountingSystemDto);
 
 		return this._accountingSystemRepository.findOne({
@@ -46,7 +47,7 @@ export class AccountingSystemsService {
 
 	async updateAccountingSystem(
 		id: string,
-		accountingSystemDto: UpdateAccountingSystemDto
+		accountingSystemDto: UpdateAccountingSystemInput
 	): Promise<AccountingSystemEntity> {
 		return this._accountingSystemRepository.save({ id, ...accountingSystemDto });
 	}

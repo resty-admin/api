@@ -1,31 +1,14 @@
 import { Field, InputType } from "@nestjs/graphql";
-import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
+import { IsUUID } from "class-validator";
 
-import { IsNotEmpty, IsOptional, IsString } from "../../shared";
-import { IFile } from "../../shared/interfaces";
-
-export class UpdateCategoryDto {
-	@IsString()
-	@IsNotEmpty()
-	@ApiProperty()
-	@IsOptional()
-	name: string;
-
-	@IsString()
-	@IsOptional()
-	@IsNotEmpty()
-	@ApiProperty()
-	place: string;
-
-	@ApiProperty()
-	@IsOptional()
-	file: IFile;
-}
+import { IsNotEmpty, IsOptional } from "../../shared";
 
 @InputType()
 export class UpdateCategoryInput {
 	@Field(() => String)
+	@IsUUID()
+	@IsNotEmpty()
 	id: string;
 
 	@Field(() => String, { nullable: true })

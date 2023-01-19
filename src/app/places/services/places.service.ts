@@ -1,13 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import * as console from "console";
 
 import { CompanyEntity } from "../../companies/entities";
-import { getFindOptionsByFilters } from "../../shared/crud";
+import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { PlaceVerificationStatusEnum } from "../../shared/enums";
 import { OrderStatusEnum } from "../../shared/enums";
 import { UserEntity } from "../../users/entities";
-import type { CreatePlaceDto, UpdatePlaceDto } from "../dtos";
 import type { CreatePlaceInput, UpdatePlaceInput } from "../dtos";
 import type { AddEmployeeInput } from "../dtos/add-employee.dto";
 import { PlaceEntity } from "../entities";
@@ -66,13 +66,13 @@ export class PlacesService {
 		};
 	}
 
-	async createPlace(place: CreatePlaceDto | CreatePlaceInput): Promise<PlaceEntity> {
+	async createPlace(place: CreatePlaceInput): Promise<PlaceEntity> {
 		const savedPlace = await this._placesRepository.save({ ...place, company: { id: place.company } });
 
 		return this._placesRepository.findOne({ where: { id: savedPlace.id } });
 	}
 
-	async updatePlace(id: string, place: UpdatePlaceDto | UpdatePlaceInput): Promise<PlaceEntity> {
+	async updatePlace(id: string, place: UpdatePlaceInput): Promise<PlaceEntity> {
 		await this._placesRepository.save({ id, ...place });
 
 		return this._placesRepository.findOne({ where: { id }, relations: this.findOneRelations });
@@ -106,7 +106,8 @@ export class PlacesService {
 
 		const user = await this._usersRepository.findOne({ where: { id: employee.userId } });
 
-		return this._placesRepository.save({ ...place, employees: [...(place.employees || []), { user }] });
+		console.log("user", user);
+		return this._placesRepository.save({ ...place, employees: [...(place.employees || []), { ...user }] });
 	}
 
 	async removeEmployeeFromPlace(employee: AddEmployeeInput) {

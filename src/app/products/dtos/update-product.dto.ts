@@ -1,42 +1,15 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { Transform } from "class-transformer";
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsUUID } from "class-validator";
 
 import { FileUploadInput } from "../../files/dtos";
-import { IsNumber, IsOptional } from "../../shared";
-import { IFile } from "../../shared/interfaces";
-
-export class UpdateProductDto {
-	@IsString()
-	@IsNotEmpty()
-	@IsOptional()
-	// @ApiProperty()
-	name: string;
-
-	@IsString()
-	@IsNotEmpty()
-	@IsOptional()
-	// @ApiProperty()
-	category: string;
-
-	@IsString()
-	@IsOptional()
-	// @ApiProperty()
-	description: string;
-
-	@IsNumber()
-	@IsOptional()
-	// @ApiProperty()
-	price: number;
-
-	// @ApiProperty()
-	@IsOptional()
-	file: IFile;
-}
+import { IsNotEmpty, IsOptional } from "../../shared";
 
 @InputType()
 export class UpdateProductInput {
 	@Field(() => String)
+	@IsUUID()
+	@IsNotEmpty()
 	id: string;
 
 	@Field(() => String, { nullable: true })

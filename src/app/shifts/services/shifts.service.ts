@@ -6,7 +6,6 @@ import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import { ErrorsEnum } from "../../shared/enums";
 import type { IUser } from "../../shared/interfaces";
-import type { CreateShiftDto, UpdateShiftDto } from "../dtos";
 import type { CreateShiftInput, UpdateShiftInput } from "../dtos";
 import { ActiveShiftEntity } from "../entities";
 import { HistoryShiftEntity } from "../entities/history-shift.entity";
@@ -56,7 +55,7 @@ export class ShiftsService {
 		});
 	}
 
-	async createShift(shift: CreateShiftDto | CreateShiftInput, user: IUser) {
+	async createShift(shift: CreateShiftInput, user: IUser) {
 		const shiftPresent = await this._shiftsRepository.findOne({
 			where: { waiter: { id: user.id } },
 			relations: ["waiter"]
@@ -96,7 +95,7 @@ export class ShiftsService {
 		}
 	}
 
-	async updateShift(id: string, shift: UpdateShiftDto | UpdateShiftInput): Promise<ActiveShiftEntity> {
+	async updateShift(id: string, shift: UpdateShiftInput): Promise<ActiveShiftEntity> {
 		return this._shiftsRepository.save({ id, ...shift });
 	}
 

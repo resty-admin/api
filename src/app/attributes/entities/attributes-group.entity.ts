@@ -14,24 +14,20 @@ import { AttributesEntity } from "./attributes.entity";
 @Entity({ name: ATTRIBUTE_GROUPS })
 export class AttributesGroupEntity extends BaseEntity {
 	@Column()
-	// @ApiProperty()
 	@Field(() => String)
 	name: string;
 
-	// @ApiProperty()
 	@Field(() => [AttributesEntity], { nullable: true })
 	@ManyToMany(() => AttributesEntity, (attr) => attr.attributesGroup, { nullable: true, onDelete: "CASCADE" })
 	@JoinTable()
 	attributes?: AttributesEntity[];
 
-	// @ApiProperty()
 	@Field(() => [ProductEntity], { nullable: true })
 	@ManyToMany(() => ProductEntity, (product) => product.attrsGroups, { nullable: true, onDelete: "CASCADE" })
 	products?: ProductEntity[];
 
 	@ManyToOne(() => PlaceEntity, (place) => place.attrGroups, { cascade: true })
 	@Field(() => PlaceEntity)
-	// @ApiProperty()
 	place: PlaceEntity;
 
 	@Field(() => AttributeGroupTypeEnum)

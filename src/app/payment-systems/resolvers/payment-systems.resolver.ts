@@ -16,13 +16,13 @@ export class PaymentSystemsResolver {
 	constructor(private readonly _paymentSystemService: PaymentSystemsService) {}
 
 	@Query(() => PaymentSystemEntity)
-	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
 	async paymentSystem(@Args("id", { type: () => String }) id: string) {
 		return this._paymentSystemService.getPaymentSystem(id);
 	}
 
 	@Query(() => PaginatedPaymentSystem)
-	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
 	async paymentSystems(@Args() args: PaginationArgsDto) {
 		return this._paymentSystemService.getPaymentSystems(args);
 	}
@@ -46,7 +46,7 @@ export class PaymentSystemsResolver {
 	}
 
 	@Mutation(() => PlaceToPaymentSystemEntity)
-	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
 	async connectPaymentSystemToPlace(@Args("body") body: ConnectPaymentSystemToPlaceInput) {
 		return this._paymentSystemService.connectPaymentSystemToPlace(body);
 	}

@@ -8,7 +8,6 @@ import { ACCOUNTING_SYSTEMS } from "../constant";
 @ObjectType()
 @Entity({ name: ACCOUNTING_SYSTEMS })
 export class AccountingSystemEntity extends BaseEntity {
-	// @ApiProperty()
 	@Field(() => String)
 	@Column()
 	name: string;

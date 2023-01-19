@@ -131,7 +131,8 @@ export class ProductToOrderService {
 		const pTos = await this.productToOrderRepository.find({
 			where: {
 				id: In(productToOrderIds)
-			}
+			},
+			relations: ["order"]
 		});
 
 		const updatedPtos = pTos.map((el) => ({ ...el, status: ProductToOrderStatusEnum.REJECTED }));
@@ -143,7 +144,8 @@ export class ProductToOrderService {
 		const pTos = await this.productToOrderRepository.find({
 			where: {
 				id: In(productToOrderIds)
-			}
+			},
+			relations: ["order"]
 		});
 
 		const updatedPtos = pTos.map((el) => ({ ...el, status: ProductToOrderStatusEnum.APPROVED }));

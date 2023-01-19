@@ -4,14 +4,13 @@ import { Repository } from "typeorm";
 
 import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
-import type { CreateAttributeGroupDto, UpdateAttributeGroupDto } from "../dtos";
 import type { CreateAttributeGroupInput, UpdateAttributeGroupInput } from "../dtos";
 import { AttributesGroupEntity } from "../entities";
 
 @Injectable()
 export class AttributeGroupsService {
-	private findRelations = ["attributes"];
-	private findOneRelations = ["attributes"];
+	private findRelations = ["attributes", "attributes.attributesGroup"];
+	private findOneRelations = ["attributes", "attributes.attributesGroup"];
 
 	constructor(
 		@InjectRepository(AttributesGroupEntity)
@@ -42,9 +41,7 @@ export class AttributeGroupsService {
 		};
 	}
 
-	async createAttributeGroup(
-		attributeGroupDto: CreateAttributeGroupDto | CreateAttributeGroupInput
-	): Promise<AttributesGroupEntity> {
+	async createAttributeGroup(attributeGroupDto: CreateAttributeGroupInput): Promise<AttributesGroupEntity> {
 		const savedAttributeGroup = await this._attributeGroupsRepository.save({
 			...attributeGroupDto,
 			place: { id: attributeGroupDto.place },
@@ -56,10 +53,7 @@ export class AttributeGroupsService {
 		});
 	}
 
-	async updateAttributeGroup(
-		id: string,
-		attributeGroupDto: UpdateAttributeGroupDto | UpdateAttributeGroupInput
-	): Promise<AttributesGroupEntity> {
+	async updateAttributeGroup(id: string, attributeGroupDto: UpdateAttributeGroupInput): Promise<AttributesGroupEntity> {
 		await this._attributeGroupsRepository.save({
 			...attributeGroupDto,
 			id,

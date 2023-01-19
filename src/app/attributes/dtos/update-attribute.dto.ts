@@ -4,17 +4,11 @@ import { IsUUID } from "class-validator";
 
 import { IsNotEmpty, IsOptional, IsString } from "../../shared";
 
-export class UpdateAttributeDto {
-	@IsString()
-	@IsNotEmpty()
-	// @ApiProperty()
-	name: string;
-}
-
 @InputType()
 export class UpdateAttributeInput {
 	@Field(() => String)
 	@IsUUID()
+	@IsNotEmpty()
 	id: string;
 
 	@Field(() => String)
