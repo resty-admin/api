@@ -12,17 +12,12 @@ export class PlaceGuard implements CanActivate {
 	async canActivate(context: ExecutionContext) {
 		const ctx = GqlExecutionContext.create(context);
 		const request = ctx.getContext().req;
-		console.log("here1", request.body.variables);
 		const { placeId = null } = request.body.variables;
 		const { company = null, id = null } = request.body.variables.place || {};
-		const { placeId: employeePlaceId = null, userId: employeeId = null } = request.body.variables.employeeData || {};
 
-		console.log("HERE", placeId, company, id);
 		if (request.user.role === UserRoleEnum.ADMIN) {
 			return true;
 		}
-
-		if (employeeId && employeePlaceId) {}
 
 		if (id || placeId) {
 			return this.updateGuard(id || placeId, request.user.id);
@@ -39,6 +34,10 @@ export class PlaceGuard implements CanActivate {
 			},
 			relations: ["owner"]
 		});
+
+		if (!currCompany) {
+			return false;
+		}
 
 		return currCompany.owner.id === userId;
 	}

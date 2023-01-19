@@ -13,7 +13,8 @@ export class CompaniesGuard implements CanActivate {
 		const ctx = GqlExecutionContext.create(context);
 		const request = ctx.getContext().req;
 
-		const { id, companyId } = request.body.variables.company || request.body.variables;
+		const { companyId = null } = request.body.variables;
+		const { id = null } = request.body.variables.company || {};
 
 		if (request.user.role === UserRoleEnum.ADMIN) {
 			return true;
@@ -22,6 +23,8 @@ export class CompaniesGuard implements CanActivate {
 		if (id || companyId) {
 			return this.updateGuard(id || companyId, request.user.id);
 		}
+
+		return true;
 	}
 
 	async updateGuard(companyId: string, userId) {
