@@ -1,4 +1,5 @@
 export * from "./add-product-to-order.dto";
+export * from "./confirm-product-to-order.dto";
 export * from "./create-order.dto";
 export * from "./create-product-to-order.dto";
 export * from "./remove-product-from.order.dto";

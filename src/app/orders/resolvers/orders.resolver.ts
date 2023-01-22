@@ -6,7 +6,7 @@ import { GqlJwtGuard } from "../../auth";
 import { RolesGuard, UserGql } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
 import { IUser } from "../../shared/interfaces";
-import { CreateOrderInput, RemoveProductFromOrderInput, UpdateOrderInput } from "../dtos";
+import { ConfirmProductToOrderInput, CreateOrderInput, RemoveProductFromOrderInput, UpdateOrderInput } from "../dtos";
 import { AddProductToOrderInput } from "../dtos/add-product-to-order.dto";
 import { ActiveOrderEntity, PaginatedActiveOrder, PaginatedHistoryOrder, ProductToOrderEntity } from "../entities";
 import { OrdersGuard } from "../guards/orders.guard";
@@ -218,6 +218,19 @@ export class OrdersResolver {
 	)
 	async confirmOrder(@Args("orderId") orderId: string, @UserGql() user: IUser) {
 		return this._ordersService.confirmOrder(orderId, user);
+	}
+
+	@Mutation(() => ActiveOrderEntity)
+	@UseGuards(
+		GqlJwtGuard,
+		RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.WAITER, UserRoleEnum.CLIENT])
+	)
+	async confirmProductsToOrders(
+		@UserGql() user: IUser,
+		@Args("productsToOrders", { type: () => [ConfirmProductToOrderInput] })
+		productsToOrders: ConfirmProductToOrderInput[]
+	) {
+		return this._ordersService.confirmProductsToOrders(user, productsToOrders);
 	}
 
 	@Mutation(() => String)

@@ -618,6 +618,7 @@ type Mutation {
 	rejectTableInOrder(orderId: String!): ActiveOrderEntity!
 	removeTableFromOrder(orderId: String!): ActiveOrderEntity!
 	confirmOrder(orderId: String!): ActiveOrderEntity!
+	confirmProductsToOrders(productsToOrders: [ConfirmProductToOrderInput!]!): ActiveOrderEntity!
 	closeOrder(orderId: String!): String!
 	cancelOrder(orderId: String!): String!
 	createProduct(product: CreateProductInput!): ProductEntity!
@@ -787,6 +788,13 @@ input RemoveProductFromOrderInput {
 	orderId: String!
 	productId: String!
 	attrs: [String!]
+}
+
+input ConfirmProductToOrderInput {
+	orderId: String!
+	productId: String!
+	count: Float!
+	attributesIds: [String!]
 }
 
 input CreateProductInput {
