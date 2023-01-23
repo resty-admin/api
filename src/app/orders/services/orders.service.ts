@@ -95,6 +95,18 @@ export class OrdersService {
 		const savedOrder: ActiveOrderEntity = await this._ordersRepository.save({
 			...order,
 			users: [{ id: user.id }],
+			...(order.productsToOrder?.length
+				? {
+						productsToOrders: order.productsToOrder.map((el) => ({
+							user: {
+								id: user.id
+							},
+							count: el.count,
+							product: el.product,
+							attributes: el.attributes
+						}))
+				  }
+				: {}),
 			createdAt: date,
 			startDate: date,
 			code: Math.floor(Math.random() * 9999)

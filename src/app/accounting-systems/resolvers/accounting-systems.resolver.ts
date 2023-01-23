@@ -5,8 +5,8 @@ import { GqlJwtGuard } from "../../auth";
 import { RolesGuard } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
 import { UserRoleEnum } from "../../shared/enums";
-import { CreateAccountingSystemInput, UpdateAccountingSystemInput } from "../dtos";
-import { AccountingSystemEntity, PaginatedAccountingSystem } from "../entities";
+import { ConnectAccountingSystemToPlaceInput, CreateAccountingSystemInput, UpdateAccountingSystemInput } from "../dtos";
+import { AccountingSystemEntity, PaginatedAccountingSystem, PlaceToAccountingSystemEntity } from "../entities";
 import { AccountingSystemsService } from "../services";
 
 @Resolver(() => AccountingSystemEntity)
@@ -34,12 +34,18 @@ export class AccountingSystemsResolver {
 	@Mutation(() => AccountingSystemEntity)
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
 	async updateAccountingSystem(@Args("accountingSystem") accountingSystem: UpdateAccountingSystemInput) {
-		return this._accountingSystemService.updateAccountingSystem(accountingSystem.id, accountingSystem);
+		return this._accountingSystemService.updateAccountingSystem(accountingSystem);
 	}
 
 	@Mutation(() => String)
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
 	async deleteAccountingSystem(@Args("accountingSystemId") id: string) {
 		return this._accountingSystemService.deleteAccountingSystem(id);
+	}
+
+	@Mutation(() => PlaceToAccountingSystemEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
+	async connectAccountingSystemToPlace(@Args("body") body: ConnectAccountingSystemToPlaceInput) {
+		return this._accountingSystemService.connectAccountingSystemToPlace(body);
 	}
 }

@@ -1,7 +1,8 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { IsUUID } from "class-validator";
+import { GraphQLJSONObject } from "graphql-type-json";
 
-import { IsNotEmpty, IsString } from "../../shared";
+import { IsNotEmpty, IsObject, IsOptional, IsString } from "../../shared";
 
 @InputType()
 export class UpdateAccountingSystemInput {
@@ -10,8 +11,13 @@ export class UpdateAccountingSystemInput {
 	@IsNotEmpty()
 	id: string;
 
-	@Field(() => String)
+	@Field(() => String, { nullable: true })
 	@IsString()
-	@IsNotEmpty()
-	name: string;
+	@IsOptional()
+	name?: string;
+
+	@Field(() => GraphQLJSONObject, { nullable: true })
+	@IsObject()
+	@IsOptional()
+	configFields?: object;
 }

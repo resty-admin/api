@@ -26,5 +26,6 @@ export enum ErrorsEnum {
 	ActiveInPlaceOrderWithTableExist = 1024,
 	NoActiveProductsExist = 1025,
 	InvalidOrderDate = 1026,
-	TableAlreadyReserved = 1027
+	TableAlreadyReserved = 1027,
+	PosterTokenNotExist = 1028
 }

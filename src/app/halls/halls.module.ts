@@ -8,7 +8,7 @@ import { HALLS_RESOLVERS } from "./resolvers";
 import { HALLS_SERVICES } from "./services";
 
 @Module({
-	imports: [TypeOrmModule.forFeature(HALLS_ENTITIES), forwardRef(() => OrdersModule), PlacesModule],
+	imports: [TypeOrmModule.forFeature(HALLS_ENTITIES), forwardRef(() => OrdersModule), forwardRef(() => PlacesModule)],
 	providers: [...HALLS_SERVICES, ...HALLS_RESOLVERS],
 	exports: [TypeOrmModule]
 })

@@ -1,6 +1,7 @@
 import { Field, InputType, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 
+import { PlaceToAccountingSystemEntity } from "../../accounting-systems/entities";
 import { AttributesGroupEntity } from "../../attributes/entities";
 import { CategoryEntity } from "../../categories/entities";
 import { CommandEntity } from "../../commands/entities";
@@ -105,6 +106,10 @@ export class PlaceEntity extends BaseEntity {
 	@Field(() => [PlaceToPaymentSystemEntity], { nullable: true })
 	@OneToMany(() => PlaceToPaymentSystemEntity, (pTp) => pTp.place, { nullable: true })
 	paymentSystems: PlaceToPaymentSystemEntity[];
+
+	@Field(() => [PlaceToAccountingSystemEntity], { nullable: true })
+	@OneToMany(() => PlaceToAccountingSystemEntity, (pTa) => pTa.place, { nullable: true })
+	accountingSystems: PlaceToAccountingSystemEntity[];
 }
 
 @ObjectType()

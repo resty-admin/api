@@ -1,4 +1,5 @@
 import { Field, InputType, ObjectType } from "@nestjs/graphql";
+import { GraphQLJSONObject } from "graphql-type-json";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 
 import { FileEntity } from "../../files/entities";
@@ -33,6 +34,14 @@ export class HallEntity extends BaseEntity {
 	@Field(() => Boolean)
 	@Column("boolean", { default: false })
 	isHide: boolean;
+
+	@Field(() => GraphQLJSONObject, { nullable: true })
+	@Column({
+		type: "json",
+		default: () => `('${JSON.stringify({})}')`,
+		nullable: true
+	})
+	accountingSystemsFields?: object;
 }
 
 @ObjectType()

@@ -5,9 +5,9 @@ import { IsNumber } from "../../shared";
 
 @InputType()
 export class CreateProductToOrderInput {
-	@Field(() => String)
-	@Transform(({ value }) => ({ id: value }))
-	user: String;
+	// @Field(() => String)
+	// @Transform(({ value }) => ({ id: value }))
+	// user: String;
 
 	@Field(() => String)
 	@Transform(({ value }) => ({ id: value }))

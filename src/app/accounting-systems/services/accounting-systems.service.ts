@@ -6,13 +6,16 @@ import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { CreateAccountingSystemInput } from "../dtos";
 import type { UpdateAccountingSystemInput } from "../dtos";
-import { AccountingSystemEntity } from "../entities";
+import type { ConnectAccountingSystemToPlaceInput } from "../dtos";
+import { AccountingSystemEntity, PlaceToAccountingSystemEntity } from "../entities";
 
 @Injectable()
 export class AccountingSystemsService {
 	constructor(
 		@InjectRepository(AccountingSystemEntity)
-		private readonly _accountingSystemRepository: Repository<AccountingSystemEntity>
+		private readonly _accountingSystemRepository: Repository<AccountingSystemEntity>,
+		@InjectRepository(PlaceToAccountingSystemEntity)
+		private readonly _pTa
 	) {}
 
 	async getAccountingSystem(id: string) {
@@ -45,15 +48,17 @@ export class AccountingSystemsService {
 		});
 	}
 
-	async updateAccountingSystem(
-		id: string,
-		accountingSystemDto: UpdateAccountingSystemInput
-	): Promise<AccountingSystemEntity> {
-		return this._accountingSystemRepository.save({ id, ...accountingSystemDto });
+	async updateAccountingSystem(accountingSystemDto: UpdateAccountingSystemInput): Promise<AccountingSystemEntity> {
+		console.log("here", accountingSystemDto);
+		return this._accountingSystemRepository.save({ ...accountingSystemDto });
 	}
 
 	async deleteAccountingSystem(id: string): Promise<string> {
 		await this._accountingSystemRepository.delete(id);
 		return "DELETED";
+	}
+
+	async connectAccountingSystemToPlace(body: ConnectAccountingSystemToPlaceInput) {
+		return this._pTa.save({ ...body });
 	}
 }
