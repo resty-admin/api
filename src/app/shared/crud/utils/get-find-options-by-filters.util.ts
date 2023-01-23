@@ -1,4 +1,4 @@
-import { isArray, set } from "lodash";
+import { set } from "lodash";
 import type { FindManyOptions } from "typeorm";
 import { In } from "typeorm";
 
@@ -26,10 +26,12 @@ export function getFindOptionsByFilters(filters: any[] = []): FindManyOptions {
 		sortType,
 		...where
 	} = filters.reduce(
-		(previousValue: any, { key, value }) =>
-			set(previousValue, key, isArray(value) ? In(value) : getNumberOrString(value)),
+		(previousValue: any, { key, operator, value }) =>
+			set(previousValue, key, operator === "=[]" ? In(value.split(".")) : getNumberOrString(value)),
 		{}
 	);
+
+	console.log(where);
 
 	return {
 		skip,

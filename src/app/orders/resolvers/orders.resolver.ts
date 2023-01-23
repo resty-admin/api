@@ -230,7 +230,7 @@ export class OrdersResolver {
 		@Args("productsToOrders", { type: () => [ConfirmProductToOrderInput] })
 		productsToOrders: ConfirmProductToOrderInput[]
 	) {
-		return this._ordersService.confirmProductsToOrders(user, productsToOrders);
+		return this._productToOrderService.confirmProductsToOrders(productsToOrders, user);
 	}
 
 	@Mutation(() => String)
