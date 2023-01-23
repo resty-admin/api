@@ -9,7 +9,7 @@ import { ErrorsEnum, OrderStatusEnum, OrderTypeEnum, ProductToOrderStatusEnum } 
 import { TableStatusEnum } from "../../shared/enums/orders/table-status.enum";
 import type { IUser } from "../../shared/interfaces";
 import { ActiveShiftEntity } from "../../shifts/entities";
-import type { ConfirmProductToOrderInput, CreateOrderInput, UpdateOrderInput } from "../dtos";
+import type { CreateOrderInput, UpdateOrderInput } from "../dtos";
 import { ActiveOrderEntity, HistoryOrderEntity, ProductToOrderEntity } from "../entities";
 import { OrdersGateway } from "../gateways";
 import { OrdersNotificationsService } from "./orders.notifications.service";
@@ -205,37 +205,6 @@ export class OrdersService {
 		}));
 		await this._ordersNotificationService.confirmOrderEvent(orderId);
 		return this._ordersRepository.save({ ...productsToOrders[0].order, productsToOrders: updatedOrders });
-	}
-
-	async confirmProductsToOrders(user: IUser, addProductsToOrders: ConfirmProductToOrderInput[]) {
-		await this.productToOrderRepository.save(
-			addProductsToOrders.map((productToOrder) => ({
-				order: {
-					id: productToOrder.orderId
-				},
-				product: {
-					id: productToOrder.productId
-				},
-				user: {
-					id: user.id
-				},
-				status: ProductToOrderStatusEnum.WAITING_FOR_APPROVE,
-				count: productToOrder.count
-			}))
-		);
-
-		if (addProductsToOrders.length === 0) {
-			throw new GraphQLError(ErrorsEnum.NoActiveProductsExist.toString(), {
-				extensions: {
-					code: 500
-				}
-			});
-		}
-
-		const [{ orderId }] = addProductsToOrders;
-
-		await this._ordersNotificationService.confirmOrderEvent(orderId);
-		return this._ordersRepository.findOne({ where: { id: orderId } });
 	}
 
 	async archiveOrder(order: ActiveOrderEntity) {
