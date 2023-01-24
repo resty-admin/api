@@ -15,7 +15,8 @@ import { PlaceToPaymentSystemEntity } from "../entities/place-to-payment-system.
 @Injectable()
 export class FondyService {
 	readonly fondy;
-	orderId: string;
+
+	// orderId: string;
 
 	constructor(
 		@InjectRepository(PaymentSystemEntity) private readonly _paymentSystemRepository,
@@ -41,7 +42,7 @@ export class FondyService {
 			relations: ["product", "order", "order.users", "order.place", "attributes"]
 		});
 
-		const baseUrl = false && environment.production ? `https://dev-api.resty.od.ua` : `http://192.168.68.100:3000`;
+		const baseUrl = false && environment.production ? `https://dev-api.resty.od.ua` : `http://localhost:3000`;
 
 		const totalPrice =
 			10_000 *
@@ -70,30 +71,30 @@ export class FondyService {
 			}
 		];
 
-		this.orderId = `${orderId}_${users.reduce((pre, curr) => `${pre}${curr}$`, "$")}_${new Date().toISOString()}`;
+		const fondyOrderId = `${orderId}_${users.reduce((pre, curr) => `${pre}${curr}$`, "$")}_${new Date().toISOString()}`;
 
 		const requestData = {
-			order_id: this.orderId,
+			order_id: fondyOrderId,
 			order_desc: productsToOrders.reduce((pre, curr) => `${pre} ${curr.product.name} x${curr.count} ` + `\n`, ""),
 			currency: "UAH",
 			amount: totalPrice,
 			receivers,
-			response_url: `${baseUrl}/api/fondy/check`
+			response_url: `${baseUrl}/api/fondy/check?orderId=${fondyOrderId}`
 		};
 
 		const result = await this.fondy.Checkout(requestData);
 		return result.checkout_url;
 	}
 
-	async verifyOrder(_) {
-		const successStatus = (await this.fondy.Status({ order_id: this.orderId })).response_status === "success";
+	async verifyOrder(fondyOrderId: string) {
+		const successStatus = (await this.fondy.Status({ order_id: fondyOrderId })).response_status === "success";
 
 		if (!successStatus) {
-			return;
+			return "failed";
 		}
-		const [orderId] = this.orderId.split("_");
+		const [orderId] = fondyOrderId.split("_");
 
-		const users = this.orderId.match(/(?<=\$)(.*?)(?=\$)/g);
+		const users = fondyOrderId.match(/(?<=\$)(.*?)(?=\$)/g);
 
 		const productsToOrders = await this.productToOrderRepository.find({
 			where: {
@@ -114,7 +115,7 @@ export class FondyService {
 			});
 		}
 
-		return orderId;
+		return "success";
 	}
 
 	async getMerchantByPlace(placeId: string): Promise<PlaceToPaymentSystemEntity> {

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res } from "@nestjs/common";
+import { Body, Controller, Post, Query, Res } from "@nestjs/common";
 import { Response } from "express";
 
 import { environment } from "../../../environments/environment";
@@ -10,11 +10,10 @@ export class FondyController {
 	constructor(private readonly _fondyService: FondyService) {}
 
 	@Post("check")
-	async checkFondy(@Body() body: any, @Res() response: Response) {
-		const baseUrl = false && environment.production ? `https://dev.resty.od.ua/` : `http://192.168.68.100:4201`;
+	async checkFondy(@Body() body: any, @Res() response: Response, @Query("orderId") orderId: string) {
+		const baseUrl = environment.production ? `https://dev.resty.od.ua/` : `http://192.168.68.100:4201`;
 
-		const orderId = await this._fondyService.verifyOrder(body);
-
-		return response.redirect(`${baseUrl}/active-orders/${orderId}/payment-status`);
+		const paymentStatus = await this._fondyService.verifyOrder(orderId);
+		return response.redirect(`${baseUrl}/orders/${orderId}/payment-status?status=${paymentStatus}`);
 	}
 }
