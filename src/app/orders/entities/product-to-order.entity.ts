@@ -34,7 +34,7 @@ export class ProductToOrderEntity extends BaseEntity {
 	count: number;
 
 	@Field(() => ProductToOrderStatusEnum)
-	@Column("enum", { enum: ProductToOrderStatusEnum, default: ProductToOrderStatusEnum.ADDED })
+	@Column("enum", { enum: ProductToOrderStatusEnum, default: ProductToOrderStatusEnum.WAITING_FOR_APPROVE })
 	status: ProductToOrderStatusEnum;
 
 	@Field(() => ProductToOrderPaidStatusEnum)

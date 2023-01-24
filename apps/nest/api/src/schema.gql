@@ -149,7 +149,6 @@ type ProductToOrderEntity {
 }
 
 enum ProductToOrderStatusEnum {
-	ADDED
 	WAITING_FOR_APPROVE
 	REJECTED
 	APPROVED
@@ -574,7 +573,7 @@ type Query {
 	isTableAvailableForReserve(body: IsTableAvailableInput!): TableEntity!
 	hall(id: String!): HallEntity!
 	halls(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedHall!
-	order(id: String!): ActiveOrderEntity!
+	order(id: String, filtersArgs: [FiltersArgsDto!]): ActiveOrderEntity
 	orders(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedActiveOrder!
 	historyOrders(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedHistoryOrder!
 	product(id: String!): ProductEntity!
@@ -642,8 +641,6 @@ type Mutation {
 	createOrder(order: CreateOrderInput!): ActiveOrderEntity!
 	updateOrder(order: UpdateOrderInput!): ActiveOrderEntity!
 	deleteOrder(orderId: String!): String!
-	addProductToOrder(productToOrder: AddProductToOrderInput!): ActiveOrderEntity!
-	removeProductFromOrder(productFromOrder: RemoveProductFromOrderInput!): ActiveOrderEntity!
 	rejectProductsInOrder(productToOrderIds: [String!]!): [ProductToOrderEntity!]!
 	approveProductsInOrder(productToOrderIds: [String!]!): [ProductToOrderEntity!]!
 	setManualPayForProductsInOrder(productToOrderIds: [String!]!): [ProductToOrderEntity!]!
@@ -653,7 +650,6 @@ type Mutation {
 	approveTableInOrder(orderId: String!): ActiveOrderEntity!
 	rejectTableInOrder(orderId: String!): ActiveOrderEntity!
 	removeTableFromOrder(orderId: String!): ActiveOrderEntity!
-	confirmOrder(orderId: String!): ActiveOrderEntity!
 	confirmProductsToOrders(productsToOrders: [ConfirmProductToOrderInput!]!): ActiveOrderEntity!
 	closeOrder(orderId: String!): String!
 	cancelOrder(orderId: String!): String!
@@ -831,8 +827,8 @@ input CreateOrderInput {
 }
 
 input CreateProductToOrderInput {
-	product: String!
-	attributes: [String!]
+	productId: String!
+	attributesIds: [String!]
 	count: Int!
 }
 
@@ -842,18 +838,6 @@ input UpdateOrderInput {
 	users: [String!]
 	status: OrderStatusEnum
 	type: OrderTypeEnum
-}
-
-input AddProductToOrderInput {
-	orderId: String!
-	productId: String!
-	attrs: [String!]
-}
-
-input RemoveProductFromOrderInput {
-	orderId: String!
-	productId: String!
-	attrs: [String!]
 }
 
 input ConfirmProductToOrderInput {

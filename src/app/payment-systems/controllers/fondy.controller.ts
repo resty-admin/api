@@ -11,9 +11,10 @@ export class FondyController {
 
 	@Post("check")
 	async checkFondy(@Body() body: any, @Res() response: Response) {
-		const baseUrl = environment.production ? `https://dev.resty.od.ua/` : `http://192.168.68.100:4201`;
+		const baseUrl = false && environment.production ? `https://dev.resty.od.ua/` : `http://192.168.68.100:4201`;
 
-		await this._fondyService.verifyOrder(body);
-		return response.redirect(`${baseUrl}/orders/${body.order_id}/payment-status`);
+		const orderId = await this._fondyService.verifyOrder(body);
+
+		return response.redirect(`${baseUrl}/active-orders/${orderId}/payment-status`);
 	}
 }

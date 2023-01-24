@@ -11,11 +11,11 @@ export class CreateProductToOrderInput {
 
 	@Field(() => String)
 	@Transform(({ value }) => ({ id: value }))
-	product: string;
+	productId: string;
 
 	@Field(() => [String], { nullable: true })
 	@Transform(({ value }) => value.map((id) => ({ id })))
-	attributes?: string[];
+	attributesIds?: string[];
 
 	@Field(() => Int)
 	@IsNumber()

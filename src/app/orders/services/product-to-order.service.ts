@@ -5,7 +5,6 @@ import { In } from "typeorm";
 
 import { ErrorsEnum, ProductToOrderPaidStatusEnum, ProductToOrderStatusEnum } from "../../shared/enums";
 import type { IUser } from "../../shared/interfaces";
-import type { AddProductToOrderInput, RemoveProductFromOrderInput } from "../dtos";
 import type { ConfirmProductToOrderInput } from "../dtos";
 import { ActiveOrderEntity, ProductToOrderEntity } from "../entities";
 import { OrdersNotificationsService } from "./orders.notifications.service";
@@ -20,95 +19,95 @@ export class ProductToOrderService {
 		private readonly _ordersNotificationService: OrdersNotificationsService
 	) {}
 
-	async addProductToOrder(productToOrder: AddProductToOrderInput, user: IUser) {
-		const order: ActiveOrderEntity = await this._ordersRepository.findOne({
-			where: {
-				id: productToOrder.orderId
-			},
-			relations: [
-				"productsToOrders",
-				"productsToOrders.product",
-				"productsToOrders.attributes",
-				"productsToOrders.user"
-			]
-		});
-
-		const currProduct = order.productsToOrders.find((userToOrder) => {
-			const isUserSame = userToOrder.user.id === user.id;
-			const isProductSame = userToOrder.product.id === productToOrder.productId;
-			const isStatusAdded = userToOrder.status === ProductToOrderStatusEnum.ADDED;
-			const isAttributesLengthSame = (userToOrder.attributes || []).length === (productToOrder.attrs || []).length;
-			const isAttributesSame = (userToOrder.attributes || []).every((attribute) =>
-				(productToOrder.attrs || []).includes(attribute.id)
-			);
-
-			return isUserSame && isStatusAdded && isProductSame && isAttributesLengthSame && isAttributesSame;
-		});
-
-		if (currProduct) {
-			await this.productToOrderRepository.save({ ...currProduct, count: currProduct.count + 1 });
-			return this.updateOrderTotalPrice(order.id);
-		}
-
-		await this.productToOrderRepository.save({
-			order: {
-				id: productToOrder.orderId
-			},
-			product: {
-				id: productToOrder.productId
-			},
-			user: {
-				id: user.id
-			},
-			status: ProductToOrderStatusEnum.ADDED,
-			count: 1,
-			...(productToOrder.attrs?.length > 0 ? { attributes: productToOrder.attrs.map((id) => ({ id })) } : {})
-		});
-
-		return this.updateOrderTotalPrice(order.id);
-	}
-
-	async removeProductFromOrder(productFromOrder: RemoveProductFromOrderInput, user: IUser) {
-		const order: ActiveOrderEntity = await this._ordersRepository.findOne({
-			where: {
-				id: productFromOrder.orderId,
-				productsToOrders: {
-					user: {
-						id: user.id
-					}
-				}
-			},
-			relations: [
-				"productsToOrders",
-				"productsToOrders.product",
-				"productsToOrders.attributes",
-				"productsToOrders.user"
-			]
-		});
-
-		const deleteProduct = order.productsToOrders.find((userToOrder) => {
-			const isUserSame = userToOrder.user.id === user.id;
-			const isProductSame = userToOrder.product.id === productFromOrder.productId;
-			const isAttributesLengthSame = (userToOrder.attributes || []).length === (productFromOrder.attrs || []).length;
-			const isAttributesSame = (userToOrder.attributes || []).every((attribute) =>
-				(productFromOrder.attrs || []).includes(attribute.id)
-			);
-
-			return isUserSame && isProductSame && isAttributesLengthSame && isAttributesSame;
-		});
-
-		if (deleteProduct.count === 1) {
-			await this.productToOrderRepository.delete(deleteProduct.id);
-
-			return this.updateOrderTotalPrice(order.id);
-		}
-		await this.productToOrderRepository.save({
-			...deleteProduct,
-			count: deleteProduct.count - 1
-		});
-
-		return this.updateOrderTotalPrice(order.id);
-	}
+	// async addProductToOrder(productToOrder: AddProductToOrderInput, user: IUser) {
+	// 	const order: ActiveOrderEntity = await this._ordersRepository.findOne({
+	// 		where: {
+	// 			id: productToOrder.orderId
+	// 		},
+	// 		relations: [
+	// 			"productsToOrders",
+	// 			"productsToOrders.product",
+	// 			"productsToOrders.attributes",
+	// 			"productsToOrders.user"
+	// 		]
+	// 	});
+	//
+	// 	const currProduct = order.productsToOrders.find((userToOrder) => {
+	// 		const isUserSame = userToOrder.user.id === user.id;
+	// 		const isProductSame = userToOrder.product.id === productToOrder.productId;
+	// 		const isStatusAdded = userToOrder.status === ProductToOrderStatusEnum.ADDED;
+	// 		const isAttributesLengthSame = (userToOrder.attributes || []).length === (productToOrder.attrs || []).length;
+	// 		const isAttributesSame = (userToOrder.attributes || []).every((attribute) =>
+	// 			(productToOrder.attrs || []).includes(attribute.id)
+	// 		);
+	//
+	// 		return isUserSame && isStatusAdded && isProductSame && isAttributesLengthSame && isAttributesSame;
+	// 	});
+	//
+	// 	if (currProduct) {
+	// 		await this.productToOrderRepository.save({ ...currProduct, count: currProduct.count + 1 });
+	// 		return this.updateOrderTotalPrice(order.id);
+	// 	}
+	//
+	// 	await this.productToOrderRepository.save({
+	// 		order: {
+	// 			id: productToOrder.orderId
+	// 		},
+	// 		product: {
+	// 			id: productToOrder.productId
+	// 		},
+	// 		user: {
+	// 			id: user.id
+	// 		},
+	// 		status: ProductToOrderStatusEnum.WAITING_FOR_APPROVE,
+	// 		count: 1,
+	// 		...(productToOrder.attrs?.length > 0 ? { attributes: productToOrder.attrs.map((id) => ({ id })) } : {})
+	// 	});
+	//
+	// 	return this.updateOrderTotalPrice(order.id);
+	// }
+	//
+	// async removeProductFromOrder(productFromOrder: RemoveProductFromOrderInput, user: IUser) {
+	// 	const order: ActiveOrderEntity = await this._ordersRepository.findOne({
+	// 		where: {
+	// 			id: productFromOrder.orderId,
+	// 			productsToOrders: {
+	// 				user: {
+	// 					id: user.id
+	// 				}
+	// 			}
+	// 		},
+	// 		relations: [
+	// 			"productsToOrders",
+	// 			"productsToOrders.product",
+	// 			"productsToOrders.attributes",
+	// 			"productsToOrders.user"
+	// 		]
+	// 	});
+	//
+	// 	const deleteProduct = order.productsToOrders.find((userToOrder) => {
+	// 		const isUserSame = userToOrder.user.id === user.id;
+	// 		const isProductSame = userToOrder.product.id === productFromOrder.productId;
+	// 		const isAttributesLengthSame = (userToOrder.attributes || []).length === (productFromOrder.attrs || []).length;
+	// 		const isAttributesSame = (userToOrder.attributes || []).every((attribute) =>
+	// 			(productFromOrder.attrs || []).includes(attribute.id)
+	// 		);
+	//
+	// 		return isUserSame && isProductSame && isAttributesLengthSame && isAttributesSame;
+	// 	});
+	//
+	// 	if (deleteProduct.count === 1) {
+	// 		await this.productToOrderRepository.delete(deleteProduct.id);
+	//
+	// 		return this.updateOrderTotalPrice(order.id);
+	// 	}
+	// 	await this.productToOrderRepository.save({
+	// 		...deleteProduct,
+	// 		count: deleteProduct.count - 1
+	// 	});
+	//
+	// 	return this.updateOrderTotalPrice(order.id);
+	// }
 
 	async confirmProductsToOrders(addProductsToOrders: ConfirmProductToOrderInput[], user: IUser) {
 		await this.productToOrderRepository.save(
@@ -122,7 +121,6 @@ export class ProductToOrderService {
 				user: {
 					id: user.id
 				},
-				status: ProductToOrderStatusEnum.WAITING_FOR_APPROVE,
 				count: productToOrder.count
 			}))
 		);

@@ -4,10 +4,9 @@ import { UserRoleEnum } from "src/app/shared/enums";
 
 import { GqlJwtGuard } from "../../auth";
 import { RolesGuard, UserGql } from "../../shared";
-import { PaginationArgsDto } from "../../shared/dtos";
+import { FiltersArgsDto, PaginationArgsDto } from "../../shared/dtos";
 import { IUser } from "../../shared/interfaces";
-import { ConfirmProductToOrderInput, CreateOrderInput, RemoveProductFromOrderInput, UpdateOrderInput } from "../dtos";
-import { AddProductToOrderInput } from "../dtos/add-product-to-order.dto";
+import { ConfirmProductToOrderInput, CreateOrderInput, UpdateOrderInput } from "../dtos";
 import { ActiveOrderEntity, PaginatedActiveOrder, PaginatedHistoryOrder, ProductToOrderEntity } from "../entities";
 import { OrdersGuard } from "../guards/orders.guard";
 import { OrdersService, ProductToOrderService } from "../services";
@@ -19,7 +18,7 @@ export class OrdersResolver {
 		private readonly _productToOrderService: ProductToOrderService
 	) {}
 
-	@Query(() => ActiveOrderEntity)
+	@Query(() => ActiveOrderEntity, { nullable: true })
 	@UseGuards(
 		GqlJwtGuard,
 		RolesGuard([
@@ -31,8 +30,11 @@ export class OrdersResolver {
 			UserRoleEnum.CLIENT
 		])
 	)
-	async order(@Args("id", { type: () => String }) id: string) {
-		return this._ordersService.getOrder(id);
+	async order(
+		@Args("id", { type: () => String, nullable: true }) id: string,
+		@Args("filtersArgs", { type: () => [FiltersArgsDto], nullable: true }) filtersArgs: FiltersArgsDto[]
+	) {
+		return this._ordersService.getOrder(id, filtersArgs);
 	}
 
 	@Query(() => PaginatedActiveOrder)
@@ -95,26 +97,26 @@ export class OrdersResolver {
 		return this._ordersService.deleteOrder(id);
 	}
 
-	@Mutation(() => ActiveOrderEntity)
-	@UseGuards(
-		GqlJwtGuard,
-		RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.WAITER, UserRoleEnum.CLIENT])
-	)
-	async addProductToOrder(@Args("productToOrder") productToOrder: AddProductToOrderInput, @UserGql() user: IUser) {
-		return this._productToOrderService.addProductToOrder(productToOrder, user);
-	}
+	// @Mutation(() => ActiveOrderEntity)
+	// @UseGuards(
+	// 	GqlJwtGuard,
+	// 	RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.WAITER, UserRoleEnum.CLIENT])
+	// )
+	// async addProductToOrder(@Args("productToOrder") productToOrder: AddProductToOrderInput, @UserGql() user: IUser) {
+	// 	return this._productToOrderService.addProductToOrder(productToOrder, user);
+	// }
 
-	@Mutation(() => ActiveOrderEntity)
-	@UseGuards(
-		GqlJwtGuard,
-		RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.WAITER, UserRoleEnum.CLIENT])
-	)
-	async removeProductFromOrder(
-		@Args("productFromOrder") productFromOrder: RemoveProductFromOrderInput,
-		@UserGql() user: IUser
-	) {
-		return this._productToOrderService.removeProductFromOrder(productFromOrder, user);
-	}
+	// @Mutation(() => ActiveOrderEntity)
+	// @UseGuards(
+	// 	GqlJwtGuard,
+	// 	RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.WAITER, UserRoleEnum.CLIENT])
+	// )
+	// async removeProductFromOrder(
+	// 	@Args("productFromOrder") productFromOrder: RemoveProductFromOrderInput,
+	// 	@UserGql() user: IUser
+	// ) {
+	// 	return this._productToOrderService.removeProductFromOrder(productFromOrder, user);
+	// }
 
 	@Mutation(() => [ProductToOrderEntity])
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.WAITER]))
@@ -205,20 +207,20 @@ export class OrdersResolver {
 		return this._ordersService.removeTableFrom(orderId);
 	}
 
-	@Mutation(() => ActiveOrderEntity)
-	@UseGuards(
-		GqlJwtGuard,
-		RolesGuard([
-			UserRoleEnum.ADMIN,
-			UserRoleEnum.MANAGER,
-			UserRoleEnum.WAITER,
-			UserRoleEnum.HOSTESS,
-			UserRoleEnum.HOOKAH
-		])
-	)
-	async confirmOrder(@Args("orderId") orderId: string, @UserGql() user: IUser) {
-		return this._ordersService.confirmOrder(orderId, user);
-	}
+	// @Mutation(() => ActiveOrderEntity)
+	// @UseGuards(
+	// 	GqlJwtGuard,
+	// 	RolesGuard([
+	// 		UserRoleEnum.ADMIN,
+	// 		UserRoleEnum.MANAGER,
+	// 		UserRoleEnum.WAITER,
+	// 		UserRoleEnum.HOSTESS,
+	// 		UserRoleEnum.HOOKAH
+	// 	])
+	// )
+	// async confirmOrder(@Args("orderId") orderId: string, @UserGql() user: IUser) {
+	// 	return this._ordersService.confirmOrder(orderId, user);
+	// }
 
 	@Mutation(() => ActiveOrderEntity)
 	@UseGuards(

@@ -113,6 +113,8 @@ export class FondyService {
 				paidStatus: ProductToOrderPaidStatusEnum.PAID
 			});
 		}
+
+		return orderId;
 	}
 
 	async getMerchantByPlace(placeId: string): Promise<PlaceToPaymentSystemEntity> {

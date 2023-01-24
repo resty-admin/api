@@ -5,6 +5,7 @@ import { GraphQLError } from "graphql/error";
 
 import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
+import type { FiltersArgsDto } from "../../shared/dtos";
 import { ErrorsEnum, OrderStatusEnum, OrderTypeEnum, ProductToOrderStatusEnum } from "../../shared/enums";
 import { TableStatusEnum } from "../../shared/enums/orders/table-status.enum";
 import type { IUser } from "../../shared/interfaces";
@@ -48,9 +49,11 @@ export class OrdersService {
 		private readonly _orderGateway: OrdersGateway
 	) {}
 
-	async getOrder(id: string) {
+	async getOrder(id: string, filtersArgs?: FiltersArgsDto[]) {
+		const findOptions: any = filtersArgs ? getFindOptionsByFilters(filtersArgs) : { where: { id } };
+
 		return this._ordersRepository.findOne({
-			where: { id },
+			where: findOptions.where,
 			relations: this.findOneRelations
 		});
 	}
@@ -102,8 +105,9 @@ export class OrdersService {
 								id: user.id
 							},
 							count: el.count,
-							product: el.product,
-							attributes: el.attributes
+							product: el.productId,
+							attributes: el.attributesIds,
+							status: ProductToOrderStatusEnum.WAITING_FOR_APPROVE
 						}))
 				  }
 				: {}),
@@ -178,34 +182,34 @@ export class OrdersService {
 		return this.archiveOrder({ ...order, status: OrderStatusEnum.CLOSED });
 	}
 
-	async confirmOrder(orderId, user) {
-		const productsToOrders: ProductToOrderEntity[] = await this.productToOrderRepository.find({
-			where: {
-				order: {
-					id: orderId
-				},
-				user: {
-					id: user.id
-				}
-			},
-			relations: ["order", "user"]
-		});
-
-		if (productsToOrders.length === 0) {
-			throw new GraphQLError(ErrorsEnum.NoActiveProductsExist.toString(), {
-				extensions: {
-					code: 500
-				}
-			});
-		}
-
-		const updatedOrders = productsToOrders.map((el) => ({
-			...el,
-			status: el.status === ProductToOrderStatusEnum.ADDED ? ProductToOrderStatusEnum.WAITING_FOR_APPROVE : el.status
-		}));
-		await this._ordersNotificationService.confirmOrderEvent(orderId);
-		return this._ordersRepository.save({ ...productsToOrders[0].order, productsToOrders: updatedOrders });
-	}
+	// async confirmOrder(orderId, user) {
+	// 	const productsToOrders: ProductToOrderEntity[] = await this.productToOrderRepository.find({
+	// 		where: {
+	// 			order: {
+	// 				id: orderId
+	// 			},
+	// 			user: {
+	// 				id: user.id
+	// 			}
+	// 		},
+	// 		relations: ["order", "user"]
+	// 	});
+	//
+	// 	if (productsToOrders.length === 0) {
+	// 		throw new GraphQLError(ErrorsEnum.NoActiveProductsExist.toString(), {
+	// 			extensions: {
+	// 				code: 500
+	// 			}
+	// 		});
+	// 	}
+	//
+	// 	const updatedOrders = productsToOrders.map((el) => ({
+	// 		...el,
+	// 		status: el.status === ProductToOrderStatusEnum.ADDED ? ProductToOrderStatusEnum.WAITING_FOR_APPROVE : el.status
+	// 	}));
+	// 	await this._ordersNotificationService.confirmOrderEvent(orderId);
+	// 	return this._ordersRepository.save({ ...productsToOrders[0].order, productsToOrders: updatedOrders });
+	// }
 
 	async archiveOrder(order: ActiveOrderEntity) {
 		try {
