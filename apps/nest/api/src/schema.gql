@@ -128,6 +128,7 @@ type TableEntity {
 	orders: [ActiveOrderEntity!]
 	file: FileEntity
 	isHide: Boolean!
+	accountingSystemsFields: JSONObject
 }
 
 type PaginatedTable {
@@ -453,6 +454,7 @@ input TableEntityInput {
 	orders: [ActiveOrderEntityInput!]
 	file: FileEntityInput
 	isHide: Boolean!
+	accountingSystemsFields: JSONObject
 }
 
 input ProductToOrderEntityInput {
@@ -567,6 +569,9 @@ type Query {
 	companies(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedCompany!
 	accountingSystem(id: String!): AccountingSystemEntity!
 	accountingSystems(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedAccountingSystem!
+	table(id: String!): TableEntity!
+	tables(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedTable!
+	isTableAvailableForReserve(body: IsTableAvailableInput!): TableEntity!
 	hall(id: String!): HallEntity!
 	halls(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedHall!
 	order(id: String!): ActiveOrderEntity!
@@ -576,9 +581,6 @@ type Query {
 	products(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedProduct!
 	category(id: String!): CategoryEntity!
 	categories(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedCategory!
-	table(id: String!): TableEntity!
-	tables(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedTable!
-	isTableAvailableForReserve(body: IsTableAvailableInput!): TableEntity!
 	shift(id: String!): ActiveShiftEntity!
 	shifts(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedActiveShift!
 	activeShift: ActiveShiftEntity
@@ -629,6 +631,11 @@ type Mutation {
 	getMerchantLoginAndCodeLink(placeId: String!): Link!
 	getAccessToken(body: PosterAccessCodeInput!): PlaceToAccountingSystemEntity!
 	syncHalls(placeId: String!): String!
+	syncTables(placeId: String!): String!
+	createTable(table: CreateTableInput!): TableEntity!
+	updateTable(table: UpdateTableInput!): TableEntity!
+	deleteTable(tableId: String!): String!
+	getTableByCode(code: String!, placeId: String!): TableEntity!
 	createHall(hall: CreateHallInput!): HallEntity!
 	updateHall(hall: UpdateHallInput!): HallEntity!
 	deleteHall(hallId: String!): String!
@@ -656,10 +663,6 @@ type Mutation {
 	createCategory(category: CreateCategoryInput!): CategoryEntity!
 	updateCategory(category: UpdateCategoryInput!): CategoryEntity!
 	deleteCategory(categoryId: String!): String!
-	createTable(table: CreateTableInput!): TableEntity!
-	updateTable(table: UpdateTableInput!): TableEntity!
-	deleteTable(tableId: String!): String!
-	getTableByCode(code: String!, placeId: String!): TableEntity!
 	createShift(shift: CreateShiftInput!): ActiveShiftEntity!
 	closeShift(shiftId: String!): String!
 	updateShift(shift: UpdateShiftInput!): ActiveShiftEntity!
@@ -793,6 +796,20 @@ input PosterAccessCodeInput {
 	placeId: String!
 }
 
+input CreateTableInput {
+	name: String!
+	code: Int
+	hall: String!
+	file: String
+}
+
+input UpdateTableInput {
+	id: String!
+	code: Int
+	name: String!
+	file: String
+}
+
 input CreateHallInput {
 	name: String!
 	place: String!
@@ -875,20 +892,6 @@ input UpdateCategoryInput {
 	id: String!
 	name: String
 	place: String
-	file: String
-}
-
-input CreateTableInput {
-	name: String!
-	code: Int
-	hall: String!
-	file: String
-}
-
-input UpdateTableInput {
-	id: String!
-	code: Int
-	name: String!
 	file: String
 }
 
