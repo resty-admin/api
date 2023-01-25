@@ -35,4 +35,14 @@ export class PosterResolver {
 	async syncTables(@Args("placeId") placeId: string) {
 		return this._posterService.syncTables(placeId);
 	}
+
+	@Mutation(() => String)
+	async syncCategories(@Args("placeId") placeId: string) {
+		return this._posterService.syncCategories(placeId);
+	}
+
+	@Mutation(() => String)
+	async syncProducts(@Args("placeId") placeId: string) {
+		return this._posterService.syncProducts(placeId);
+	}
 }

@@ -1,5 +1,6 @@
 import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
+import { GraphQLJSONObject } from "graphql-type-json";
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne } from "typeorm";
 
 import { AttributesGroupEntity } from "../../attributes/entities";
@@ -48,6 +49,14 @@ export class ProductEntity extends BaseEntity {
 	@Field(() => Boolean)
 	@Column("boolean", { default: false })
 	isHide: boolean;
+
+	@Field(() => GraphQLJSONObject, { nullable: true })
+	@Column({
+		type: "json",
+		default: () => `('${JSON.stringify({})}')`,
+		nullable: true
+	})
+	accountingSystemsFields?: object;
 }
 
 @ObjectType()

@@ -31,6 +31,7 @@ type CategoryEntity {
 	products: [ProductEntity!]
 	file: FileEntity
 	isHide: Boolean!
+	accountingSystemsFields: JSONObject
 }
 
 type PaginatedCategory {
@@ -48,6 +49,7 @@ type ProductEntity {
 	file: FileEntity
 	attrsGroups: [AttributesGroupEntity!]
 	isHide: Boolean!
+	accountingSystemsFields: JSONObject
 }
 
 type PaginatedProduct {
@@ -404,6 +406,7 @@ input CategoryEntityInput {
 	products: [ProductEntityInput!]
 	file: FileEntityInput
 	isHide: Boolean!
+	accountingSystemsFields: JSONObject
 }
 
 input ProductEntityInput {
@@ -414,6 +417,7 @@ input ProductEntityInput {
 	file: FileEntityInput
 	attrsGroups: [AttributesGroupEntityInput!]
 	isHide: Boolean!
+	accountingSystemsFields: JSONObject
 }
 
 input AttributesGroupEntityInput {
@@ -568,21 +572,21 @@ type Query {
 	companies(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedCompany!
 	accountingSystem(id: String!): AccountingSystemEntity!
 	accountingSystems(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedAccountingSystem!
+	product(id: String!): ProductEntity!
+	products(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedProduct!
+	order(id: String, filtersArgs: [FiltersArgsDto!]): ActiveOrderEntity
+	orders(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedActiveOrder!
+	historyOrders(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedHistoryOrder!
 	table(id: String!): TableEntity!
 	tables(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedTable!
 	isTableAvailableForReserve(body: IsTableAvailableInput!): TableEntity!
 	hall(id: String!): HallEntity!
 	halls(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedHall!
-	order(id: String, filtersArgs: [FiltersArgsDto!]): ActiveOrderEntity
-	orders(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedActiveOrder!
-	historyOrders(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedHistoryOrder!
-	product(id: String!): ProductEntity!
-	products(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedProduct!
-	category(id: String!): CategoryEntity!
-	categories(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedCategory!
 	shift(id: String!): ActiveShiftEntity!
 	shifts(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedActiveShift!
 	activeShift: ActiveShiftEntity
+	category(id: String!): CategoryEntity!
+	categories(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedCategory!
 	paymentSystem(id: String!): PaymentSystemEntity!
 	paymentSystems(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedPaymentSystem!
 	language(id: String!): LanguageEntity!
@@ -590,7 +594,6 @@ type Query {
 	getMe: AccessToken!
 	command(id: String!): CommandEntity!
 	commands(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedCommand!
-	emitCommand(commandId: String!, tableId: String!): String!
 }
 
 input FiltersArgsDto {
@@ -631,13 +634,11 @@ type Mutation {
 	getAccessToken(body: PosterAccessCodeInput!): PlaceToAccountingSystemEntity!
 	syncHalls(placeId: String!): String!
 	syncTables(placeId: String!): String!
-	createTable(table: CreateTableInput!): TableEntity!
-	updateTable(table: UpdateTableInput!): TableEntity!
-	deleteTable(tableId: String!): String!
-	getTableByCode(code: String!, placeId: String!): TableEntity!
-	createHall(hall: CreateHallInput!): HallEntity!
-	updateHall(hall: UpdateHallInput!): HallEntity!
-	deleteHall(hallId: String!): String!
+	syncCategories(placeId: String!): String!
+	syncProducts(placeId: String!): String!
+	createProduct(product: CreateProductInput!): ProductEntity!
+	updateProduct(product: UpdateProductInput!): ProductEntity!
+	deleteProduct(productId: String!): String!
 	createOrder(order: CreateOrderInput!): ActiveOrderEntity!
 	updateOrder(order: UpdateOrderInput!): ActiveOrderEntity!
 	deleteOrder(orderId: String!): String!
@@ -653,16 +654,20 @@ type Mutation {
 	confirmProductsToOrders(productsToOrders: [ConfirmProductToOrderInput!]!): ActiveOrderEntity!
 	closeOrder(orderId: String!): String!
 	cancelOrder(orderId: String!): String!
-	createProduct(product: CreateProductInput!): ProductEntity!
-	updateProduct(product: UpdateProductInput!): ProductEntity!
-	deleteProduct(productId: String!): String!
-	createCategory(category: CreateCategoryInput!): CategoryEntity!
-	updateCategory(category: UpdateCategoryInput!): CategoryEntity!
-	deleteCategory(categoryId: String!): String!
+	createTable(table: CreateTableInput!): TableEntity!
+	updateTable(table: UpdateTableInput!): TableEntity!
+	deleteTable(tableId: String!): String!
+	getTableByCode(code: String!, placeId: String!): TableEntity!
+	createHall(hall: CreateHallInput!): HallEntity!
+	updateHall(hall: UpdateHallInput!): HallEntity!
+	deleteHall(hallId: String!): String!
 	createShift(shift: CreateShiftInput!): ActiveShiftEntity!
 	closeShift(shiftId: String!): String!
 	updateShift(shift: UpdateShiftInput!): ActiveShiftEntity!
 	deleteShift(shiftId: String!): String!
+	createCategory(category: CreateCategoryInput!): CategoryEntity!
+	updateCategory(category: UpdateCategoryInput!): CategoryEntity!
+	deleteCategory(categoryId: String!): String!
 	createPaymentSystem(paymentSystem: CreatePaymentSystemInput!): PaymentSystemEntity!
 	updatePaymentSystem(paymentSystem: UpdatePaymentSystemInput!): PaymentSystemEntity!
 	deletePaymentSystem(paymentSystemId: String!): String!
@@ -676,6 +681,7 @@ type Mutation {
 	resetPassword(body: ResetPasswordInput!): AccessToken!
 	telegram(telegramUser: TelegramUserInput!): AccessToken!
 	deleteMe: String!
+	emitCommand(commandId: String!, tableId: String!): String!
 	createCommand(command: CreateCommandInput!): CommandEntity!
 	updateCommand(command: UpdateCommandInput!): CommandEntity!
 	deleteCommand(commandId: String!): String!
@@ -792,30 +798,23 @@ input PosterAccessCodeInput {
 	placeId: String!
 }
 
-input CreateTableInput {
+input CreateProductInput {
 	name: String!
-	code: Int
-	hall: String!
+	category: String!
+	description: String
+	price: Float
 	file: String
+	attrsGroups: [String!]
 }
 
-input UpdateTableInput {
+input UpdateProductInput {
 	id: String!
-	code: Int
-	name: String!
+	name: String
+	category: String
+	description: String
+	price: Float
 	file: String
-}
-
-input CreateHallInput {
-	name: String!
-	place: String!
-	file: String
-}
-
-input UpdateHallInput {
-	id: String!
-	name: String!
-	file: String
+	attrsGroups: [String!]
 }
 
 input CreateOrderInput {
@@ -847,23 +846,40 @@ input ConfirmProductToOrderInput {
 	attributesIds: [String!]
 }
 
-input CreateProductInput {
+input CreateTableInput {
 	name: String!
-	category: String!
-	description: String
-	price: Float
+	code: Int
+	hall: String!
 	file: String
-	attrsGroups: [String!]
 }
 
-input UpdateProductInput {
+input UpdateTableInput {
 	id: String!
-	name: String
-	category: String
-	description: String
-	price: Float
+	code: Int
+	name: String!
 	file: String
-	attrsGroups: [String!]
+}
+
+input CreateHallInput {
+	name: String!
+	place: String!
+	file: String
+}
+
+input UpdateHallInput {
+	id: String!
+	name: String!
+	file: String
+}
+
+input CreateShiftInput {
+	tables: [String!]!
+	place: String
+}
+
+input UpdateShiftInput {
+	id: String!
+	tables: [String!]
 }
 
 input CreateCategoryInput {
@@ -877,16 +893,6 @@ input UpdateCategoryInput {
 	name: String
 	place: String
 	file: String
-}
-
-input CreateShiftInput {
-	tables: [String!]!
-	place: String
-}
-
-input UpdateShiftInput {
-	id: String!
-	tables: [String!]
 }
 
 input CreatePaymentSystemInput {
