@@ -218,7 +218,7 @@ export class OrdersService {
 
 			return "ARCHIVED";
 		} catch (error) {
-			console.log("e", error);
+			console.error("e", error);
 		}
 	}
 

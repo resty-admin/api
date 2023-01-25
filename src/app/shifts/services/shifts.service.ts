@@ -90,7 +90,7 @@ export class ShiftsService {
 
 			return "ARCHIVED";
 		} catch (error) {
-			console.log("e", error);
+			console.error("e", error);
 			return "fuck!";
 		}
 	}

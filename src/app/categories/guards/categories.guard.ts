@@ -54,7 +54,6 @@ export class CategoriesGuard implements CanActivate {
 			relations: ["place", "place.company", "place.company.owner"]
 		});
 
-		console.log("cata", currCategory);
 		return currCategory.place.company.owner.id === userId;
 	}
 }

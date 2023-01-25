@@ -27,7 +27,6 @@ export class PlaceGuard implements CanActivate {
 	}
 
 	async createGuard(companyId: string, userId) {
-		console.log("222", companyId, userId);
 		const currCompany = await this._companyRepository.findOne({
 			where: {
 				id: companyId

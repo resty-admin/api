@@ -18,7 +18,7 @@ export class PosterAuthService {
 	async getMerchantLoginAndCodeLink(placeId: string) {
 		const place = await this.getPosterPlace(placeId);
 
-		const baseUrl = false && environment.production ? `https://dev-api.resty.od.ua` : `http://192.168.68.102:3000`;
+		const baseUrl = false && environment.production ? `https://dev-api.resty.od.ua` : `http://192.168.68.100:3000`;
 
 		return {
 			link: `https://joinposter.com/api/auth?application_id=${
@@ -30,10 +30,9 @@ export class PosterAuthService {
 	async getAccessToken(body: PosterAccessCodeInput) {
 		const place = await this.getPosterPlace(body.placeId);
 
-		const baseUrl = "http://192.168.68.102:3000/api/poster/auth-confirm";
+		const baseUrl = "http://192.168.68.100:3000/api/poster/auth-confirm";
 
 		const bodyFormData = new FormData();
-		console.log("place", place);
 		bodyFormData.append("application_id", (place.placeConfigFields as any).application_id);
 		bodyFormData.append("application_secret", (place.placeConfigFields as any).application_secret);
 		bodyFormData.append("grant_type", "authorization_code");
@@ -43,7 +42,6 @@ export class PosterAuthService {
 		const res = await this._httpService
 			.post(`https://${body.login}.joinposter.com/api/v2/auth/access_token`, bodyFormData)
 			.toPromise();
-		console.log("res", res.data);
 
 		return this._pTa.save({
 			...place,

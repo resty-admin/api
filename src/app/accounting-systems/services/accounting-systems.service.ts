@@ -49,7 +49,6 @@ export class AccountingSystemsService {
 	}
 
 	async updateAccountingSystem(accountingSystemDto: UpdateAccountingSystemInput): Promise<AccountingSystemEntity> {
-		console.log("here", accountingSystemDto);
 		return this._accountingSystemRepository.save({ ...accountingSystemDto });
 	}
 

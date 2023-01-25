@@ -1,6 +1,5 @@
 import { UseGuards } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
-import * as console from "console";
 
 import { GqlJwtGuard } from "../../auth";
 import { RolesGuard, UserGql } from "../../shared";
@@ -55,7 +54,6 @@ export class CompaniesResolver {
 	@Mutation(() => CompanyEntity)
 	@UseGuards(GqlJwtGuard, CompaniesGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
 	async updateCompany(@Args("company") company: UpdateCompanyInput) {
-		console.log("company", company);
 		return this._companiesService.updateCompany(company.id, company);
 	}
 

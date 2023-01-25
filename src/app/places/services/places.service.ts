@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import * as console from "console";
 
 import { CompanyEntity } from "../../companies/entities";
 import { getFindOptionsByFilters } from "../../shared";
@@ -48,10 +47,8 @@ export class PlacesService {
 	}
 
 	async getPlaces({ take, skip, filtersArgs }: PaginationArgsDto) {
-		console.log("FILTERS", take, skip, filtersArgs);
 		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
-		console.log("findOptions", findOptions);
 		const [data, count] = await this._placesRepository.findAndCount({
 			where: findOptions.where,
 			relations: this.findRelations,
@@ -106,7 +103,6 @@ export class PlacesService {
 
 		const user = await this._usersRepository.findOne({ where: { id: employee.userId } });
 
-		console.log("user", user);
 		return this._placesRepository.save({ ...place, employees: [...(place.employees || []), { ...user }] });
 	}
 

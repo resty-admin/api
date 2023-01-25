@@ -26,7 +26,6 @@ export class PlaceEmployeeGuard implements CanActivate {
 	}
 
 	async employeeGuard(placeId: string, employeeId: string, userId: string) {
-		console.log("placeid", placeId, employeeId, userId);
 		const currCompany = await this._companyRepository.findOne({
 			where: {
 				owner: {
@@ -40,11 +39,8 @@ export class PlaceEmployeeGuard implements CanActivate {
 			return false;
 		}
 
-		console.log("curCompany", currCompany);
 		const placeExist = currCompany.places.find((el) => el.id === placeId);
 
-		console.log("COMPANy", currCompany);
-		console.log("placeExist", placeExist);
 		if (!placeExist) {
 			return false;
 		}
@@ -56,7 +52,6 @@ export class PlaceEmployeeGuard implements CanActivate {
 			relations: ["place"]
 		});
 
-		console.log("iser", user);
 		return (
 			user &&
 			(user.role === UserRoleEnum.WAITER || user.role === UserRoleEnum.HOSTESS || user.role === UserRoleEnum.HOOKAH)

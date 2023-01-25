@@ -31,8 +31,6 @@ export function getFindOptionsByFilters(filters: any[] = []): FindManyOptions {
 		{}
 	);
 
-	console.log(where);
-
 	return {
 		skip,
 		take,
