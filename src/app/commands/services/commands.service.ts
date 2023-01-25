@@ -44,7 +44,7 @@ export class CommandsService {
 
 		this._gatewaysService.emitEvent(COMMAND_EMITTED, { command, table, waiters });
 
-		return "emitted";
+		return commandId;
 	}
 
 	async getCommand(id: string) {
