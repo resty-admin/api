@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 
 import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
-import { OrderStatusEnum } from "../../shared/enums";
+import { OrderStatusEnum, UserRoleEnum } from "../../shared/enums";
 import type { IUser } from "../../shared/interfaces";
 import type { CreateCompanyInput, UpdateCompanyInput } from "../dtos";
 import { CompanyEntity } from "../entities";
@@ -22,11 +22,20 @@ export class CompaniesService {
 		});
 	}
 
-	async getCompanies({ take, skip, filtersArgs }: PaginationArgsDto) {
+	async getCompanies({ take, skip, filtersArgs }: PaginationArgsDto, user: IUser) {
 		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
 		const [data, totalCount] = await this._companiesRepository.findAndCount({
-			where: findOptions.where,
+			where: {
+				...findOptions.where,
+				...(user.role !== UserRoleEnum.ADMIN
+					? {
+							owner: {
+								id: user.id
+							}
+					  }
+					: {})
+			},
 			relations: this.findRelations,
 			take,
 			skip

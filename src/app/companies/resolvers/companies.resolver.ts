@@ -41,8 +41,8 @@ export class CompaniesResolver {
 			UserRoleEnum.HOOKAH
 		])
 	)
-	async companies(@Args() args: PaginationArgsDto) {
-		return this._companiesService.getCompanies(args);
+	async companies(@Args() args: PaginationArgsDto, @UserGql() user: IUser) {
+		return this._companiesService.getCompanies(args, user);
 	}
 
 	@Mutation(() => CompanyEntity)

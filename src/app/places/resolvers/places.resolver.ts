@@ -3,8 +3,9 @@ import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { PlaceVerificationStatusEnum, UserRoleEnum } from "src/app/shared/enums";
 
 import { GqlJwtGuard } from "../../auth";
-import { RolesGuard } from "../../shared";
+import { RolesGuard, UserGql } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
+import { IUser } from "../../shared/interfaces";
 import { CreatePlaceInput, UpdatePlaceInput } from "../dtos";
 import { AddEmployeeInput } from "../dtos/add-employee.dto";
 import { PaginatedPlace, PlaceEntity } from "../entities";
@@ -44,8 +45,8 @@ export class PlacesResolver {
 			UserRoleEnum.CLIENT
 		])
 	)
-	async places(@Args() args: PaginationArgsDto) {
-		return this._placesService.getPlaces(args);
+	async places(@Args() args: PaginationArgsDto, @UserGql() user: IUser) {
+		return this._placesService.getPlaces(args, user);
 	}
 
 	@Mutation(() => PlaceEntity)

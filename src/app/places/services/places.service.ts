@@ -5,7 +5,8 @@ import { CompanyEntity } from "../../companies/entities";
 import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { PlaceVerificationStatusEnum } from "../../shared/enums";
-import { OrderStatusEnum } from "../../shared/enums";
+import { OrderStatusEnum, UserRoleEnum } from "../../shared/enums";
+import type { IUser } from "../../shared/interfaces";
 import { UserEntity } from "../../users/entities";
 import type { CreatePlaceInput, UpdatePlaceInput } from "../dtos";
 import type { AddEmployeeInput } from "../dtos/add-employee.dto";
@@ -46,11 +47,22 @@ export class PlacesService {
 		});
 	}
 
-	async getPlaces({ take, skip, filtersArgs }: PaginationArgsDto) {
+	async getPlaces({ take, skip, filtersArgs }: PaginationArgsDto, user: IUser) {
 		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
 		const [data, count] = await this._placesRepository.findAndCount({
-			where: findOptions.where,
+			where: {
+				...findOptions.where,
+				...(user.role !== UserRoleEnum.ADMIN && user.role !== UserRoleEnum.CLIENT
+					? {
+							company: {
+								owner: {
+									id: user.id
+								}
+							}
+					  }
+					: {})
+			},
 			relations: this.findRelations,
 			take,
 			skip
