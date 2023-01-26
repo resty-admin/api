@@ -31,7 +31,7 @@ export class HealthController {
 	@ApiOperation({ summary: `Health check` })
 	check() {
 		return this.health.check([
-			() => this.http.pingCheck("basic check", "http://192.168.68.100:3000/api/health/check"),
+			() => this.http.pingCheck("basic check", "http://192.168.68.52:3000/api/health/check"),
 			// () => this.disk.checkStorage('diskStorage', { thresholdPercent: 0.5, path: 'C:\\' }),
 			() => this.db.pingCheck("database"),
 			() => this.memory.checkHeap("memory_heap", 300 * 1024 * 1024),
