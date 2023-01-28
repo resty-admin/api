@@ -2,6 +2,7 @@ import { HttpModule } from "@nestjs/axios";
 import { forwardRef, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
+import { PlacesModule } from "../places/places.module";
 import { ProductsModule } from "../products/products.module";
 import { ShiftsModule } from "../shifts/shifts.module";
 import { TablesModule } from "../tables/tables.module";
@@ -16,7 +17,8 @@ import { ORDERS_SERVICES } from "./services";
 		HttpModule,
 		ShiftsModule,
 		forwardRef(() => TablesModule),
-		forwardRef(() => ProductsModule)
+		forwardRef(() => ProductsModule),
+		forwardRef(() => PlacesModule)
 	],
 	providers: [...ORDERS_SERVICES, ...ORDERS_RESOLVERS, ...ORDERS_GATEWAYS],
 	exports: [TypeOrmModule]

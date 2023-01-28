@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import * as console from "console";
 import { GraphQLError } from "graphql/error";
 
+import { PlaceEntity } from "../../places/entities";
 import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { FiltersArgsDto } from "../../shared/dtos";
@@ -44,6 +45,7 @@ export class OrdersService {
 		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository,
 		@InjectRepository(ProductToOrderEntity) private readonly productToOrderRepository,
 		@InjectRepository(HistoryOrderEntity) private readonly _historyOrderRepository,
+		@InjectRepository(PlaceEntity) private readonly _placeRepository,
 		@Inject(forwardRef(() => OrdersNotificationsService))
 		private readonly _ordersNotificationService: OrdersNotificationsService,
 		private readonly _orderGateway: OrdersGateway
@@ -213,6 +215,17 @@ export class OrdersService {
 
 	async archiveOrder(order: ActiveOrderEntity) {
 		try {
+			const place = await this._placeRepository.findOne({
+				where: {
+					id: order.place.id
+				},
+				relations: ["guests"]
+			});
+
+			await this._placeRepository.save({
+				...place,
+				guests: [...place.guests, ...order.users]
+			});
 			await this._historyOrderRepository.save({ ...order, place: { id: order.place.id } });
 			await this._ordersRepository.delete(order.id);
 

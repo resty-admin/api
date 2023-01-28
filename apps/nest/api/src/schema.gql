@@ -334,6 +334,7 @@ type PlaceEntity {
 	isHide: Boolean!
 	paymentSystems: [PlaceToPaymentSystemEntity!]
 	accountingSystems: [PlaceToAccountingSystemEntity!]
+	guests: [UserEntity!]
 }
 
 enum PlaceStatusEnum {
@@ -553,6 +554,7 @@ input PlaceEntityInput {
 	isHide: Boolean!
 	paymentSystems: [PlaceToPaymentSystemEntityInput!]
 	accountingSystems: [PlaceAccountingSystemEntityInput!]
+	guests: [UserEntityInput!]
 }
 
 input PlaceAccountingSystemEntityInput {

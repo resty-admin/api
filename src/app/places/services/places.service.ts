@@ -20,6 +20,7 @@ export class PlacesService {
 		"employees",
 		"halls",
 		"file",
+		"guests",
 		"paymentSystems",
 		"paymentSystems.paymentSystem"
 	];
@@ -30,6 +31,7 @@ export class PlacesService {
 		"employees",
 		"halls",
 		"file",
+		"guests",
 		"paymentSystems",
 		"paymentSystems.paymentSystem"
 	];
