@@ -391,6 +391,15 @@ type FondyLink {
 	link: String!
 }
 
+type StatisticType {
+	guests: Int!
+	employees: Int!
+	halls: Int!
+	tables: Int!
+	totalAmount: Int!
+	tax: Int!
+}
+
 input AccountingSystemEntityInput {
 	name: String!
 	configFields: JSONObject
@@ -560,23 +569,20 @@ input ActiveShiftEntityInput {
 }
 
 type Query {
-	attribute(id: String!): AttributesEntity!
-	attributes(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedAttributes!
-	attributeGroup(id: String!): AttributesGroupEntity!
-	attributeGroups(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedAttributeGroups!
+	getPlaceStatistic(placeId: String!): StatisticType!
 	place(id: String!): PlaceEntity!
 	places(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedPlace!
 	user(id: String, filtersArgs: [FiltersArgsDto!]): UserEntity!
 	users(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedUser!
 	company(id: String!): CompanyEntity!
 	companies(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedCompany!
-	accountingSystem(id: String!): AccountingSystemEntity!
-	accountingSystems(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedAccountingSystem!
-	product(id: String!): ProductEntity!
-	products(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedProduct!
 	order(id: String, filtersArgs: [FiltersArgsDto!]): ActiveOrderEntity
 	orders(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedActiveOrder!
 	historyOrders(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedHistoryOrder!
+	product(id: String!): ProductEntity!
+	products(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedProduct!
+	category(id: String!): CategoryEntity!
+	categories(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedCategory!
 	table(id: String!): TableEntity!
 	tables(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedTable!
 	isTableAvailableForReserve(body: IsTableAvailableInput!): TableEntity!
@@ -585,8 +591,12 @@ type Query {
 	shift(id: String!): ActiveShiftEntity!
 	shifts(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedActiveShift!
 	activeShift: ActiveShiftEntity
-	category(id: String!): CategoryEntity!
-	categories(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedCategory!
+	attribute(id: String!): AttributesEntity!
+	attributes(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedAttributes!
+	attributeGroup(id: String!): AttributesGroupEntity!
+	attributeGroups(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedAttributeGroups!
+	accountingSystem(id: String!): AccountingSystemEntity!
+	accountingSystems(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedAccountingSystem!
 	paymentSystem(id: String!): PaymentSystemEntity!
 	paymentSystems(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedPaymentSystem!
 	language(id: String!): LanguageEntity!
@@ -608,12 +618,6 @@ input IsTableAvailableInput {
 }
 
 type Mutation {
-	createAttr(attr: CreateAttributeInput!): AttributesEntity!
-	updateAttr(attr: UpdateAttributeInput!): AttributesEntity!
-	deleteAttr(attrId: String!): String!
-	createAttrGroup(attrGroup: CreateAttributeGroupInput!): AttributesGroupEntity!
-	updateAttrGroup(attrGroup: UpdateAttributeGroupInput!): AttributesGroupEntity!
-	deleteAttrGroup(attrGroupId: String!): String!
 	createPlace(place: CreatePlaceInput!): PlaceEntity!
 	updatePlace(place: UpdatePlaceInput!): PlaceEntity!
 	deletePlace(placeId: String!): String!
@@ -626,19 +630,6 @@ type Mutation {
 	createCompany(company: CreateCompanyInput!): CompanyEntity!
 	updateCompany(company: UpdateCompanyInput!): CompanyEntity!
 	deleteCompany(companyId: String!): String!
-	createAccountingSystem(accountingSystem: CreateAccountingSystemInput!): AccountingSystemEntity!
-	updateAccountingSystem(accountingSystem: UpdateAccountingSystemInput!): AccountingSystemEntity!
-	deleteAccountingSystem(accountingSystemId: String!): String!
-	connectAccountingSystemToPlace(body: ConnectAccountingSystemToPlaceInput!): PlaceToAccountingSystemEntity!
-	getMerchantLoginAndCodeLink(placeId: String!): Link!
-	getAccessToken(body: PosterAccessCodeInput!): PlaceToAccountingSystemEntity!
-	syncHalls(placeId: String!): String!
-	syncTables(placeId: String!): String!
-	syncCategories(placeId: String!): String!
-	syncProducts(placeId: String!): String!
-	createProduct(product: CreateProductInput!): ProductEntity!
-	updateProduct(product: UpdateProductInput!): ProductEntity!
-	deleteProduct(productId: String!): String!
 	createOrder(order: CreateOrderInput!): ActiveOrderEntity!
 	updateOrder(order: UpdateOrderInput!): ActiveOrderEntity!
 	deleteOrder(orderId: String!): String!
@@ -654,6 +645,12 @@ type Mutation {
 	confirmProductsToOrders(productsToOrders: [ConfirmProductToOrderInput!]!): ActiveOrderEntity!
 	closeOrder(orderId: String!): String!
 	cancelOrder(orderId: String!): String!
+	createProduct(product: CreateProductInput!): ProductEntity!
+	updateProduct(product: UpdateProductInput!): ProductEntity!
+	deleteProduct(productId: String!): String!
+	createCategory(category: CreateCategoryInput!): CategoryEntity!
+	updateCategory(category: UpdateCategoryInput!): CategoryEntity!
+	deleteCategory(categoryId: String!): String!
 	createTable(table: CreateTableInput!): TableEntity!
 	updateTable(table: UpdateTableInput!): TableEntity!
 	deleteTable(tableId: String!): String!
@@ -665,9 +662,22 @@ type Mutation {
 	closeShift(shiftId: String!): String!
 	updateShift(shift: UpdateShiftInput!): ActiveShiftEntity!
 	deleteShift(shiftId: String!): String!
-	createCategory(category: CreateCategoryInput!): CategoryEntity!
-	updateCategory(category: UpdateCategoryInput!): CategoryEntity!
-	deleteCategory(categoryId: String!): String!
+	createAttr(attr: CreateAttributeInput!): AttributesEntity!
+	updateAttr(attr: UpdateAttributeInput!): AttributesEntity!
+	deleteAttr(attrId: String!): String!
+	createAttrGroup(attrGroup: CreateAttributeGroupInput!): AttributesGroupEntity!
+	updateAttrGroup(attrGroup: UpdateAttributeGroupInput!): AttributesGroupEntity!
+	deleteAttrGroup(attrGroupId: String!): String!
+	createAccountingSystem(accountingSystem: CreateAccountingSystemInput!): AccountingSystemEntity!
+	updateAccountingSystem(accountingSystem: UpdateAccountingSystemInput!): AccountingSystemEntity!
+	deleteAccountingSystem(accountingSystemId: String!): String!
+	connectAccountingSystemToPlace(body: ConnectAccountingSystemToPlaceInput!): PlaceToAccountingSystemEntity!
+	getMerchantLoginAndCodeLink(placeId: String!): Link!
+	getAccessToken(body: PosterAccessCodeInput!): PlaceToAccountingSystemEntity!
+	syncHalls(placeId: String!): String!
+	syncTables(placeId: String!): String!
+	syncCategories(placeId: String!): String!
+	syncProducts(placeId: String!): String!
 	createPaymentSystem(paymentSystem: CreatePaymentSystemInput!): PaymentSystemEntity!
 	updatePaymentSystem(paymentSystem: UpdatePaymentSystemInput!): PaymentSystemEntity!
 	deletePaymentSystem(paymentSystemId: String!): String!
@@ -685,36 +695,6 @@ type Mutation {
 	createCommand(command: CreateCommandInput!): CommandEntity!
 	updateCommand(command: UpdateCommandInput!): CommandEntity!
 	deleteCommand(commandId: String!): String!
-}
-
-input CreateAttributeInput {
-	name: String!
-	price: Int!
-	attributesGroup: [String!]!
-}
-
-input UpdateAttributeInput {
-	id: String!
-	name: String!
-	price: Int
-	attributesGroup: [String!]
-}
-
-input CreateAttributeGroupInput {
-	name: String!
-	place: String!
-	attributes: [String!]
-	type: AttributeGroupTypeEnum!
-	maxItemsForPick: Int!
-}
-
-input UpdateAttributeGroupInput {
-	id: String!
-	name: String
-	isUniq: Boolean
-	attributes: [String!]
-	type: AttributeGroupTypeEnum
-	maxItemsForPick: Int
 }
 
 input CreatePlaceInput {
@@ -775,48 +755,6 @@ input UpdateCompanyInput {
 	employees: [String!]
 }
 
-input CreateAccountingSystemInput {
-	name: String!
-	configFields: JSONObject
-}
-
-input UpdateAccountingSystemInput {
-	id: String!
-	name: String
-	configFields: JSONObject
-}
-
-input ConnectAccountingSystemToPlaceInput {
-	place: String!
-	accountingSystem: String!
-	placeConfigFields: JSONObject!
-}
-
-input PosterAccessCodeInput {
-	code: String!
-	login: String!
-	placeId: String!
-}
-
-input CreateProductInput {
-	name: String!
-	category: String!
-	description: String
-	price: Float
-	file: String
-	attrsGroups: [String!]
-}
-
-input UpdateProductInput {
-	id: String!
-	name: String
-	category: String
-	description: String
-	price: Float
-	file: String
-	attrsGroups: [String!]
-}
-
 input CreateOrderInput {
 	type: OrderTypeEnum!
 	place: String!
@@ -844,6 +782,38 @@ input ConfirmProductToOrderInput {
 	productId: String!
 	count: Float!
 	attributesIds: [String!]
+}
+
+input CreateProductInput {
+	name: String!
+	category: String!
+	description: String
+	price: Float
+	file: String
+	attrsGroups: [String!]
+}
+
+input UpdateProductInput {
+	id: String!
+	name: String
+	category: String
+	description: String
+	price: Float
+	file: String
+	attrsGroups: [String!]
+}
+
+input CreateCategoryInput {
+	name: String!
+	place: String!
+	file: String
+}
+
+input UpdateCategoryInput {
+	id: String!
+	name: String
+	place: String
+	file: String
 }
 
 input CreateTableInput {
@@ -882,17 +852,57 @@ input UpdateShiftInput {
 	tables: [String!]
 }
 
-input CreateCategoryInput {
+input CreateAttributeInput {
 	name: String!
-	place: String!
-	file: String
+	price: Int!
+	attributesGroup: [String!]!
 }
 
-input UpdateCategoryInput {
+input UpdateAttributeInput {
+	id: String!
+	name: String!
+	price: Int
+	attributesGroup: [String!]
+}
+
+input CreateAttributeGroupInput {
+	name: String!
+	place: String!
+	attributes: [String!]
+	type: AttributeGroupTypeEnum!
+	maxItemsForPick: Int!
+}
+
+input UpdateAttributeGroupInput {
 	id: String!
 	name: String
-	place: String
-	file: String
+	isUniq: Boolean
+	attributes: [String!]
+	type: AttributeGroupTypeEnum
+	maxItemsForPick: Int
+}
+
+input CreateAccountingSystemInput {
+	name: String!
+	configFields: JSONObject
+}
+
+input UpdateAccountingSystemInput {
+	id: String!
+	name: String
+	configFields: JSONObject
+}
+
+input ConnectAccountingSystemToPlaceInput {
+	place: String!
+	accountingSystem: String!
+	placeConfigFields: JSONObject!
+}
+
+input PosterAccessCodeInput {
+	code: String!
+	login: String!
+	placeId: String!
 }
 
 input CreatePaymentSystemInput {

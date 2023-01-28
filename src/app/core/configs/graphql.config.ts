@@ -17,6 +17,7 @@ import { PaymentSystemsModule } from "../../payment-systems/payment-systems.modu
 import { PlacesModule } from "../../places/places.module";
 import { ProductsModule } from "../../products/products.module";
 import { ShiftsModule } from "../../shifts/shifts.module";
+import { StatisticModule } from "../../statistics/statistic.module";
 import { TablesModule } from "../../tables/tables.module";
 import { UsersModule } from "../../users";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -41,7 +42,8 @@ export const GRAPHQL_CONFIG = {
 		AccountingSystemsModule,
 		AttributesModule,
 		ShiftsModule,
-		AuthModule
+		AuthModule,
+		StatisticModule
 	],
 	context: ({ req }) => ({ req }),
 	formatError: (error: GraphQLError) => {
