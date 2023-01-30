@@ -244,6 +244,7 @@ type UserEntity {
 	orders: [ActiveOrderEntity!]
 	place: PlaceEntity
 	companies: CompanyEntity
+	placesGuest: [PlaceEntity!]
 }
 
 enum UserRoleEnum {
@@ -334,7 +335,6 @@ type PlaceEntity {
 	isHide: Boolean!
 	paymentSystems: [PlaceToPaymentSystemEntity!]
 	accountingSystems: [PlaceToAccountingSystemEntity!]
-	guests: [UserEntity!]
 }
 
 enum PlaceStatusEnum {
@@ -511,6 +511,7 @@ input UserEntityInput {
 	orders: [ActiveOrderEntityInput!]
 	place: PlaceEntityInput
 	companies: CompanyEntityInput
+	placesGuest: [PlaceEntityInput!]
 }
 
 input CompanyEntityInput {
@@ -554,7 +555,6 @@ input PlaceEntityInput {
 	isHide: Boolean!
 	paymentSystems: [PlaceToPaymentSystemEntityInput!]
 	accountingSystems: [PlaceAccountingSystemEntityInput!]
-	guests: [UserEntityInput!]
 }
 
 input PlaceAccountingSystemEntityInput {
@@ -572,7 +572,8 @@ input ActiveShiftEntityInput {
 
 type Query {
 	getPlaceStatistic(placeId: String!): StatisticType!
-	place(id: String!): PlaceEntity!
+	place(id: String!, filtersArgs: [FiltersArgsDto!]): PlaceEntity!
+	placeGuests(placeId: String!, skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedUser!
 	places(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedPlace!
 	user(id: String, filtersArgs: [FiltersArgsDto!]): UserEntity!
 	users(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedUser!

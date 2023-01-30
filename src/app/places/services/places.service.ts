@@ -4,6 +4,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { CompanyEntity } from "../../companies/entities";
 import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
+import type { FiltersArgsDto } from "../../shared/dtos";
 import type { PlaceVerificationStatusEnum } from "../../shared/enums";
 import { OrderStatusEnum, UserRoleEnum } from "../../shared/enums";
 import type { IUser } from "../../shared/interfaces";
@@ -20,7 +21,7 @@ export class PlacesService {
 		"employees",
 		"halls",
 		"file",
-		"guests",
+		// "guests",
 		"paymentSystems",
 		"paymentSystems.paymentSystem"
 	];
@@ -31,7 +32,7 @@ export class PlacesService {
 		"employees",
 		"halls",
 		"file",
-		"guests",
+		// "guests",
 		"paymentSystems",
 		"paymentSystems.paymentSystem"
 	];
@@ -42,11 +43,38 @@ export class PlacesService {
 		@InjectRepository(UserEntity) private readonly _usersRepository
 	) {}
 
-	async getPlace(id: string) {
+	async getPlace(id: string, filtersArgs?: FiltersArgsDto[]) {
+		const findOptions = filtersArgs?.length > 0 ? getFindOptionsByFilters(filtersArgs) : ([] as any);
+
 		return this._placesRepository.findOne({
-			where: { id },
+			where: {
+				id,
+				...findOptions.where
+			},
 			relations: this.findOneRelations
 		});
+	}
+
+	async getPlaceGuests(id: string, { take, skip, filtersArgs }: PaginationArgsDto) {
+		const findOptions = filtersArgs?.length > 0 ? getFindOptionsByFilters(filtersArgs) : ([] as any);
+
+		const [data, count] = await this._usersRepository.findAndCount({
+			where: {
+				placesGuest: {
+					id
+				},
+				...findOptions.where
+			},
+			relations: ["place", "placesGuest"],
+			take,
+			skip
+		});
+
+		return {
+			data,
+			totalCount: count,
+			page: skip / take + 1
+		};
 	}
 
 	async getPlaces({ take, skip, filtersArgs }: PaginationArgsDto, user: IUser) {

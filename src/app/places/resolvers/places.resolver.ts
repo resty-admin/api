@@ -4,8 +4,9 @@ import { PlaceVerificationStatusEnum, UserRoleEnum } from "src/app/shared/enums"
 
 import { GqlJwtGuard } from "../../auth";
 import { RolesGuard, UserGql } from "../../shared";
-import { PaginationArgsDto } from "../../shared/dtos";
+import { FiltersArgsDto, PaginationArgsDto } from "../../shared/dtos";
 import { IUser } from "../../shared/interfaces";
+import { PaginatedUser } from "../../users/entities";
 import { CreatePlaceInput, UpdatePlaceInput } from "../dtos";
 import { AddEmployeeInput } from "../dtos/add-employee.dto";
 import { PaginatedPlace, PlaceEntity } from "../entities";
@@ -29,8 +30,26 @@ export class PlacesResolver {
 			UserRoleEnum.CLIENT
 		])
 	)
-	async place(@Args("id", { type: () => String }) id: string) {
-		return this._placesService.getPlace(id);
+	async place(
+		@Args("id", { type: () => String }) id: string,
+		@Args("filtersArgs", { type: () => [FiltersArgsDto], nullable: true }) filtersArgs: FiltersArgsDto[]
+	) {
+		return this._placesService.getPlace(id, filtersArgs);
+	}
+
+	@Query(() => PaginatedUser)
+	@UseGuards(
+		GqlJwtGuard,
+		RolesGuard([
+			UserRoleEnum.ADMIN,
+			UserRoleEnum.MANAGER,
+			UserRoleEnum.WAITER,
+			UserRoleEnum.HOSTESS,
+			UserRoleEnum.HOOKAH
+		])
+	)
+	async placeGuests(@Args("placeId", { type: () => String }) id: string, @Args() args: PaginationArgsDto) {
+		return this._placesService.getPlaceGuests(id, args);
 	}
 
 	@Query(() => PaginatedPlace)

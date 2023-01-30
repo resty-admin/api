@@ -2,6 +2,7 @@ import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as console from "console";
 import { GraphQLError } from "graphql/error";
+import { In } from "typeorm";
 
 import { PlaceEntity } from "../../places/entities";
 import { getFindOptionsByFilters } from "../../shared";
@@ -11,6 +12,7 @@ import { ErrorsEnum, OrderStatusEnum, OrderTypeEnum, ProductToOrderStatusEnum } 
 import { TableStatusEnum } from "../../shared/enums/orders/table-status.enum";
 import type { IUser } from "../../shared/interfaces";
 import { ActiveShiftEntity } from "../../shifts/entities";
+import { UserEntity } from "../../users/entities";
 import type { CreateOrderInput, UpdateOrderInput } from "../dtos";
 import { ActiveOrderEntity, HistoryOrderEntity, ProductToOrderEntity } from "../entities";
 import { OrdersGateway } from "../gateways";
@@ -46,6 +48,7 @@ export class OrdersService {
 		@InjectRepository(ProductToOrderEntity) private readonly productToOrderRepository,
 		@InjectRepository(HistoryOrderEntity) private readonly _historyOrderRepository,
 		@InjectRepository(PlaceEntity) private readonly _placeRepository,
+		@InjectRepository(UserEntity) private readonly _userRepository,
 		@Inject(forwardRef(() => OrdersNotificationsService))
 		private readonly _ordersNotificationService: OrdersNotificationsService,
 		private readonly _orderGateway: OrdersGateway
@@ -215,17 +218,16 @@ export class OrdersService {
 
 	async archiveOrder(order: ActiveOrderEntity) {
 		try {
-			const place = await this._placeRepository.findOne({
+			const users = await this._userRepository.find({
 				where: {
-					id: order.place.id
-				},
-				relations: ["guests"]
+					id: In(order.users.map((el) => el.id))
+				}
 			});
 
-			await this._placeRepository.save({
-				...place,
-				guests: [...place.guests, ...order.users]
-			});
+			await this._userRepository.save(
+				users.map((u) => ({ ...u, placesGuest: [...(u.placesGuest || []), order.place] }))
+			);
+
 			await this._historyOrderRepository.save({ ...order, place: { id: order.place.id } });
 			await this._ordersRepository.delete(order.id);
 

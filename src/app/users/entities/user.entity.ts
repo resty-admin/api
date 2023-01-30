@@ -1,6 +1,6 @@
 import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { Exclude } from "class-transformer";
-import { Column, Entity, ManyToMany, ManyToOne, OneToMany } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from "typeorm";
 
 import { CompanyEntity } from "../../companies/entities";
 import { ActiveOrderEntity } from "../../orders/entities";
@@ -75,6 +75,11 @@ export class UserEntity extends BaseEntity implements IUser {
 	@Field(() => CompanyEntity, { nullable: true })
 	@OneToMany(() => CompanyEntity, (company) => company.employees, { nullable: true })
 	companies?: CompanyEntity;
+
+	@Field(() => [PlaceEntity], { nullable: true })
+	@ManyToMany(() => PlaceEntity, { nullable: true })
+	@JoinTable()
+	placesGuest?: PlaceEntity[];
 }
 
 @ObjectType()

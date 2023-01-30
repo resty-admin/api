@@ -1,5 +1,5 @@
 import { Field, InputType, ObjectType } from "@nestjs/graphql";
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 
 import { PlaceToAccountingSystemEntity } from "../../accounting-systems/entities";
 import { AttributesGroupEntity } from "../../attributes/entities";
@@ -111,10 +111,10 @@ export class PlaceEntity extends BaseEntity {
 	@OneToMany(() => PlaceToAccountingSystemEntity, (pTa) => pTa.place, { nullable: true })
 	accountingSystems: PlaceToAccountingSystemEntity[];
 
-	@Field(() => [UserEntity], { nullable: true })
-	@ManyToMany(() => UserEntity, { nullable: true })
-	@JoinTable()
-	guests?: UserEntity[];
+	// @Field(() => [UserEntity], { nullable: true })
+	// @ManyToMany(() => UserEntity, { nullable: true })
+	// @JoinTable()
+	// guests?: UserEntity[];
 }
 
 @ObjectType()

@@ -6,6 +6,7 @@ import { PlacesModule } from "../places/places.module";
 import { ProductsModule } from "../products/products.module";
 import { ShiftsModule } from "../shifts/shifts.module";
 import { TablesModule } from "../tables/tables.module";
+import { UsersModule } from "../users";
 import { ORDERS_ENTITIES } from "./entities";
 import { ORDERS_GATEWAYS } from "./gateways";
 import { ORDERS_RESOLVERS } from "./resolvers";
@@ -18,7 +19,8 @@ import { ORDERS_SERVICES } from "./services";
 		ShiftsModule,
 		forwardRef(() => TablesModule),
 		forwardRef(() => ProductsModule),
-		forwardRef(() => PlacesModule)
+		forwardRef(() => PlacesModule),
+		forwardRef(() => UsersModule)
 	],
 	providers: [...ORDERS_SERVICES, ...ORDERS_RESOLVERS, ...ORDERS_GATEWAYS],
 	exports: [TypeOrmModule]

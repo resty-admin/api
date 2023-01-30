@@ -1,6 +1,6 @@
 import { set } from "lodash";
 import type { FindManyOptions } from "typeorm";
-import { In } from "typeorm";
+import { In, Like } from "typeorm";
 
 import { SortTypeEnum } from "../enums";
 import { getNumberOrString } from "./get-number-or-string.util";
@@ -27,7 +27,11 @@ export function getFindOptionsByFilters(filters: any[] = []): FindManyOptions {
 		...where
 	} = filters.reduce(
 		(previousValue: any, { key, operator, value }) =>
-			set(previousValue, key, operator === "=[]" ? In(value.split(".")) : getNumberOrString(value)),
+			set(
+				previousValue,
+				key,
+				operator === "=[]" ? In(value.split(".")) : operator === "like" ? Like(`%${value}%`) : getNumberOrString(value)
+			),
 		{}
 	);
 
