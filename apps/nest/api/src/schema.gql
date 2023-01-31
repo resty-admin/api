@@ -5,7 +5,13 @@
 type AccountingSystemEntity {
 	id: String!
 	name: String!
+	configFields: JSONObject
 }
+
+"""
+The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSONObject
 
 type PaginatedAccountingSystem {
 	data: [AccountingSystemEntity!]
@@ -18,19 +24,14 @@ type FileEntity {
 	url: String!
 }
 
-type FondyEntity {
-	id: String!
-	merchantId: String!
-	secretKey: String!
-	company: CompanyEntity!
-}
-
 type CategoryEntity {
 	id: String!
 	name: String!
 	place: PlaceEntity!
-	products: [ProductEntity!]!
+	products: [ProductEntity!]
 	file: FileEntity
+	isHide: Boolean!
+	accountingSystemsFields: JSONObject
 }
 
 type PaginatedCategory {
@@ -47,6 +48,8 @@ type ProductEntity {
 	price: Int!
 	file: FileEntity
 	attrsGroups: [AttributesGroupEntity!]
+	isHide: Boolean!
+	accountingSystemsFields: JSONObject
 }
 
 type PaginatedProduct {
@@ -58,10 +61,17 @@ type PaginatedProduct {
 type AttributesGroupEntity {
 	id: String!
 	name: String!
-	isUniq: Boolean
 	attributes: [AttributesEntity!]
 	products: [ProductEntity!]
 	place: PlaceEntity!
+	type: AttributeGroupTypeEnum!
+	maxItemsForPick: Int!
+}
+
+enum AttributeGroupTypeEnum {
+	ADD_UNIQ
+	ADD
+	REMOVE
 }
 
 type PaginatedAttributeGroups {
@@ -73,8 +83,8 @@ type PaginatedAttributeGroups {
 type AttributesEntity {
 	id: String!
 	name: String!
-	attributesGroup: AttributesGroupEntity
-	price: Int
+	attributesGroup: [AttributesGroupEntity!]!
+	price: Int!
 }
 
 type PaginatedAttributes {
@@ -83,81 +93,15 @@ type PaginatedAttributes {
 	totalCount: Int!
 }
 
-type ActiveShiftEntity {
-	id: String!
-	waiter: UserEntity
-	table: TableEntity
-	place: PlaceEntity
-	orders: [ActiveOrderEntity!]
-	shiftDate: String!
-}
-
-type PaginatedActiveShift {
-	data: [ActiveShiftEntity!]
-	page: Int!
-	totalCount: Int!
-}
-
-type HistoryShiftEntity {
-	id: String!
-	waiter: UserEntity
-	table: TableEntity
-	place: PlaceEntity
-	orders: [ActiveOrderEntity!]
-	shiftDate: String!
-}
-
-type ActiveOrderEntity {
-	id: String!
-	orderCode: String!
-	table: TableEntity!
-	users: [UserEntity!]!
-	type: OrderTypeEnum!
-	status: OrderStatusEnum!
-	place: PlaceEntity!
-	shift: ActiveShiftEntity
-}
-
-enum OrderTypeEnum {
-	RESERVE
-	PICKUP
-	IN_PLACE
-	DELIVERY
-}
-
-enum OrderStatusEnum {
-	OPENED
-	CLOSED
-}
-
-type PaginatedActiveOrder {
-	data: [ActiveOrderEntity!]
-	page: Int!
-	totalCount: Int!
-}
-
-type HistoryOrderEntity {
-	id: String!
-	orderCode: String!
-	table: TableEntity!
-	users: [UserEntity!]!
-	type: OrderTypeEnum!
-	status: OrderStatusEnum!
-	place: PlaceEntity!
-	shift: ActiveShiftEntity
-}
-
-type TableEntity {
+type CommandEntity {
 	id: String!
 	name: String!
-	code: Int!
-	hall: HallEntity!
-	orders: [ActiveOrderEntity!]
-	file: FileEntity!
+	place: PlaceEntity!
+	description: String!
 }
 
-type PaginatedTable {
-	data: [TableEntity!]
+type PaginatedCommand {
+	data: [CommandEntity!]
 	page: Int!
 	totalCount: Int!
 }
@@ -168,6 +112,8 @@ type HallEntity {
 	place: PlaceEntity!
 	file: FileEntity
 	tables: [TableEntity!]
+	isHide: Boolean!
+	accountingSystemsFields: JSONObject
 }
 
 type PaginatedHall {
@@ -176,53 +122,108 @@ type PaginatedHall {
 	totalCount: Int!
 }
 
-type PlaceEntity {
+type TableEntity {
 	id: String!
 	name: String!
-	company: CompanyEntity!
-	address: String!
-	status: PlaceStatusEnum!
-	halls: [HallEntity!]!
-	categories: [CategoryEntity!]!
-	file: FileEntity
-	a11y: String!
-	weekDays: String!
-	weekendDays: String!
-	holidayDays: String!
-	attrGroups: [AttributesGroupEntity!]!
+	code: Int!
+	hall: HallEntity!
 	orders: [ActiveOrderEntity!]
+	file: FileEntity
+	isHide: Boolean!
+	accountingSystemsFields: JSONObject
 }
 
-enum PlaceStatusEnum {
-	OPENED
-	CLOSED
-}
-
-type PaginatedPlace {
-	data: [PlaceEntity!]
+type PaginatedTable {
+	data: [TableEntity!]
 	page: Int!
 	totalCount: Int!
 }
 
-type CompanyEntity {
+type ProductToOrderEntity {
 	id: String!
-	name: String!
-	owner: UserEntity!
-	places: [PlaceEntity!]
-	employees: [UserEntity!]
-	status: CompanyStatusEnum!
-	logo: FileEntity
-	fondy: FondyEntity
+	user: UserEntity!
+	product: ProductEntity!
+	attributes: [AttributesEntity!]
+	order: ActiveOrderEntity!
+	count: Int!
+	status: ProductToOrderStatusEnum!
+	paidStatus: ProductToOrderPaidStatusEnum!
 }
 
-enum CompanyStatusEnum {
-	APPROVED
+enum ProductToOrderStatusEnum {
+	WAITING_FOR_APPROVE
 	REJECTED
-	PENDING
+	APPROVED
 }
 
-type PaginatedCompany {
-	data: [CompanyEntity!]
+enum ProductToOrderPaidStatusEnum {
+	PAID
+	NOT_PAID
+	WAITING
+}
+
+type ActiveOrderEntity {
+	id: String!
+	code: Int!
+	orderNumber: Int!
+	table: TableEntity
+	tableStatus: TableStatusEnum!
+	users: [UserEntity!]
+	type: OrderTypeEnum!
+	status: OrderStatusEnum!
+	place: PlaceEntity!
+	totalPrice: Int
+	productsToOrders: [ProductToOrderEntity!]
+	createdAt: DateTime!
+	startDate: DateTime!
+	comments: String
+}
+
+enum TableStatusEnum {
+	EMPTY
+	WAITING_FOR_APPROVE
+	REJECTED
+	APPROVED
+}
+
+enum OrderTypeEnum {
+	RESERVE
+	PICKUP
+	IN_PLACE
+	DELIVERY
+}
+
+enum OrderStatusEnum {
+	CREATED
+	CANCEL
+	CLOSED
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type PaginatedActiveOrder {
+	data: [ActiveOrderEntity!]
+	page: Int!
+	totalCount: Int!
+}
+
+type HistoryOrderEntity {
+	id: String!
+	orderNumber: Int!
+	table: JSONObject
+	users: [JSONObject!]!
+	type: OrderTypeEnum!
+	status: OrderStatusEnum!
+	place: PlaceEntity!
+	totalPrice: Int
+	productsToOrders: [JSONObject!]!
+}
+
+type PaginatedHistoryOrder {
+	data: [HistoryOrderEntity!]
 	page: Int!
 	totalCount: Int!
 }
@@ -240,13 +241,15 @@ type UserEntity {
 	verificationCode: Int
 	status: UserStatusEnum!
 	password: String
-	orders: [ActiveOrderEntity!]!
-	company: CompanyEntity
+	orders: [ActiveOrderEntity!]
+	place: PlaceEntity
+	companies: CompanyEntity
+	placesGuest: [PlaceEntity!]
 }
 
 enum UserRoleEnum {
-	ROOT
 	ADMIN
+	MANAGER
 	HOSTESS
 	WAITER
 	HOOKAH
@@ -269,26 +272,33 @@ type PaginatedUser {
 	totalCount: Int!
 }
 
-type CommandEntity {
+type CompanyEntity {
 	id: String!
 	name: String!
+	owner: UserEntity!
+	places: [PlaceEntity!]
+	employees: [UserEntity!]
+	status: CompanyStatusEnum!
+	logo: FileEntity
+	isHide: Boolean!
 }
 
-type PaginatedCommand {
-	data: [CommandEntity!]
+enum CompanyStatusEnum {
+	APPROVED
+	REJECTED
+	PENDING
+}
+
+type PaginatedCompany {
+	data: [CompanyEntity!]
 	page: Int!
 	totalCount: Int!
-}
-
-type LanguageEntity {
-	id: String!
-	name: String!
-	file: FileEntity!
 }
 
 type PaymentSystemEntity {
 	id: String!
 	name: String!
+	configFields: JSONObject
 }
 
 type PaginatedPaymentSystem {
@@ -297,35 +307,670 @@ type PaginatedPaymentSystem {
 	totalCount: Int!
 }
 
+type PlaceToPaymentSystemEntity {
+	id: String!
+	place: PlaceEntity!
+	paymentSystem: PaymentSystemEntity!
+	placeConfigFields: JSONObject
+}
+
+type PlaceEntity {
+	id: String!
+	name: String!
+	company: CompanyEntity!
+	address: String
+	status: PlaceStatusEnum!
+	verificationStatus: PlaceVerificationStatusEnum!
+	halls: [HallEntity!]!
+	categories: [CategoryEntity!]
+	file: FileEntity
+	a11y: String!
+	weekDays: String!
+	weekendDays: String!
+	holidayDays: String!
+	attrGroups: [AttributesGroupEntity!]!
+	orders: [ActiveOrderEntity!]
+	commands: [CommandEntity!]
+	employees: [UserEntity!]
+	isHide: Boolean!
+	paymentSystems: [PlaceToPaymentSystemEntity!]
+	accountingSystems: [PlaceToAccountingSystemEntity!]
+}
+
+enum PlaceStatusEnum {
+	OPENED
+	CLOSED
+}
+
+enum PlaceVerificationStatusEnum {
+	VERIFIED
+	NOT_VERIFIED
+}
+
+type PaginatedPlace {
+	data: [PlaceEntity!]
+	page: Int!
+	totalCount: Int!
+}
+
+type PlaceToAccountingSystemEntity {
+	id: String!
+	place: PlaceEntity!
+	accountingSystem: AccountingSystemEntity!
+	placeConfigFields: JSONObject
+}
+
+type AccessToken {
+	accessToken: String!
+}
+
+type ActiveShiftEntity {
+	id: String!
+	waiter: UserEntity
+	tables: [TableEntity!]
+	place: PlaceEntity
+	shiftDate: DateTime!
+}
+
+type PaginatedActiveShift {
+	data: [ActiveShiftEntity!]
+	page: Int!
+	totalCount: Int!
+}
+
+type Link {
+	link: String!
+}
+
+type LanguageEntity {
+	id: String!
+	name: String!
+	file: FileEntity!
+}
+
+type FondyLink {
+	link: String!
+}
+
+type StatisticType {
+	guests: Int!
+	employees: Int!
+	halls: Int!
+	tables: Int!
+	totalAmount: Int!
+	tax: Int!
+}
+
+input AccountingSystemEntityInput {
+	name: String!
+	configFields: JSONObject
+}
+
+input FileEntityInput {
+	url: String!
+}
+
+input CategoryEntityInput {
+	name: String!
+	place: PlaceEntityInput!
+	products: [ProductEntityInput!]
+	file: FileEntityInput
+	isHide: Boolean!
+	accountingSystemsFields: JSONObject
+}
+
+input ProductEntityInput {
+	name: String!
+	category: CategoryEntityInput!
+	description: String
+	price: Int!
+	file: FileEntityInput
+	attrsGroups: [AttributesGroupEntityInput!]
+	isHide: Boolean!
+	accountingSystemsFields: JSONObject
+}
+
+input AttributesGroupEntityInput {
+	name: String!
+	attributes: [AttributesEntityInput!]
+	products: [ProductEntityInput!]
+	place: PlaceEntityInput!
+	type: AttributeGroupTypeEnum!
+	maxItemsForPick: Int!
+}
+
+input AttributesEntityInput {
+	name: String!
+	attributesGroup: [AttributesGroupEntityInput!]!
+	price: Int!
+}
+
+input CommandEntityInput {
+	name: String!
+	place: PlaceEntityInput!
+	description: String!
+}
+
+input HallEntityInput {
+	name: String!
+	place: PlaceEntityInput!
+	file: FileEntityInput
+	tables: [TableEntityInput!]
+	isHide: Boolean!
+	accountingSystemsFields: JSONObject
+}
+
+input TableEntityInput {
+	name: String!
+	code: Int!
+	hall: HallEntityInput!
+	orders: [ActiveOrderEntityInput!]
+	file: FileEntityInput
+	isHide: Boolean!
+	accountingSystemsFields: JSONObject
+}
+
+input ProductToOrderEntityInput {
+	user: UserEntityInput!
+	product: ProductEntityInput!
+	attributes: [AttributesEntityInput!]
+	order: ActiveOrderEntityInput!
+	count: Int!
+	status: ProductToOrderStatusEnum!
+	paidStatus: ProductToOrderPaidStatusEnum!
+}
+
+input ActiveOrderEntityInput {
+	code: Int!
+	orderNumber: Int!
+	table: TableEntityInput
+	tableStatus: TableStatusEnum!
+	users: [UserEntityInput!]
+	type: OrderTypeEnum!
+	status: OrderStatusEnum!
+	place: PlaceEntityInput!
+	totalPrice: Int
+	productsToOrders: [ProductToOrderEntityInput!]
+	createdAt: DateTime!
+	startDate: DateTime!
+	comments: String
+}
+
+input UserEntityInput {
+	name: String!
+	role: UserRoleEnum!
+	theme: ThemeEnum!
+	email: String
+	googleId: String
+	telegramId: Int
+	telegramToken: String
+	tel: String
+	verificationCode: Int
+	status: UserStatusEnum!
+	password: String
+	orders: [ActiveOrderEntityInput!]
+	place: PlaceEntityInput
+	companies: CompanyEntityInput
+	placesGuest: [PlaceEntityInput!]
+}
+
+input CompanyEntityInput {
+	name: String!
+	owner: UserEntityInput!
+	places: [PlaceEntityInput!]
+	employees: [UserEntityInput!]
+	status: CompanyStatusEnum!
+	logo: FileEntityInput
+	isHide: Boolean!
+}
+
+input PaymentSystemEntityInput {
+	name: String!
+	configFields: JSONObject
+}
+
+input PlaceToPaymentSystemEntityInput {
+	place: PlaceEntityInput!
+	paymentSystem: PaymentSystemEntityInput!
+	placeConfigFields: JSONObject
+}
+
+input PlaceEntityInput {
+	name: String!
+	company: CompanyEntityInput!
+	address: String
+	status: PlaceStatusEnum!
+	verificationStatus: PlaceVerificationStatusEnum!
+	halls: [HallEntityInput!]!
+	categories: [CategoryEntityInput!]
+	file: FileEntityInput
+	a11y: String!
+	weekDays: String!
+	weekendDays: String!
+	holidayDays: String!
+	attrGroups: [AttributesGroupEntityInput!]!
+	orders: [ActiveOrderEntityInput!]
+	commands: [CommandEntityInput!]
+	employees: [UserEntityInput!]
+	isHide: Boolean!
+	paymentSystems: [PlaceToPaymentSystemEntityInput!]
+	accountingSystems: [PlaceAccountingSystemEntityInput!]
+}
+
+input PlaceAccountingSystemEntityInput {
+	place: PlaceEntityInput!
+	accountingSystem: AccountingSystemEntityInput!
+	placeConfigFields: JSONObject
+}
+
+input ActiveShiftEntityInput {
+	waiter: UserEntityInput
+	tables: [TableEntityInput!]
+	place: PlaceEntityInput
+	shiftDate: DateTime!
+}
+
 type Query {
-	attribute(id: String!): AttributesEntity!
-	attributes(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedAttributes!
-	attributeGroup(id: String!): AttributesGroupEntity!
-	attributeGroups(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedAttributeGroups!
-	accountingSystem(id: String!): AccountingSystemEntity!
-	accountingSystems(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedAccountingSystem!
-	payment(id: String!): PaymentSystemEntity!
-	payments(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedPaymentSystem!
+	getPlaceStatistic(placeId: String!): StatisticType!
+	place(id: String!, filtersArgs: [FiltersArgsDto!]): PlaceEntity!
+	placeGuests(placeId: String!, skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedUser!
+	places(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedPlace!
+	user(id: String, filtersArgs: [FiltersArgsDto!]): UserEntity!
+	users(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedUser!
 	company(id: String!): CompanyEntity!
-	companies(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedCompany!
-	shift(id: String!): ActiveShiftEntity!
-	shifts(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedActiveShift!
-	language(id: String!): LanguageEntity!
-	languages(skip: Int! = 0, take: Int! = 25, filtersString: String): LanguageEntity!
-	order(id: String!): ActiveOrderEntity!
-	orders(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedActiveOrder!
+	companies(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedCompany!
+	order(id: String, filtersArgs: [FiltersArgsDto!]): ActiveOrderEntity
+	orders(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedActiveOrder!
+	historyOrders(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedHistoryOrder!
 	product(id: String!): ProductEntity!
-	products(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedProduct!
-	hall(id: String!): HallEntity!
-	halls(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedHall!
-	place(id: String!): PlaceEntity!
-	places(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedPlace!
+	products(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedProduct!
 	category(id: String!): CategoryEntity!
-	categories(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedCategory!
+	categories(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedCategory!
 	table(id: String!): TableEntity!
-	tables(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedTable!
+	tables(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedTable!
+	isTableAvailableForReserve(body: IsTableAvailableInput!): TableEntity!
+	hall(id: String!): HallEntity!
+	halls(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedHall!
+	shift(id: String!): ActiveShiftEntity!
+	shifts(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedActiveShift!
+	activeShift: ActiveShiftEntity
+	attribute(id: String!): AttributesEntity!
+	attributes(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedAttributes!
+	attributeGroup(id: String!): AttributesGroupEntity!
+	attributeGroups(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedAttributeGroups!
+	accountingSystem(id: String!): AccountingSystemEntity!
+	accountingSystems(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedAccountingSystem!
+	paymentSystem(id: String!): PaymentSystemEntity!
+	paymentSystems(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedPaymentSystem!
+	language(id: String!): LanguageEntity!
+	languages(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): LanguageEntity!
+	getMe: AccessToken!
 	command(id: String!): CommandEntity!
-	commands(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedCommand!
-	user(id: String!): UserEntity!
-	users(skip: Int! = 0, take: Int! = 25, filtersString: String): PaginatedUser!
+	commands(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedCommand!
+}
+
+input FiltersArgsDto {
+	key: String!
+	operator: String!
+	value: String!
+}
+
+input IsTableAvailableInput {
+	tableId: String!
+	date: DateTime!
+}
+
+type Mutation {
+	createPlace(place: CreatePlaceInput!): PlaceEntity!
+	updatePlace(place: UpdatePlaceInput!): PlaceEntity!
+	deletePlace(placeId: String!): String!
+	addEmployeeToPlace(employeeData: AddEmployeeInput!): PlaceEntity!
+	removeEmployeeFromPlace(employeeData: AddEmployeeInput!): PlaceEntity!
+	updatePlaceVerification(placeId: String!, status: PlaceVerificationStatusEnum!): PlaceEntity!
+	createUser(user: CreateUserInput!): UserEntity!
+	updateUser(user: UpdateUserInput!): UserEntity!
+	deleteUser(userId: String!): String!
+	createCompany(company: CreateCompanyInput!): CompanyEntity!
+	updateCompany(company: UpdateCompanyInput!): CompanyEntity!
+	deleteCompany(companyId: String!): String!
+	createOrder(order: CreateOrderInput!): ActiveOrderEntity!
+	updateOrder(order: UpdateOrderInput!): ActiveOrderEntity!
+	deleteOrder(orderId: String!): String!
+	rejectProductsInOrder(productToOrderIds: [String!]!): [ProductToOrderEntity!]!
+	approveProductsInOrder(productToOrderIds: [String!]!): [ProductToOrderEntity!]!
+	setManualPayForProductsInOrder(productToOrderIds: [String!]!): [ProductToOrderEntity!]!
+	setPaidStatusForProductsInOrder(productToOrderIds: [String!]!): [ProductToOrderEntity!]!
+	addUserToOrder(code: Int!): ActiveOrderEntity!
+	addTableToOrder(orderId: String!, tableId: String!): ActiveOrderEntity!
+	approveTableInOrder(orderId: String!): ActiveOrderEntity!
+	rejectTableInOrder(orderId: String!): ActiveOrderEntity!
+	removeTableFromOrder(orderId: String!): ActiveOrderEntity!
+	confirmProductsToOrders(productsToOrders: [ConfirmProductToOrderInput!]!): ActiveOrderEntity!
+	closeOrder(orderId: String!): String!
+	cancelOrder(orderId: String!): String!
+	createProduct(product: CreateProductInput!): ProductEntity!
+	updateProduct(product: UpdateProductInput!): ProductEntity!
+	deleteProduct(productId: String!): String!
+	createCategory(category: CreateCategoryInput!): CategoryEntity!
+	updateCategory(category: UpdateCategoryInput!): CategoryEntity!
+	deleteCategory(categoryId: String!): String!
+	createTable(table: CreateTableInput!): TableEntity!
+	updateTable(table: UpdateTableInput!): TableEntity!
+	deleteTable(tableId: String!): String!
+	getTableByCode(code: String!, placeId: String!): TableEntity!
+	createHall(hall: CreateHallInput!): HallEntity!
+	updateHall(hall: UpdateHallInput!): HallEntity!
+	deleteHall(hallId: String!): String!
+	createShift(shift: CreateShiftInput!): ActiveShiftEntity!
+	closeShift(shiftId: String!): String!
+	updateShift(shift: UpdateShiftInput!): ActiveShiftEntity!
+	deleteShift(shiftId: String!): String!
+	createAttr(attr: CreateAttributeInput!): AttributesEntity!
+	updateAttr(attr: UpdateAttributeInput!): AttributesEntity!
+	deleteAttr(attrId: String!): String!
+	createAttrGroup(attrGroup: CreateAttributeGroupInput!): AttributesGroupEntity!
+	updateAttrGroup(attrGroup: UpdateAttributeGroupInput!): AttributesGroupEntity!
+	deleteAttrGroup(attrGroupId: String!): String!
+	createAccountingSystem(accountingSystem: CreateAccountingSystemInput!): AccountingSystemEntity!
+	updateAccountingSystem(accountingSystem: UpdateAccountingSystemInput!): AccountingSystemEntity!
+	deleteAccountingSystem(accountingSystemId: String!): String!
+	connectAccountingSystemToPlace(body: ConnectAccountingSystemToPlaceInput!): PlaceToAccountingSystemEntity!
+	getMerchantLoginAndCodeLink(placeId: String!): Link!
+	getAccessToken(body: PosterAccessCodeInput!): PlaceToAccountingSystemEntity!
+	syncHalls(placeId: String!): String!
+	syncTables(placeId: String!): String!
+	syncCategories(placeId: String!): String!
+	syncProducts(placeId: String!): String!
+	createPaymentSystem(paymentSystem: CreatePaymentSystemInput!): PaymentSystemEntity!
+	updatePaymentSystem(paymentSystem: UpdatePaymentSystemInput!): PaymentSystemEntity!
+	deletePaymentSystem(paymentSystemId: String!): String!
+	connectPaymentSystemToPlace(body: ConnectPaymentSystemToPlaceInput!): PlaceToPaymentSystemEntity!
+	createPaymentOrderLink(productsToOrders: [String!]!): FondyLink!
+	updateMe(user: UpdateMeInput!): UserEntity!
+	verifyCode(code: Int!): AccessToken!
+	signIn(body: SignInInput!): AccessToken!
+	signUp(body: SignUpInput!): AccessToken!
+	forgotPassword(body: ForgotPasswordInput!): String!
+	resetPassword(body: ResetPasswordInput!): AccessToken!
+	telegram(telegramUser: TelegramUserInput!): AccessToken!
+	deleteMe: String!
+	emitCommand(commandId: String!, tableId: String!): String!
+	createCommand(command: CreateCommandInput!): CommandEntity!
+	updateCommand(command: UpdateCommandInput!): CommandEntity!
+	deleteCommand(commandId: String!): String!
+}
+
+input CreatePlaceInput {
+	name: String!
+	address: String
+	company: String!
+	file: String
+	weekDays: WorkingHoursInput
+	weekendDays: WorkingHoursInput
+	holidayDays: WorkingHoursInput
+}
+
+input WorkingHoursInput {
+	name: String!
+	start: Int!
+	end: Int!
+}
+
+input UpdatePlaceInput {
+	id: String!
+	name: String
+	address: String
+	file: String
+	weekDays: WorkingHoursInput
+	weekendDays: WorkingHoursInput
+	holidayDays: WorkingHoursInput
+}
+
+input AddEmployeeInput {
+	placeId: String!
+	userId: String!
+}
+
+input CreateUserInput {
+	name: String
+	email: String!
+	password: String
+	role: UserRoleEnum!
+	tel: String
+}
+
+input UpdateUserInput {
+	id: String!
+	name: String
+	email: String
+	tel: String
+}
+
+input CreateCompanyInput {
+	name: String!
+	logo: String
+}
+
+input UpdateCompanyInput {
+	id: String!
+	name: String
+	logo: String
+	employees: [String!]
+}
+
+input CreateOrderInput {
+	type: OrderTypeEnum!
+	place: String!
+	table: String
+	productsToOrder: [CreateProductToOrderInput!]
+	comments: String
+}
+
+input CreateProductToOrderInput {
+	productId: String!
+	attributesIds: [String!]
+	count: Int!
+}
+
+input UpdateOrderInput {
+	id: String!
+	table: String
+	users: [String!]
+	status: OrderStatusEnum
+	type: OrderTypeEnum
+}
+
+input ConfirmProductToOrderInput {
+	orderId: String!
+	productId: String!
+	count: Float!
+	attributesIds: [String!]
+}
+
+input CreateProductInput {
+	name: String!
+	category: String!
+	description: String
+	price: Float
+	file: String
+	attrsGroups: [String!]
+}
+
+input UpdateProductInput {
+	id: String!
+	name: String
+	category: String
+	description: String
+	price: Float
+	file: String
+	attrsGroups: [String!]
+}
+
+input CreateCategoryInput {
+	name: String!
+	place: String!
+	file: String
+}
+
+input UpdateCategoryInput {
+	id: String!
+	name: String
+	place: String
+	file: String
+}
+
+input CreateTableInput {
+	name: String!
+	code: Int
+	hall: String!
+	file: String
+}
+
+input UpdateTableInput {
+	id: String!
+	code: Int
+	name: String!
+	file: String
+}
+
+input CreateHallInput {
+	name: String!
+	place: String!
+	file: String
+}
+
+input UpdateHallInput {
+	id: String!
+	name: String!
+	file: String
+}
+
+input CreateShiftInput {
+	tables: [String!]!
+	place: String
+}
+
+input UpdateShiftInput {
+	id: String!
+	tables: [String!]
+}
+
+input CreateAttributeInput {
+	name: String!
+	price: Int!
+	attributesGroup: [String!]!
+}
+
+input UpdateAttributeInput {
+	id: String!
+	name: String!
+	price: Int
+	attributesGroup: [String!]
+}
+
+input CreateAttributeGroupInput {
+	name: String!
+	place: String!
+	attributes: [String!]
+	type: AttributeGroupTypeEnum!
+	maxItemsForPick: Int!
+}
+
+input UpdateAttributeGroupInput {
+	id: String!
+	name: String
+	isUniq: Boolean
+	attributes: [String!]
+	type: AttributeGroupTypeEnum
+	maxItemsForPick: Int
+}
+
+input CreateAccountingSystemInput {
+	name: String!
+	configFields: JSONObject
+}
+
+input UpdateAccountingSystemInput {
+	id: String!
+	name: String
+	configFields: JSONObject
+}
+
+input ConnectAccountingSystemToPlaceInput {
+	place: String!
+	accountingSystem: String!
+	placeConfigFields: JSONObject!
+}
+
+input PosterAccessCodeInput {
+	code: String!
+	login: String!
+	placeId: String!
+}
+
+input CreatePaymentSystemInput {
+	name: String!
+}
+
+input UpdatePaymentSystemInput {
+	id: String!
+	name: String!
+}
+
+input ConnectPaymentSystemToPlaceInput {
+	place: String!
+	paymentSystem: String!
+	placeConfigFields: JSONObject!
+}
+
+input UpdateMeInput {
+	name: String
+	email: String
+	tel: String
+}
+
+input SignInInput {
+	tel: String
+	email: String
+	password: String!
+}
+
+input SignUpInput {
+	tel: String
+	email: String
+	password: String!
+	role: UserRoleEnum!
+}
+
+input ForgotPasswordInput {
+	tel: String!
+	email: String!
+}
+
+input ResetPasswordInput {
+	password: String!
+}
+
+input TelegramUserInput {
+	id: ID!
+	is_bot: Boolean
+	first_name: String!
+	username: String
+	last_name: String
+	is_premium: Boolean
+	language_code: String
+	added_to_attachment_menu: Boolean
+}
+
+input CreateCommandInput {
+	name: String!
+	place: String!
+	description: String!
+}
+
+input UpdateCommandInput {
+	id: String!
+	name: String
+	place: String
+	description: String
 }

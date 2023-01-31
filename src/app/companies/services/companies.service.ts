@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import type { IUser } from "src/app/shared/interfaces";
-import { Repository } from "typeorm";
 
-import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared/crud";
+import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
-import type { CreateCompanyDto, UpdateCompanyDto } from "../dtos";
+import { OrderStatusEnum, UserRoleEnum } from "../../shared/enums";
+import type { IUser } from "../../shared/interfaces";
+import type { CreateCompanyInput, UpdateCompanyInput } from "../dtos";
 import { CompanyEntity } from "../entities";
 
 @Injectable()
@@ -13,7 +13,7 @@ export class CompaniesService {
 	private findRelations = ["owner", "places", "logo"];
 	private findOneRelations = ["owner", "places", "logo"];
 
-	constructor(@InjectRepository(CompanyEntity) private readonly _companiesRepository: Repository<CompanyEntity>) {}
+	constructor(@InjectRepository(CompanyEntity) private readonly _companiesRepository) {}
 
 	async getCompany(id: string) {
 		return this._companiesRepository.findOne({
@@ -22,12 +22,20 @@ export class CompaniesService {
 		});
 	}
 
-	async getCompanies({ take, skip, filtersString }: PaginationArgsDto) {
-		const filters = getFiltersByUrl(filtersString);
-		const findOptions = getFindOptionsByFilters(filters) as any;
+	async getCompanies({ take, skip, filtersArgs }: PaginationArgsDto, user: IUser) {
+		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
 		const [data, totalCount] = await this._companiesRepository.findAndCount({
-			where: findOptions.where,
+			where: {
+				...findOptions.where,
+				...(user.role !== UserRoleEnum.ADMIN
+					? {
+							owner: {
+								id: user.id
+							}
+					  }
+					: {})
+			},
 			relations: this.findRelations,
 			take,
 			skip
@@ -40,7 +48,7 @@ export class CompaniesService {
 		};
 	}
 
-	async createCompany(company: CreateCompanyDto, user: IUser): Promise<CompanyEntity> {
+	async createCompany(company: CreateCompanyInput, user: IUser): Promise<CompanyEntity> {
 		const savedCompany = await this._companiesRepository.save({ ...company, owner: { id: user.id } });
 
 		return this._companiesRepository.findOne({
@@ -48,15 +56,35 @@ export class CompaniesService {
 		});
 	}
 
-	async updateCompany(id: string, company: UpdateCompanyDto): Promise<CompanyEntity> {
-		return this._companiesRepository.save({
+	async updateCompany(id: string, company: UpdateCompanyInput): Promise<CompanyEntity> {
+		await this._companiesRepository.save({
 			...company,
 			id,
-			employees: company.employees.map((el) => ({ id: el }))
+			...(company.employees?.length > 0 && { employees: company.employees.map((el) => ({ id: el })) })
+		});
+
+		return this._companiesRepository.findOne({
+			where: { id },
+			relations: this.findOneRelations
 		});
 	}
 
 	async deleteCompany(id: string): Promise<string> {
+		const company: CompanyEntity = await this._companiesRepository.findOne({
+			where: { id },
+			relations: [...this.findOneRelations, "places.commands"]
+		});
+
+		const isActiveOrdersPresent = company.places?.some((place) =>
+			place.orders?.some((el) => el.status !== OrderStatusEnum.CLOSED)
+		);
+
+		if (isActiveOrdersPresent) {
+			await this._companiesRepository.save({ ...company, isHide: true });
+
+			return `Company is having active order(s). Company will be hide for now`;
+		}
+
 		await this._companiesRepository.delete(id);
 		return `${id} deleted`;
 	}

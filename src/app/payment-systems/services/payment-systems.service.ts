@@ -1,14 +1,19 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
-import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared";
+import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
-import type { CreatePaymentSystemDto, UpdatePaymentSystemDto } from "../dtos";
+import type { CreatePaymentSystemInput, UpdatePaymentSystemInput } from "../dtos";
+import type { ConnectPaymentSystemToPlaceInput } from "../dtos/connect-payment-system-to-place.dto";
 import { PaymentSystemEntity } from "../entities";
+import { PlaceToPaymentSystemEntity } from "../entities/place-to-payment-system.entity";
 
 @Injectable()
 export class PaymentSystemsService {
-	constructor(@InjectRepository(PaymentSystemEntity) private readonly _paymentSystemRepository) {}
+	constructor(
+		@InjectRepository(PaymentSystemEntity) private readonly _paymentSystemRepository,
+		@InjectRepository(PlaceToPaymentSystemEntity) private readonly _paymentSystemToPlaceRepository
+	) {}
 
 	async getPaymentSystem(id: string) {
 		return this._paymentSystemRepository.findOne({
@@ -16,9 +21,8 @@ export class PaymentSystemsService {
 		});
 	}
 
-	async getPaymentSystems({ take, skip, filtersString }: PaginationArgsDto) {
-		const filters = getFiltersByUrl(filtersString);
-		const findOptions = getFindOptionsByFilters(filters) as any;
+	async getPaymentSystems({ take, skip, filtersArgs }: PaginationArgsDto) {
+		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
 		const [data, count] = await this._paymentSystemRepository.findAndCount({
 			where: findOptions.where,
@@ -33,7 +37,7 @@ export class PaymentSystemsService {
 		};
 	}
 
-	async creatPaymentSystem(paymentSystemDto: CreatePaymentSystemDto): Promise<PaymentSystemEntity> {
+	async creatPaymentSystem(paymentSystemDto: CreatePaymentSystemInput): Promise<PaymentSystemEntity> {
 		const savedOrder = await this._paymentSystemRepository.save(paymentSystemDto);
 
 		return this._paymentSystemRepository.findOne({
@@ -41,12 +45,16 @@ export class PaymentSystemsService {
 		});
 	}
 
-	async updatePaymentSystem(id: string, paymentSystemDto: UpdatePaymentSystemDto): Promise<PaymentSystemEntity> {
+	async updatePaymentSystem(id: string, paymentSystemDto: UpdatePaymentSystemInput): Promise<PaymentSystemEntity> {
 		return this._paymentSystemRepository.save({ id, ...paymentSystemDto });
 	}
 
 	async deletePaymentSystem(id: string): Promise<string> {
 		await this._paymentSystemRepository.delete(id);
 		return "DELETED";
+	}
+
+	async connectPaymentSystemToPlace(body: ConnectPaymentSystemToPlaceInput) {
+		return this._paymentSystemToPlaceRepository.save({ ...body });
 	}
 }

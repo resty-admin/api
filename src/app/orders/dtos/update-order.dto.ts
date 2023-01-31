@@ -1,11 +1,30 @@
-import { OrderTypeEnum } from "src/app/shared/enums";
+import { Field, InputType } from "@nestjs/graphql";
+import { Transform } from "class-transformer";
+import { OrderStatusEnum, OrderTypeEnum } from "src/app/shared/enums";
 
-import { IsEnum, IsNotEmpty, IsOptional } from "../../shared";
+import { IsEnum, IsOptional } from "../../shared";
 
-export class UpdateOrderDto {
-	@IsEnum(OrderTypeEnum)
-	@IsNotEmpty()
+@InputType()
+export class UpdateOrderInput {
+	@Field(() => String)
+	id: string;
+
+	@Field(() => String, { nullable: true })
 	@IsOptional()
-	// @ApiProperty()
-	type: OrderTypeEnum;
+	@Transform(({ value }) => ({ id: value }))
+	table?: string;
+
+	@Field(() => [String], { nullable: true })
+	@IsOptional()
+	@Transform(({ value }) => value.map((id) => ({ id })))
+	users?: string[];
+
+	@Field(() => OrderStatusEnum, { nullable: true })
+	@IsOptional()
+	status?: OrderStatusEnum;
+
+	@Field(() => OrderTypeEnum, { nullable: true })
+	@IsOptional()
+	@IsEnum(OrderTypeEnum)
+	type?: OrderTypeEnum;
 }

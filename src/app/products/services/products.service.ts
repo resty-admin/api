@@ -1,17 +1,22 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
-import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared/crud";
+import { ActiveOrderEntity } from "../../orders/entities";
+import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
-import type { CreateProductDto, UpdateProductDto } from "../dtos";
+import { OrderStatusEnum } from "../../shared/enums";
+import type { CreateProductInput, UpdateProductInput } from "../dtos";
 import { ProductEntity } from "../entities";
 
 @Injectable()
 export class ProductsService {
-	private findRelations = ["file", "category"];
-	private findOneRelations = ["file", "category"];
+	private findRelations = ["file", "category", "attrsGroups", "attrsGroups.attributes"];
+	private findOneRelations = ["file", "category", "attrsGroups", "attrsGroups.attributes"];
 
-	constructor(@InjectRepository(ProductEntity) private readonly _productsRepository) {}
+	constructor(
+		@InjectRepository(ProductEntity) private readonly _productsRepository,
+		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository
+	) {}
 
 	async getProduct(id: string) {
 		return this._productsRepository.findOne({
@@ -20,9 +25,8 @@ export class ProductsService {
 		});
 	}
 
-	async getProducts({ take, skip, filtersString }: PaginationArgsDto) {
-		const filters = getFiltersByUrl(filtersString);
-		const findOptions = getFindOptionsByFilters(filters) as any;
+	async getProducts({ take, skip, filtersArgs }: PaginationArgsDto) {
+		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
 		const [data, count] = await this._productsRepository.findAndCount({
 			where: findOptions.where,
@@ -38,7 +42,7 @@ export class ProductsService {
 		};
 	}
 
-	async createProduct(product: CreateProductDto): Promise<ProductEntity> {
+	async createProduct(product: CreateProductInput): Promise<ProductEntity> {
 		const savedProduct = await this._productsRepository.save({
 			...product,
 			category: { id: product.category },
@@ -50,11 +54,30 @@ export class ProductsService {
 		});
 	}
 
-	async updateProduct(id: string, user: UpdateProductDto): Promise<ProductEntity> {
-		return this._productsRepository.save({ id, ...user });
+	async updateProduct(id: string, user: UpdateProductInput): Promise<ProductEntity> {
+		await this._productsRepository.save({ id, ...user });
+
+		return this._productsRepository.findOne({ where: { id }, relations: this.findOneRelations });
 	}
 
 	async deleteProduct(id: string): Promise<string> {
+		const orders: ActiveOrderEntity[] = await this._ordersRepository.find({
+			where: {
+				productsToOrders: {
+					product: { id }
+				}
+			},
+			relations: ["productsToOrders", "productsToOrders.product"]
+		});
+
+		const isActiveOrdersPresent = orders.some((el) => el.status !== OrderStatusEnum.CLOSED);
+
+		if (isActiveOrdersPresent) {
+			await this._productsRepository.save({ id, isHide: true });
+
+			return `Product is using in active order(s). Product will be hide for now`;
+		}
+
 		await this._productsRepository.delete(id);
 		return "DELETED";
 	}

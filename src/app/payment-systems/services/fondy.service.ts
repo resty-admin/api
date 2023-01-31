@@ -3,78 +3,128 @@ import { InjectRepository } from "@nestjs/typeorm";
 import * as CloudIpsp from "cloudipsp-node-js-sdk";
 import { ApiService } from "src/app/shared/api";
 import { CryptoService } from "src/app/shared/crypto";
+import { In, Repository } from "typeorm";
 
+import { environment } from "../../../environments/environment";
 import { CompaniesService } from "../../companies/services";
-import type { CreateFondyMerchantDto } from "../dtos";
-import type { CreatePaymentOrderLinkDto } from "../dtos";
+import { ActiveOrderEntity, ProductToOrderEntity } from "../../orders/entities";
+import { ProductToOrderPaidStatusEnum } from "../../shared/enums";
 import { PaymentSystemEntity } from "../entities";
-import { FondyEntity } from "../entities/fondy.entity";
+import { PlaceToPaymentSystemEntity } from "../entities/place-to-payment-system.entity";
 
 @Injectable()
 export class FondyService {
 	readonly fondy;
 
+	// orderId: string;
+
 	constructor(
 		@InjectRepository(PaymentSystemEntity) private readonly _paymentSystemRepository,
+		@InjectRepository(PlaceToPaymentSystemEntity) private readonly _paymentPlaceRepository,
+		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository: Repository<ActiveOrderEntity>,
+		@InjectRepository(ProductToOrderEntity) private readonly productToOrderRepository: Repository<ProductToOrderEntity>,
 		private readonly _apiService: ApiService,
 		private readonly _cryptoService: CryptoService,
-		@InjectRepository(FondyEntity) private readonly _fondyRepository,
 		private readonly _companiesService: CompaniesService
 	) {
 		this.fondy = new CloudIpsp({
 			merchantId: 1_396_424,
-			secretKey: "test"
+			secretKey: "test",
+			protocol: "2.0"
 		});
 	}
 
-	async createPaymentOrderLink(createPaymentOrderLinkDto: CreatePaymentOrderLinkDto) {
+	async createPaymentOrderLink(pTos: string[]) {
+		const productsToOrders = await this.productToOrderRepository.find({
+			where: {
+				id: In(pTos)
+			},
+			relations: ["product", "order", "order.users", "order.place", "attributes"]
+		});
+
+		const baseUrl = false && environment.production ? `https://dev-api.resty.od.ua` : `http://localhost:3000`;
+
+		const totalPrice =
+			10_000 *
+			productsToOrders.reduce(
+				(pre, curr) =>
+					pre +
+					curr.count *
+						((curr.attributes.length > 0 ? curr.attributes.reduce((pre, curr) => pre + curr.price, 0) : 0) +
+							curr.product.price),
+				0
+			);
+
+		const [{ order }] = productsToOrders;
+		const orderId = order.id;
+		const users = order.users.map((el) => el.id);
+		const merchant = await this.getMerchantByPlace(order.place.id);
+
+		// 1_396_4247
+		const receivers = [
+			{
+				requisites: {
+					amount: totalPrice * 0.95,
+					merchant_id: (merchant.placeConfigFields as any).merchantId
+				},
+				type: "merchant"
+			}
+		];
+
+		const fondyOrderId = `${orderId}_${users.reduce((pre, curr) => `${pre}${curr}$`, "$")}_${new Date().toISOString()}`;
+
 		const requestData = {
-			order_id: Math.random() * 1000,
-			order_desc: createPaymentOrderLinkDto.orderId,
+			order_id: fondyOrderId,
+			order_desc: productsToOrders.reduce((pre, curr) => `${pre} ${curr.product.name} x${curr.count} ` + `\n`, ""),
 			currency: "UAH",
-			amount: "144",
-			response_url: `http://192.168.68.52:4200/auth/test?order=${createPaymentOrderLinkDto.orderId}`
-			// server_callback_url: "http://localhost:3000/api/payment/fondy/success-response"
+			amount: totalPrice,
+			receivers,
+			response_url: `${baseUrl}/api/fondy/check?orderId=${fondyOrderId}`
 		};
 
-		this.fondy
-			.Checkout(requestData)
-			.then((data) => {
-				console.log(data, requestData);
-			})
-			.catch((error) => {
-				console.log(error);
-			});
+		const result = await this.fondy.Checkout(requestData);
+		return result.checkout_url;
 	}
 
-	async verifyOrder(id: string) {
-		const requestData = {
-			order_id: id
-		};
+	async verifyOrder(fondyOrderId: string) {
+		const successStatus = (await this.fondy.Status({ order_id: fondyOrderId })).response_status === "success";
 
-		this.fondy
-			.Status(requestData)
-			.then((data) => {
-				console.log(data, requestData);
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-	}
+		if (!successStatus) {
+			return "failed";
+		}
+		const [orderId] = fondyOrderId.split("_");
 
-	async createMerchant(createFondyMerchantDto: CreateFondyMerchantDto) {
-		const savedMerchant = await this._fondyRepository.save({
-			...createFondyMerchantDto,
-			company: { id: createFondyMerchantDto.company }
+		const users = fondyOrderId.match(/(?<=\$)(.*?)(?=\$)/g);
+
+		const productsToOrders = await this.productToOrderRepository.find({
+			where: {
+				user: {
+					id: In(users)
+				},
+				order: {
+					id: orderId
+				}
+			},
+			relations: ["product", "user", "order"]
 		});
 
-		return this._fondyRepository.findOne({
-			where: { id: savedMerchant.id }
-		});
+		for (const el of productsToOrders) {
+			await this.productToOrderRepository.save({
+				id: el.id,
+				paidStatus: ProductToOrderPaidStatusEnum.PAID
+			});
+		}
+
+		return "success";
 	}
 
-	async merchantInstance(userId: string) {
-		console.log("userid", userId);
-		// const user = this._companiesService.getCompany();
+	async getMerchantByPlace(placeId: string): Promise<PlaceToPaymentSystemEntity> {
+		return this._paymentPlaceRepository.findOne({
+			where: {
+				place: {
+					id: placeId
+				}
+			}
+		});
 	}
 }

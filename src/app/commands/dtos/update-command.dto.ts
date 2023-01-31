@@ -1,8 +1,22 @@
-import { IsNotEmpty, IsString } from "../../shared";
+import { Field, InputType } from "@nestjs/graphql";
 
-export class UpdateCommandDto {
+import { IsOptional, IsString } from "../../shared";
+
+@InputType()
+export class UpdateCommandInput {
+	@Field(() => String)
 	@IsString()
-	@IsNotEmpty()
-	// @ApiProperty()
-	name: string;
+	id: string;
+
+	@Field(() => String, { nullable: true })
+	@IsOptional()
+	name?: string;
+
+	@Field(() => String, { nullable: true })
+	@IsOptional()
+	place?: string;
+
+	@Field(() => String, { nullable: true })
+	@IsOptional()
+	description?: string;
 }

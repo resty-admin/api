@@ -1,16 +1,18 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { Exclude } from "class-transformer";
-import { ThemeEnum, UserRoleEnum, UserStatusEnum } from "src/app/shared/enums";
-import type { IUser } from "src/app/shared/interfaces";
-import { Column, Entity, ManyToMany, ManyToOne } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from "typeorm";
 
 import { CompanyEntity } from "../../companies/entities";
 import { ActiveOrderEntity } from "../../orders/entities";
+import { PlaceEntity } from "../../places/entities";
 import { BaseEntity } from "../../shared";
 import { Pagination } from "../../shared/entities/pagination.type";
+import { ThemeEnum, UserRoleEnum, UserStatusEnum } from "../../shared/enums";
+import type { IUser } from "../../shared/interfaces";
 import { USERS } from "../constant";
 
 @ObjectType()
+@InputType("UserEntityInput")
 @Entity({ name: USERS })
 export class UserEntity extends BaseEntity implements IUser {
 	@Column({ default: "" })
@@ -62,23 +64,22 @@ export class UserEntity extends BaseEntity implements IUser {
 	password?: string;
 
 	// @ApiProperty()
-	@Field(() => [ActiveOrderEntity])
+	@Field(() => [ActiveOrderEntity], { nullable: true })
 	@ManyToMany(() => ActiveOrderEntity, (order) => order.users, { nullable: true })
 	orders?: ActiveOrderEntity[];
 
-	// @ApiProperty()
-	@Field(() => CompanyEntity, { nullable: true })
-	@ManyToOne(() => CompanyEntity, (company) => company.employees, { nullable: true })
-	company?: CompanyEntity;
+	@Field(() => PlaceEntity, { nullable: true })
+	@ManyToOne(() => PlaceEntity, (place) => place.employees, { nullable: true })
+	place?: PlaceEntity;
 
-	// @OneToMany(() => UserToOrderEntity, (userToOrder) => userToOrder.user, { cascade: true })
-	// orders: IUserToOrder[];
-	//
-	// @OneToMany(() => ProductToOrderEntity, (productToOrder) => productToOrder.user, { cascade: true })
-	// products: IProductToOrder[];
-	//
-	// @OneToMany(() => UserToTableEntity, (table) => table.user, { cascade: true })
-	// tables: IUserToTable[];
+	@Field(() => CompanyEntity, { nullable: true })
+	@OneToMany(() => CompanyEntity, (company) => company.employees, { nullable: true })
+	companies?: CompanyEntity;
+
+	@Field(() => [PlaceEntity], { nullable: true })
+	@ManyToMany(() => PlaceEntity, { nullable: true })
+	@JoinTable()
+	placesGuest?: PlaceEntity[];
 }
 
 @ObjectType()

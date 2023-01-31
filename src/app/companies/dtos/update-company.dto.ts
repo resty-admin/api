@@ -1,19 +1,26 @@
-import { IFile } from "src/app/shared/interfaces";
+import { Field, InputType } from "@nestjs/graphql";
+import { Transform } from "class-transformer";
+import { IsUUID } from "class-validator";
 
-import { IsNotEmpty, IsOptional, IsString } from "../../shared";
+import { IsNotEmpty, IsOptional } from "../../shared";
 
-export class UpdateCompanyDto {
-	@IsString()
+@InputType()
+export class UpdateCompanyInput {
+	@Field(() => String)
 	@IsNotEmpty()
-	// @ApiProperty()
-	name: string;
+	@IsUUID()
+	id: string;
 
-	// @ApiProperty()
+	@Field(() => String, { nullable: true })
 	@IsOptional()
-	logo: IFile;
+	name?: string;
 
-	// @ApiProperty()
+	@Field(() => String, { nullable: true })
 	@IsOptional()
-	@IsString()
-	employees: string[];
+	@Transform(({ value }) => ({ id: value }))
+	logo?: string;
+
+	@Field(() => [String], { nullable: true })
+	@IsOptional()
+	employees?: string[];
 }

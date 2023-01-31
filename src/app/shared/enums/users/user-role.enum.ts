@@ -1,6 +1,6 @@
 export enum UserRoleEnum {
-	ROOT = "ROOT",
 	ADMIN = "ADMIN",
+	MANAGER = "MANAGER",
 	HOSTESS = "HOSTESS",
 	WAITER = "WAITER",
 	HOOKAH = "HOOKAH",

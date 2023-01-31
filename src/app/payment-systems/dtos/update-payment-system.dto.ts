@@ -1,9 +1,10 @@
-import { IsNotEmpty, IsOptional, IsString } from "../../shared";
+import { Field, InputType } from "@nestjs/graphql";
 
-export class UpdatePaymentSystemDto {
-	@IsNotEmpty()
-	// @ApiProperty()
-	@IsString()
-	@IsOptional()
+@InputType()
+export class UpdatePaymentSystemInput {
+	@Field(() => String)
+	id: string;
+
+	@Field(() => String)
 	name: string;
 }

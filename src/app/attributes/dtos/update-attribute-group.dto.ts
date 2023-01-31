@@ -1,15 +1,35 @@
-import { IsBoolean } from "class-validator";
+import { Field, InputType, Int } from "@nestjs/graphql";
+import { IsUUID } from "class-validator";
 
-import { IsNotEmpty, IsOptional, IsString } from "../../shared";
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional } from "../../shared";
+import { AttributeGroupTypeEnum } from "../../shared/enums";
 
-export class UpdateAttributeGroupDto {
-	@IsString()
+@InputType()
+export class UpdateAttributeGroupInput {
+	@Field(() => String)
+	@IsUUID()
 	@IsNotEmpty()
-	// @ApiProperty()
-	name: string;
+	id: string;
 
-	@IsBoolean()
+	@Field(() => String, { nullable: true })
 	@IsOptional()
-	// @ApiProperty()
-	isUniq: boolean;
+	name?: string;
+
+	@Field(() => Boolean, { nullable: true })
+	@IsOptional()
+	isUniq?: boolean;
+
+	@Field(() => [String], { nullable: true })
+	@IsOptional()
+	attributes?: string[];
+
+	@Field(() => AttributeGroupTypeEnum, { nullable: true })
+	@IsEnum(AttributeGroupTypeEnum)
+	@IsOptional()
+	type?: AttributeGroupTypeEnum;
+
+	@Field(() => Int, { nullable: true })
+	@IsNumber()
+	@IsOptional()
+	maxItemsForPick?: number;
 }

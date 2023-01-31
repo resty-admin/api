@@ -1,30 +1,16 @@
-import { IsISO8601 } from "class-validator";
+import { Field, InputType } from "@nestjs/graphql";
+import { Transform } from "class-transformer";
 
-import { IsArray, IsOptional, IsString } from "../../shared";
+import { IsOptional } from "../../shared";
 
-export class CreateShiftDto {
-	// @ApiProperty()
+@InputType()
+export class CreateShiftInput {
+	@Field(() => [String])
 	@IsOptional()
-	@IsString()
-	waiter: string;
+	@Transform(({ value }) => value.map((id) => ({ id })))
+	tables: string[];
 
-	// @ApiProperty()
+	@Field(() => String, { nullable: true })
 	@IsOptional()
-	@IsString()
-	table: string;
-
-	// @ApiProperty()
-	@IsOptional()
-	@IsString()
-	place: string;
-
-	// @ApiProperty()
-	@IsArray()
-	@IsOptional()
-	orders: string[];
-
-	// @ApiProperty()
-	@IsOptional()
-	@IsISO8601()
-	shiftDate: string;
+	place?: string;
 }

@@ -26,7 +26,7 @@ export class ErrorsFilter implements ExceptionFilter {
 		try {
 			httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
 		} catch (error) {
-			console.log("error", error);
+			console.error("error", error);
 		}
 	}
 }

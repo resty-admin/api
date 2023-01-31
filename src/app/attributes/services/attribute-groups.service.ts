@@ -2,13 +2,16 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
-import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared";
+import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
-import type { CreateAttributeGroupDto, UpdateAttributeGroupDto } from "../dtos";
+import type { CreateAttributeGroupInput, UpdateAttributeGroupInput } from "../dtos";
 import { AttributesGroupEntity } from "../entities";
 
 @Injectable()
 export class AttributeGroupsService {
+	private findRelations = ["attributes", "attributes.attributesGroup"];
+	private findOneRelations = ["attributes", "attributes.attributesGroup"];
+
 	constructor(
 		@InjectRepository(AttributesGroupEntity)
 		private readonly _attributeGroupsRepository: Repository<AttributesGroupEntity>
@@ -16,18 +19,19 @@ export class AttributeGroupsService {
 
 	async getAttributeGroup(id: string) {
 		return this._attributeGroupsRepository.findOne({
-			where: { id }
+			where: { id },
+			relations: this.findOneRelations
 		});
 	}
 
-	async getAttributeGroups({ take, skip, filtersString }: PaginationArgsDto) {
-		const filters = getFiltersByUrl(filtersString);
-		const findOptions = getFindOptionsByFilters(filters) as any;
+	async getAttributeGroups({ take, skip, filtersArgs }: PaginationArgsDto) {
+		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
 		const [data, count] = await this._attributeGroupsRepository.findAndCount({
 			where: findOptions.where,
 			take,
-			skip
+			skip,
+			relations: this.findRelations
 		});
 
 		return {
@@ -37,10 +41,11 @@ export class AttributeGroupsService {
 		};
 	}
 
-	async createAttributeGroup(attributeGroupDto: CreateAttributeGroupDto): Promise<AttributesGroupEntity> {
+	async createAttributeGroup(attributeGroupDto: CreateAttributeGroupInput): Promise<AttributesGroupEntity> {
 		const savedAttributeGroup = await this._attributeGroupsRepository.save({
 			...attributeGroupDto,
-			place: { id: attributeGroupDto.place }
+			place: { id: attributeGroupDto.place },
+			attributes: attributeGroupDto.attributes?.length ? attributeGroupDto.attributes.map((el) => ({ id: el })) : null
 		});
 
 		return this._attributeGroupsRepository.findOne({
@@ -48,8 +53,17 @@ export class AttributeGroupsService {
 		});
 	}
 
-	async updateAttributeGroup(id: string, attributeGroupDto: UpdateAttributeGroupDto): Promise<AttributesGroupEntity> {
-		return this._attributeGroupsRepository.save({ id, ...attributeGroupDto });
+	async updateAttributeGroup(id: string, attributeGroupDto: UpdateAttributeGroupInput): Promise<AttributesGroupEntity> {
+		await this._attributeGroupsRepository.save({
+			...attributeGroupDto,
+			id,
+			attributes: attributeGroupDto.attributes?.length ? attributeGroupDto.attributes.map((el) => ({ id: el })) : null
+		});
+
+		return this._attributeGroupsRepository.findOne({
+			where: { id },
+			relations: this.findOneRelations
+		});
 	}
 
 	async deleteAttributeGroup(id: string): Promise<string> {

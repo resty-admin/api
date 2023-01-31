@@ -1,17 +1,17 @@
 version: "3.8"
 services:
-  nest-api-database:
+  api-database:
     image: postgres:latest
-    container_name: nest-api-database
+    container_name: api-database
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
-      POSTGRES_DB: "nest-api-database"
+      POSTGRES_DB: "api-database"
     ports:
       - "5432:5432"
     expose:
       - "5432"
     volumes:
-      - nest-api-database:/var/lib/postgresql/data
+      - api-database:/var/lib/postgresql/data
 volumes:
-  nest-api-database:
+  api-database:

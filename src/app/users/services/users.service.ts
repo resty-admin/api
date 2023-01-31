@@ -1,27 +1,35 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import type { IUser } from "src/app/shared/interfaces";
+import type { FindOptionsWhere } from "typeorm";
 import { Repository } from "typeorm";
-import type { FindOptionsWhere } from "typeorm/find-options/FindOptionsWhere";
 
-import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared";
+import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
+import type { FiltersArgsDto } from "../../shared/dtos";
 import { UserEntity } from "../entities";
 
 @Injectable()
 export class UsersService {
 	constructor(@InjectRepository(UserEntity) private readonly _userRepository: Repository<UserEntity>) {}
 
-	async getUser(where: FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[]) {
-		return this._userRepository.findOne({ where });
+	async getUser(where: FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[], filtersArgs?: FiltersArgsDto[]) {
+		const findOptions = filtersArgs?.length > 0 ? getFindOptionsByFilters(filtersArgs) : ([] as any);
+
+		return this._userRepository.findOne({
+			where: {
+				...(where || []),
+				...findOptions.where
+			}
+		});
 	}
 
-	async getUsers({ take, skip, filtersString }: PaginationArgsDto) {
-		const filters = getFiltersByUrl(filtersString);
-		const findOptions = getFindOptionsByFilters(filters) as any;
+	async getUsers({ take, skip, filtersArgs }: PaginationArgsDto) {
+		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
 		const [data, count] = await this._userRepository.findAndCount({
 			where: findOptions.where,
+			relations: ["placesGuest"],
 			take,
 			skip
 		});
@@ -46,7 +54,8 @@ export class UsersService {
 
 	async updateUser(id: string, user: Partial<IUser>): Promise<UserEntity> {
 		try {
-			return await this._userRepository.save({ id, ...user });
+			await this._userRepository.save({ id, ...user });
+			return await this._userRepository.findOne({ where: { id }, relations: [] });
 		} catch (error) {
 			console.error(error);
 			throw new InternalServerErrorException();

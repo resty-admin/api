@@ -1,56 +1,46 @@
-import { Type } from "class-transformer";
+import { Field, InputType } from "@nestjs/graphql";
+import { Transform, Type } from "class-transformer";
 import { isISO8601, ValidateNested } from "class-validator";
-import { PlaceStatusEnum } from "src/app/shared/enums";
-import { IFile } from "src/app/shared/interfaces";
 
-import { IsEnum, IsNotEmpty, IsObject, IsOptional, IsString } from "../../shared";
+import { IsObject, IsOptional } from "../../shared";
 import { IsMap } from "../../shared/validators/is-map.validator";
-import { WorkingHoursDto } from "./date-types.dto";
+import { WorkingHoursInput } from "./date-types.dto";
 
-export class UpdatePlaceDto {
-	@IsString()
-	@IsNotEmpty()
-	// @ApiProperty()
+@InputType()
+export class UpdatePlaceInput {
+	@Field(() => String)
+	id: string;
+
+	@Field(() => String, { nullable: true })
 	@IsOptional()
-	name: string;
+	name?: string;
 
-	@IsString()
-	@IsNotEmpty()
-	// @ApiProperty()
+	@Field(() => String, { nullable: true })
 	@IsOptional()
-	address: string;
+	address?: string;
 
-	@IsEnum(PlaceStatusEnum)
-	@IsNotEmpty()
-	// @ApiProperty()
+	@Field(() => String, { nullable: true })
 	@IsOptional()
-	status: PlaceStatusEnum;
+	@Transform(({ value }) => ({ id: value }))
+	file?: string;
 
-	@IsOptional()
-	// @ApiProperty()
-	file: IFile;
-
-	@IsOptional()
-	@IsString()
-	// @ApiProperty()
-	a11y: string;
-
-	@IsObject()
+	@Field(() => WorkingHoursInput, { nullable: true })
 	@IsOptional()
 	@ValidateNested()
-	@Type(() => WorkingHoursDto)
-	weekDays: WorkingHoursDto;
+	@Type(() => WorkingHoursInput)
+	weekDays?: WorkingHoursInput;
 
-	@IsObject()
+	@Field(() => WorkingHoursInput, { nullable: true })
 	@IsOptional()
+	@IsObject()
 	@ValidateNested()
-	@Type(() => WorkingHoursDto)
-	weekendDays: WorkingHoursDto;
+	@Type(() => WorkingHoursInput)
+	weekendDays?: WorkingHoursInput;
 
-	// @ApiProperty()
+	@Field(() => WorkingHoursInput, { nullable: true })
 	@IsOptional()
 	@IsMap([isISO8601], [])
 	@ValidateNested()
-	@Type(() => WorkingHoursDto)
-	holidayDays: Map<Date, WorkingHoursDto>;
+	@Type(() => WorkingHoursInput)
+	holidayDays?: Map<Date, WorkingHoursInput>;
 }

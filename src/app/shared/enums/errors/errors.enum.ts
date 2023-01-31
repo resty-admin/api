@@ -18,5 +18,14 @@ export enum ErrorsEnum {
 	IsObject = 1016,
 	IsDate = 1017,
 	IsKeyDate = 1018,
-	IsArray = 1019
+	IsArray = 1019,
+	OrderByCodeNotExist = 1020,
+	ActiveShiftExist = 1021,
+	ActiveOrderExist = 1022,
+	IncorrectTableCode = 1023,
+	ActiveInPlaceOrderWithTableExist = 1024,
+	NoActiveProductsExist = 1025,
+	InvalidOrderDate = 1026,
+	TableAlreadyReserved = 1027,
+	PosterTokenNotExist = 1028
 }

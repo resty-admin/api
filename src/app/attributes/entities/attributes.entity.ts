@@ -1,5 +1,5 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
-import { Column, Entity, OneToMany } from "typeorm";
+import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
+import { Column, Entity, ManyToMany } from "typeorm";
 
 import { BaseEntity } from "../../shared";
 import { Pagination } from "../../shared/entities/pagination.type";
@@ -7,22 +7,20 @@ import { ATTRIBUTES } from "../constant";
 import { AttributesGroupEntity } from "./attributes-group.entity";
 
 @ObjectType()
+@InputType("AttributesEntityInput")
 @Entity({ name: ATTRIBUTES })
 export class AttributesEntity extends BaseEntity {
 	@Column()
-	// @ApiProperty()
 	@Field(() => String)
 	name: string;
 
-	// @ApiProperty()
-	@Field(() => AttributesGroupEntity, { nullable: true })
-	@OneToMany(() => AttributesGroupEntity, (attrGroup) => attrGroup.attributes, { nullable: true })
-	attributesGroup?: AttributesGroupEntity;
+	@Field(() => [AttributesGroupEntity])
+	@ManyToMany(() => AttributesGroupEntity, (attrGroup) => attrGroup.attributes, { onDelete: "CASCADE" })
+	attributesGroup: AttributesGroupEntity[];
 
-	// @ApiProperty()
-	@Field(() => Int, { nullable: true })
+	@Field(() => Int)
 	@Column({ nullable: true })
-	price?: number;
+	price: number;
 }
 
 @ObjectType()

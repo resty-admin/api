@@ -1,17 +1,24 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { GraphQLError } from "graphql/error";
 
-import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared";
+import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
-import type { CreateShiftDto, UpdateShiftDto } from "../dtos";
+import { ErrorsEnum } from "../../shared/enums";
+import type { IUser } from "../../shared/interfaces";
+import type { CreateShiftInput, UpdateShiftInput } from "../dtos";
 import { ActiveShiftEntity } from "../entities";
+import { HistoryShiftEntity } from "../entities/history-shift.entity";
 
 @Injectable()
 export class ShiftsService {
-	private findRelations = [];
-	private findOneRelations = [];
+	private findRelations = ["tables", "tables.hall", "waiter", "place"];
+	private findOneRelations = ["tables", "tables.hall", "waiter", "place"];
 
-	constructor(@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository) {}
+	constructor(
+		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository,
+		@InjectRepository(HistoryShiftEntity) private readonly _historyShiftsRepository
+	) {}
 
 	async getShift(id: string) {
 		return this._shiftsRepository.findOne({
@@ -20,9 +27,8 @@ export class ShiftsService {
 		});
 	}
 
-	async getShifts({ take, skip, filtersString }: PaginationArgsDto) {
-		const filters = getFiltersByUrl(filtersString);
-		const findOptions = getFindOptionsByFilters(filters) as any;
+	async getShifts({ take, skip, filtersArgs }: PaginationArgsDto) {
+		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
 		const [data, count] = await this._shiftsRepository.findAndCount({
 			where: findOptions.where,
@@ -38,15 +44,58 @@ export class ShiftsService {
 		};
 	}
 
-	async createShift(shift: CreateShiftDto): Promise<ActiveShiftEntity> {
-		const savedCategory = await this._shiftsRepository.save({ ...shift });
-
+	async getActiveShift(id: string) {
 		return this._shiftsRepository.findOne({
-			where: { id: savedCategory.id }
+			where: {
+				waiter: {
+					id
+				}
+			},
+			relations: this.findOneRelations
 		});
 	}
 
-	async updateShift(id: string, shift: UpdateShiftDto): Promise<ActiveShiftEntity> {
+	async createShift(shift: CreateShiftInput, user: IUser) {
+		const shiftPresent = await this._shiftsRepository.findOne({
+			where: { waiter: { id: user.id } },
+			relations: ["waiter"]
+		});
+
+		if (shiftPresent) {
+			throw new GraphQLError(ErrorsEnum.ActiveShiftExist.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
+		const savedShift = await this._shiftsRepository.save({
+			...shift,
+			waiter: { id: user.id }
+		});
+
+		return this._shiftsRepository.findOne({
+			where: { id: savedShift.id }
+		});
+	}
+
+	async closeShift(id: string) {
+		const shift: ActiveShiftEntity = await this._shiftsRepository.findOne({
+			where: { id },
+			relations: this.findOneRelations
+		});
+
+		try {
+			await this._historyShiftsRepository.save({ ...shift, shiftDateStart: shift.shiftDate });
+			await this._shiftsRepository.delete(id);
+
+			return "ARCHIVED";
+		} catch (error) {
+			console.error("e", error);
+			return "fuck!";
+		}
+	}
+
+	async updateShift(id: string, shift: UpdateShiftInput): Promise<ActiveShiftEntity> {
 		return this._shiftsRepository.save({ id, ...shift });
 	}
 

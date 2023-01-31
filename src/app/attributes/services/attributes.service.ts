@@ -1,17 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
 
-import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared";
+import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
-import type { CreateAttributeDto, UpdateAttributeDto } from "../dtos";
+import type { CreateAttributeInput, UpdateAttributeInput } from "../dtos";
 import { AttributesEntity } from "../entities";
 
 @Injectable()
 export class AttributesService {
-	constructor(
-		@InjectRepository(AttributesEntity) private readonly _attributesRepository: Repository<AttributesEntity>
-	) {}
+	constructor(@InjectRepository(AttributesEntity) private readonly _attributesRepository) {}
 
 	async getAttribute(id: string) {
 		return this._attributesRepository.findOne({
@@ -19,9 +16,8 @@ export class AttributesService {
 		});
 	}
 
-	async getAttributes({ take, skip, filtersString }: PaginationArgsDto) {
-		const filters = getFiltersByUrl(filtersString);
-		const findOptions = getFindOptionsByFilters(filters) as any;
+	async getAttributes({ take, skip, filtersArgs }: PaginationArgsDto) {
+		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
 		const [data, count] = await this._attributesRepository.findAndCount({
 			where: findOptions.where,
@@ -36,15 +32,15 @@ export class AttributesService {
 		};
 	}
 
-	async createAttribute(attributeDto: CreateAttributeDto): Promise<AttributesEntity> {
-		const savedAttribute = await this._attributesRepository.save(attributeDto);
+	async createAttribute(attributeDto: CreateAttributeInput): Promise<AttributesEntity> {
+		const savedAttribute = await this._attributesRepository.save({ ...attributeDto });
 
 		return this._attributesRepository.findOne({
 			where: { id: savedAttribute.id }
 		});
 	}
 
-	async updateAttribute(id: string, attributeDto: UpdateAttributeDto): Promise<AttributesEntity> {
+	async updateAttribute(id: string, attributeDto: UpdateAttributeInput): Promise<AttributesEntity> {
 		return this._attributesRepository.save({ id, ...attributeDto });
 	}
 

@@ -1,14 +1,18 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
-import { CATEGORIES_CONTROLLERS } from "./controllers";
+import { OrdersModule } from "../orders/orders.module";
+import { PlacesModule } from "../places/places.module";
 import { CATEGORIES_ENITITES } from "./entities";
 import { CATEGORIES_RESOLVERS } from "./resolvers";
 import { CATEGORIES_SERVICES } from "./services";
 
 @Module({
-	imports: [TypeOrmModule.forFeature(CATEGORIES_ENITITES)],
-	controllers: CATEGORIES_CONTROLLERS,
+	imports: [
+		TypeOrmModule.forFeature(CATEGORIES_ENITITES),
+		forwardRef(() => OrdersModule),
+		forwardRef(() => PlacesModule)
+	],
 	providers: [...CATEGORIES_SERVICES, ...CATEGORIES_RESOLVERS],
 	exports: [TypeOrmModule]
 })

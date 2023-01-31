@@ -1,22 +1,56 @@
 import type { CanActivate, ExecutionContext } from "@nestjs/common";
+import { GqlExecutionContext } from "@nestjs/graphql";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
-import { PlaceEntity } from "../entities";
+import { CompanyEntity } from "../../companies/entities";
+import { UserRoleEnum } from "../../shared/enums";
 
 export class PlaceGuard implements CanActivate {
-	constructor(@InjectRepository(PlaceEntity) private readonly _placesRepository: Repository<PlaceEntity>) {}
+	constructor(@InjectRepository(CompanyEntity) private readonly _companyRepository: Repository<CompanyEntity>) {}
 
 	async canActivate(context: ExecutionContext) {
-		const request = context.switchToHttp().getRequest();
+		const ctx = GqlExecutionContext.create(context);
+		const request = ctx.getContext().req;
+		const { placeId = null } = request.body.variables;
+		const { company = null, id = null } = request.body.variables.place || {};
 
-		const {
-			user,
-			params: { id }
-		} = request;
+		if (request.user.role === UserRoleEnum.ADMIN) {
+			return true;
+		}
 
-		const place = await this._placesRepository.findOne({ where: { id }, relations: ["company", "company.owner"] });
+		if (id || placeId) {
+			return this.updateGuard(id || placeId, request.user.id);
+		}
 
-		return user.id === place.company.owner.id;
+		return this.createGuard(company, request.user.id);
+	}
+
+	async createGuard(companyId: string, userId) {
+		const currCompany = await this._companyRepository.findOne({
+			where: {
+				id: companyId
+			},
+			relations: ["owner"]
+		});
+
+		if (!currCompany) {
+			return false;
+		}
+
+		return currCompany.owner.id === userId;
+	}
+
+	async updateGuard(placeId: string, userId) {
+		const currCompany = await this._companyRepository.findOne({
+			where: {
+				places: {
+					id: placeId
+				}
+			},
+			relations: ["owner"]
+		});
+
+		return currCompany.owner.id === userId;
 	}
 }

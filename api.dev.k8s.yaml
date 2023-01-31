@@ -1,0 +1,32 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dev-nest-api-k8s-deployment
+spec:
+  selector:
+    matchLabels:
+      app: dev-nest-api-k8s
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: dev-nest-api-k8s
+    spec:
+      containers:
+        - name: dev-nest-api-k8s
+          image: registry.digitalocean.com/resty-registry/dev-nest-api:latest
+          ports:
+            - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dev-nest-api-service
+spec:
+  selector:
+    app: dev-nest-api-k8s
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 3000

@@ -1,30 +1,50 @@
 import { HttpService } from "@nestjs/axios";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { CommandsEvents } from "src/app/shared/events";
 
+import { COMMAND_EMITTED } from "../../gateways/events";
 import { GatewaysService } from "../../gateways/services";
-import { getFiltersByUrl, getFindOptionsByFilters } from "../../shared";
+import { ActiveOrderEntity } from "../../orders/entities";
+import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
+import { ActiveShiftEntity } from "../../shifts/entities";
 import { TablesService } from "../../tables/services";
-import type { CreateCommandDto, UpdateCommandDto } from "../dtos";
+import type { CreateCommandInput, UpdateCommandInput } from "../dtos";
 import { CommandEntity } from "../entities";
 
 @Injectable()
 export class CommandsService {
 	constructor(
 		@InjectRepository(CommandEntity) private readonly _commandsRepository,
+		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository,
+		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository,
 		private readonly _tablesService: TablesService,
 		private readonly _httpService: HttpService,
 		private readonly _gatewaysService: GatewaysService
 	) {}
 
-	async emitCommand(body: any) {
-		const { id, table } = body;
-		const command = await this._commandsRepository.findOneById(id);
-		const tableEntity = await this._tablesService.getTable(table);
+	async emitCommand(commandId: string, tableId: string) {
+		const command = await this._commandsRepository.findOne({ where: { id: commandId } });
+		const waiters = [];
 
-		this._gatewaysService.emitEvent(CommandsEvents, { command, table: tableEntity });
+		const shifts: ActiveShiftEntity[] = await this._shiftsRepository.find({
+			where: {
+				tables: {
+					id: tableId
+				}
+			},
+			relations: ["waiter", "tables"]
+		});
+
+		const table = shifts[0].tables.find((el) => el.id === tableId);
+
+		for (const shift of shifts) {
+			waiters.push(shift.waiter);
+		}
+
+		this._gatewaysService.emitEvent(COMMAND_EMITTED, { command, table, waiters });
+
+		return commandId;
 	}
 
 	async getCommand(id: string) {
@@ -33,9 +53,8 @@ export class CommandsService {
 		});
 	}
 
-	async getCommands({ take, skip, filtersString }: PaginationArgsDto) {
-		const filters = getFiltersByUrl(filtersString);
-		const findOptions = getFindOptionsByFilters(filters) as any;
+	async getCommands({ take, skip, filtersArgs }: PaginationArgsDto) {
+		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
 		const [data, count] = await this._commandsRepository.findAndCount({
 			where: findOptions.where,
@@ -50,7 +69,7 @@ export class CommandsService {
 		};
 	}
 
-	async createCommand(command: CreateCommandDto): Promise<CommandEntity> {
+	async createCommand(command: CreateCommandInput): Promise<CommandEntity> {
 		const savedCommand = await this._commandsRepository.save(command);
 
 		return this._commandsRepository.findOne({
@@ -58,8 +77,8 @@ export class CommandsService {
 		});
 	}
 
-	async updateCommand(id: string, user: UpdateCommandDto): Promise<CommandEntity> {
-		return this._commandsRepository.save({ id, ...user });
+	async updateCommand(id: string, command: UpdateCommandInput): Promise<CommandEntity> {
+		return this._commandsRepository.save({ id, ...command });
 	}
 
 	async deleteCommand(id: string): Promise<string> {

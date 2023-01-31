@@ -1,11 +1,24 @@
-import { isArray, set } from "lodash";
+import { set } from "lodash";
 import type { FindManyOptions } from "typeorm";
-import { In } from "typeorm";
+import { In, Like } from "typeorm";
 
 import { SortTypeEnum } from "../enums";
 import { getNumberOrString } from "./get-number-or-string.util";
 
-export function getFindOptionsByFilters(filters: any[]): FindManyOptions {
+// return {
+// 	key: isArray ? key.replace("[]", "") : key,
+// 	operator,
+// 	value: isArray ? [value] : value.includes(",") ? value.split(",") : Like(`%${value}%`)
+// };
+
+// [
+// 	{
+// 		key: "",
+// 		operator: "",
+// 		value: ""
+// 	}
+// ]
+export function getFindOptionsByFilters(filters: any[] = []): FindManyOptions {
 	const {
 		skip = 0,
 		take = 0,
@@ -13,8 +26,12 @@ export function getFindOptionsByFilters(filters: any[]): FindManyOptions {
 		sortType,
 		...where
 	} = filters.reduce(
-		(previousValue: any, { key, value }) =>
-			set(previousValue, key, isArray(value) ? In(value) : getNumberOrString(value)),
+		(previousValue: any, { key, operator, value }) =>
+			set(
+				previousValue,
+				key,
+				operator === "=[]" ? In(value.split(".")) : operator === "like" ? Like(`%${value}%`) : getNumberOrString(value)
+			),
 		{}
 	);
 

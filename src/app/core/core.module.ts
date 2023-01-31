@@ -21,6 +21,7 @@ import { ProductsModule } from "../products/products.module";
 import { ApiModule } from "../shared/api";
 import { CryptoModule } from "../shared/crypto";
 import { ShiftsModule } from "../shifts/shifts.module";
+import { StatisticModule } from "../statistics/statistic.module";
 import { TablesModule } from "../tables/tables.module";
 import { UsersModule } from "../users";
 import { API_CONFIG, CRYPTO_CONFIG, GRAPHQL_CONFIG, TYPEORM_CONFIG } from "./configs";
@@ -50,7 +51,8 @@ import { CORE_INTERCEPTORS } from "./interceptors";
 		PaymentSystemsModule,
 		AccountingSystemsModule,
 		AttributesModule,
-		ShiftsModule
+		ShiftsModule,
+		StatisticModule
 	],
 	providers: [...CORE_INTERCEPTORS, ...CORE_FILTERS]
 })

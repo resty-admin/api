@@ -9,7 +9,12 @@ import { environment } from "./environments/environment";
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
-	app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+	app.useGlobalPipes(
+		new ValidationPipe({
+			transform: true
+			// , whitelist: true
+		})
+	);
 
 	app.setGlobalPrefix("api");
 	app.use(requestIp.mw());
@@ -21,9 +26,9 @@ async function bootstrap() {
 
 	await app.listen(environment.port);
 
-	Logger.log(`🚀 Application is running on: http://localhost:${environment.port}/api`, "Bootstrap");
-	Logger.log(`🚀 Swagger is running on: http://localhost:${environment.port}/api/swagger`, "Bootstrap");
-	Logger.log(`🚀 Graphql playground is running on: http://localhost:${environment.port}/graphql`, "Bootstrap");
+	Logger.log(`🚀 Application is running on: http://192.168.68.100:${environment.port}/api`, "Bootstrap");
+	Logger.log(`🚀 Swagger is running on: http://192.168.68.100:${environment.port}/api/swagger`, "Bootstrap");
+	Logger.log(`🚀 Graphql playground is running on: http://192.168.68.100:${environment.port}/graphql`, "Bootstrap");
 }
 
 bootstrap().then();

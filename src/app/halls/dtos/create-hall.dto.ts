@@ -1,19 +1,22 @@
-import { IFile } from "src/app/shared/interfaces";
+import { Field, InputType } from "@nestjs/graphql";
+import { Transform } from "class-transformer";
 
 import { IsNotEmpty, IsOptional, IsString } from "../../shared";
 
-export class CreateHallDto {
+@InputType()
+export class CreateHallInput {
+	@Field(() => String)
 	@IsString()
 	@IsNotEmpty()
-	// @ApiProperty()
 	name: string;
 
+	@Field(() => String)
 	@IsString()
 	@IsNotEmpty()
-	// @ApiProperty()
 	place: string;
 
-	// @ApiProperty()
+	@Field(() => String, { nullable: true })
 	@IsOptional()
-	file: IFile;
+	@Transform(({ value }) => ({ id: value }))
+	file?: string;
 }

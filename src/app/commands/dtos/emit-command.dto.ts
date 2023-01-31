@@ -1,13 +1,14 @@
-import { IsNotEmpty, IsString } from "../../shared";
+import { Field, InputType } from "@nestjs/graphql";
 
-export class EmitCommandDto {
-	@IsString()
+import { IsNotEmpty } from "../../shared";
+
+@InputType()
+export class EmitCommandInput {
+	@Field(() => String)
 	@IsNotEmpty()
-	// @ApiProperty()
 	command: string;
 
-	@IsString()
+	@Field(() => String)
 	@IsNotEmpty()
-	// @ApiProperty()
 	table: string;
 }

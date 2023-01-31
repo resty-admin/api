@@ -1,15 +1,17 @@
-import { IFile } from "src/app/shared/interfaces";
+import { Field, InputType } from "@nestjs/graphql";
+import { Transform } from "class-transformer";
 
-import { IsNotEmpty, IsOptional, IsString, MinLength } from "../../shared";
+import { IsNotEmpty, IsOptional, IsString } from "../../shared";
 
-export class CreateCompanyDto {
+@InputType()
+export class CreateCompanyInput {
+	@Field(() => String)
 	@IsString()
 	@IsNotEmpty()
-	@MinLength(1)
-	// @ApiProperty()
 	name: string;
 
-	// @ApiProperty()
+	@Field(() => String, { nullable: true })
 	@IsOptional()
-	logo: IFile;
+	@Transform(({ value }) => ({ id: value }))
+	logo?: string;
 }

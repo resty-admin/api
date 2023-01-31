@@ -1,14 +1,27 @@
-import { IFile } from "src/app/shared/interfaces";
+import { Field, InputType, Int } from "@nestjs/graphql";
+import { Transform } from "class-transformer";
+import { IsUUID } from "class-validator";
 
 import { IsNotEmpty, IsOptional, IsString } from "../../shared";
 
-export class UpdateTableDto {
+@InputType()
+export class UpdateTableInput {
+	@Field(() => String)
+	@IsUUID()
+	@IsNotEmpty()
+	id: string;
+
+	@Field(() => Int, { nullable: true })
+	@IsOptional()
+	code?: number;
+
+	@Field(() => String)
 	@IsString()
 	@IsNotEmpty()
-	// @ApiProperty()
 	name: string;
 
-	// @ApiProperty()
+	@Field(() => String, { nullable: true })
 	@IsOptional()
-	file: IFile;
+	@Transform(({ value }) => ({ id: value }))
+	file?: string;
 }

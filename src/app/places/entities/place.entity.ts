@@ -1,60 +1,60 @@
-import { Field, ObjectType } from "@nestjs/graphql";
-import { ApiProperty } from "@nestjs/swagger";
-import { PlaceStatusEnum } from "src/app/shared/enums";
-import { IFile } from "src/app/shared/interfaces";
+import { Field, InputType, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 
+import { PlaceToAccountingSystemEntity } from "../../accounting-systems/entities";
 import { AttributesGroupEntity } from "../../attributes/entities";
 import { CategoryEntity } from "../../categories/entities";
+import { CommandEntity } from "../../commands/entities";
 import { CompanyEntity } from "../../companies/entities";
 import { FileEntity } from "../../files/entities";
 import { HallEntity } from "../../halls/entities";
 import { ActiveOrderEntity } from "../../orders/entities";
+import { PlaceToPaymentSystemEntity } from "../../payment-systems/entities/place-to-payment-system.entity";
 import { BaseEntity } from "../../shared/entities";
 import { Pagination } from "../../shared/entities/pagination.type";
+import { PlaceStatusEnum, PlaceVerificationStatusEnum } from "../../shared/enums";
+import { IFile } from "../../shared/interfaces";
+import { UserEntity } from "../../users/entities";
 import { PLACES } from "../constant";
 import { WorkingHoursDto } from "../dtos";
 
 @ObjectType()
+@InputType("PlaceEntityInput")
 @Entity({ name: PLACES })
 export class PlaceEntity extends BaseEntity {
-	// @ApiProperty()
 	@Column()
 	@Field(() => String)
 	name: string;
 
-	// @ApiProperty()
 	@Field(() => CompanyEntity)
-	@ManyToOne(() => CompanyEntity, (company) => company.places, { cascade: true })
+	@ManyToOne(() => CompanyEntity, (company) => company.places, { cascade: true, onDelete: "CASCADE" })
 	company: CompanyEntity;
 
-	// @ApiProperty()
-	@Column()
-	@Field(() => String)
-	address: string;
+	@Column({ nullable: true })
+	@Field(() => String, { nullable: true })
+	address?: string;
 
-	// @ApiProperty()
 	@Column("enum", { enum: PlaceStatusEnum, default: PlaceStatusEnum.CLOSED })
 	@Field(() => PlaceStatusEnum)
 	status: PlaceStatusEnum;
 
-	// @ApiProperty()
+	@Column("enum", { enum: PlaceVerificationStatusEnum, default: PlaceVerificationStatusEnum.NOT_VERIFIED })
+	@Field(() => PlaceVerificationStatusEnum)
+	verificationStatus: PlaceVerificationStatusEnum;
+
 	@Field(() => [HallEntity])
 	@OneToMany(() => HallEntity, (hall) => hall.place)
 	halls: HallEntity[];
 
-	// @ApiProperty()
-	@Field(() => [CategoryEntity])
+	@Field(() => [CategoryEntity], { nullable: true })
 	@OneToMany(() => CategoryEntity, (category) => category.place, { nullable: true })
 	categories?: CategoryEntity[];
 
-	// @ApiProperty()
 	@Field(() => FileEntity, { nullable: true })
 	@OneToOne(() => FileEntity, { cascade: true, eager: true, nullable: true })
 	@JoinColumn()
 	file?: IFile;
 
-	@ApiProperty({ type: "json", default: { delivery: false, takeaway: true, booking: true, order: true } })
 	@Field(() => String)
 	@Column({
 		type: "json",
@@ -62,7 +62,6 @@ export class PlaceEntity extends BaseEntity {
 	})
 	a11y: any;
 
-	@ApiProperty({ type: "json", default: { start: null, end: null } })
 	@Field(() => String)
 	@Column({
 		type: "json",
@@ -70,7 +69,6 @@ export class PlaceEntity extends BaseEntity {
 	})
 	weekDays: WorkingHoursDto;
 
-	@ApiProperty({ type: "json", default: { start: null, end: null } })
 	@Field(() => String)
 	@Column({
 		type: "json",
@@ -78,7 +76,6 @@ export class PlaceEntity extends BaseEntity {
 	})
 	weekendDays: WorkingHoursDto;
 
-	@ApiProperty({ type: "json", default: {} })
 	@Field(() => String)
 	@Column({
 		type: "json",
@@ -88,13 +85,36 @@ export class PlaceEntity extends BaseEntity {
 
 	@OneToMany(() => AttributesGroupEntity, (attrGroups) => attrGroups.place, { nullable: true })
 	@Field(() => [AttributesGroupEntity])
-	// @ApiProperty()
 	attrGroups?: AttributesGroupEntity[];
 
-	// @ApiProperty()
 	@Field(() => [ActiveOrderEntity], { nullable: true })
-	@ManyToOne(() => ActiveOrderEntity, (order) => order.place, { nullable: true })
+	@OneToMany(() => ActiveOrderEntity, (order) => order.place, { nullable: true })
 	orders?: ActiveOrderEntity[];
+
+	@Field(() => [CommandEntity], { nullable: true })
+	@OneToMany(() => CommandEntity, (command) => command.place, { nullable: true })
+	commands?: CommandEntity[];
+
+	@Field(() => [UserEntity], { nullable: true })
+	@OneToMany(() => UserEntity, (user) => user.place, { nullable: true })
+	employees?: UserEntity[];
+
+	@Field(() => Boolean)
+	@Column("boolean", { default: false })
+	isHide: boolean;
+
+	@Field(() => [PlaceToPaymentSystemEntity], { nullable: true })
+	@OneToMany(() => PlaceToPaymentSystemEntity, (pTp) => pTp.place, { nullable: true })
+	paymentSystems: PlaceToPaymentSystemEntity[];
+
+	@Field(() => [PlaceToAccountingSystemEntity], { nullable: true })
+	@OneToMany(() => PlaceToAccountingSystemEntity, (pTa) => pTa.place, { nullable: true })
+	accountingSystems: PlaceToAccountingSystemEntity[];
+
+	// @Field(() => [UserEntity], { nullable: true })
+	// @ManyToMany(() => UserEntity, { nullable: true })
+	// @JoinTable()
+	// guests?: UserEntity[];
 }
 
 @ObjectType()

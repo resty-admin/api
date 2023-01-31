@@ -1,3 +1,5 @@
+import { Field, InputType } from "@nestjs/graphql";
+
 import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from "../../shared";
 
 export class UpdateUserDto {
@@ -29,11 +31,26 @@ export class UpdateStatusUserDto {
 	@IsOptional()
 	@MinLength(5)
 	// @ApiProperty()
-	password: string;
-
-	@IsString()
-	@IsOptional()
-	@MinLength(5)
-	// @ApiProperty()
 	status: string;
+}
+
+@InputType()
+export class UpdateUserInput {
+	@Field(() => String)
+	id: string;
+
+	@Field(() => String, { nullable: true })
+	@IsOptional()
+	name?: string;
+
+	@Field(() => String, { nullable: true })
+	@IsOptional()
+	email?: string;
+
+	@Field(() => String, { nullable: true })
+	@IsOptional()
+	@IsString()
+	@IsNotEmpty()
+	// @ApiProperty()
+	tel?: string;
 }

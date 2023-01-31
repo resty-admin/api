@@ -1,4 +1,6 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { GraphQLError } from "graphql/error";
 import { Random } from "random-js";
 import { CryptoService } from "src/app/shared/crypto";
 import { ErrorsEnum, UserStatusEnum } from "src/app/shared/enums";
@@ -10,15 +12,16 @@ import type {
 	ISignIn,
 	ISignUp,
 	ITelegramUser,
-	IUser,
-	IVerifyCode
+	IUser
 } from "src/app/shared/interfaces";
 import { JwtService } from "src/app/shared/jwt";
 import { MailsService } from "src/app/shared/mails";
 import { MessagesService } from "src/app/shared/messages";
 import { removeFirstSlash } from "src/app/shared/utils";
 
+// import { ActiveOrderEntity } from "../../../commands/entities";
 import { UsersService } from "../../../users";
+import { UserEntity } from "../../../users/entities";
 
 @Injectable()
 export class AuthService {
@@ -29,7 +32,8 @@ export class AuthService {
 		private readonly _jwtService: JwtService,
 		private readonly _messagesService: MessagesService,
 		private readonly _cryptoService: CryptoService,
-		private readonly _mailsService: MailsService
+		private readonly _mailsService: MailsService,
+		@InjectRepository(UserEntity) private readonly _usersRepository
 	) {}
 
 	async validate(user: IUser): Promise<IUser> {
@@ -40,17 +44,44 @@ export class AuthService {
 		const me = await this._usersService.getUser({ id: user.id });
 
 		if (!me) {
-			throw new HttpException({ message: ErrorsEnum.UserNotExist }, HttpStatus.UNAUTHORIZED);
+			throw new GraphQLError(ErrorsEnum.UserNotExist.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
 		}
 
 		return this._jwtService.getAccessToken(me);
 	}
 
-	async verifyCode(user: IUser, body: IVerifyCode) {
-		const isVerified = Number(user?.verificationCode) === Number(body?.verificationCode);
+	async updateMe(updatedUser: any, userGql) {
+		return this._usersService.updateUser(userGql.id, updatedUser);
+	}
+
+	async deleteMe(id) {
+		const user = await this._usersRepository.findOne({ where: { id }, relations: ["orders"] });
+
+		if (user.orders.length > 0) {
+			throw new GraphQLError(ErrorsEnum.ActiveOrderExist.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
+
+		await this._usersService.deleteUser(id);
+		return "DELETED";
+	}
+
+	async verifyCode(user: IUser, code: number) {
+		const isVerified = Number(user?.verificationCode) === Number(code);
 
 		if (!isVerified) {
-			throw new HttpException({ message: ErrorsEnum.InvalidVerificationCode }, HttpStatus.UNAUTHORIZED);
+			throw new GraphQLError(ErrorsEnum.InvalidVerificationCode.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
 		}
 
 		const verifiedUser = await this._usersService.updateUser(user.id, {
@@ -69,13 +100,21 @@ export class AuthService {
 		});
 
 		if (existedUser) {
-			throw new HttpException({ message: ErrorsEnum.UserAlreadyExist }, HttpStatus.UNAUTHORIZED);
+			throw new GraphQLError(ErrorsEnum.UserAlreadyExist.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
 		}
 
 		const isPasswordEncrypted = this._cryptoService.check(body.password);
 
 		if (!isPasswordEncrypted) {
-			throw new HttpException({ message: ErrorsEnum.InvalidEncryption }, HttpStatus.UNAUTHORIZED);
+			throw new GraphQLError(ErrorsEnum.InvalidEncryption.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
 		}
 
 		const verificationCode = this._random.integer(1000, 9999);
@@ -100,25 +139,41 @@ export class AuthService {
 		});
 
 		if (!existedUser) {
-			throw new HttpException({ message: ErrorsEnum.UserNotExist }, HttpStatus.UNAUTHORIZED);
+			throw new GraphQLError(ErrorsEnum.UserNotExist.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
 		}
 
 		const isPasswordEncrypted = this._cryptoService.check(body.password);
 
 		if (!isPasswordEncrypted) {
-			throw new HttpException({ message: ErrorsEnum.InvalidEncryption }, HttpStatus.UNAUTHORIZED);
+			throw new GraphQLError(ErrorsEnum.InvalidEncryption.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
 		}
 
 		const isPasswordCompared = this._cryptoService.compare(body.password, existedUser.password);
 
 		if (!isPasswordCompared) {
-			throw new HttpException({ message: ErrorsEnum.InvalidPassword }, HttpStatus.UNAUTHORIZED);
+			throw new GraphQLError(ErrorsEnum.InvalidPassword.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
 		}
 
 		const isUserVerified = existedUser.status === UserStatusEnum.NOT_VERIFIED;
 
 		if (isUserVerified) {
-			throw new HttpException({ message: ErrorsEnum.UserNotVerified }, HttpStatus.UNAUTHORIZED);
+			throw new GraphQLError(ErrorsEnum.UserNotVerified.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
 		}
 
 		return this._jwtService.getAccessToken(existedUser);
@@ -131,11 +186,15 @@ export class AuthService {
 		});
 
 		if (!existedUser) {
-			throw new HttpException({ message: ErrorsEnum.UserNotExist }, HttpStatus.UNAUTHORIZED);
+			throw new GraphQLError(ErrorsEnum.UserNotExist.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
 		}
 
 		const token = this._jwtService.getAccessToken(existedUser);
-		const resetPasswordLink = `http://192.168.68.52:4200/auth/reset-password/${token}`;
+		const resetPasswordLink = `http://192.168.68.100:4200/auth/reset-password/${token}`;
 
 		if ("email" in body) {
 			await this._mailsService.send(body.email, resetPasswordLink);
@@ -150,7 +209,11 @@ export class AuthService {
 		const isPasswordEncrypted = this._cryptoService.check(body.password);
 
 		if (!isPasswordEncrypted) {
-			throw new HttpException({ message: ErrorsEnum.InvalidEncryption }, HttpStatus.UNAUTHORIZED);
+			throw new GraphQLError(ErrorsEnum.InvalidEncryption.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
 		}
 
 		const updatedUser = await this._usersService.updateUser(user.id, body);
@@ -182,7 +245,6 @@ export class AuthService {
 	}
 
 	async telegram({ id, first_name, last_name }: ITelegramUser) {
-		console.log("here?");
 		const existUser = await this._usersService.getUser({ telegramId: id });
 
 		if (existUser) {

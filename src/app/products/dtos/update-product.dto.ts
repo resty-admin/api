@@ -1,32 +1,40 @@
-import { IsNotEmpty, IsString } from "class-validator";
-import { IFile } from "src/app/shared/interfaces";
+import { Field, InputType } from "@nestjs/graphql";
+import { Transform } from "class-transformer";
+import { IsUUID } from "class-validator";
 
-import { IsNumber, IsOptional } from "../../shared";
+import { FileUploadInput } from "../../files/dtos";
+import { IsNotEmpty, IsOptional } from "../../shared";
 
-export class UpdateProductDto {
-	@IsString()
+@InputType()
+export class UpdateProductInput {
+	@Field(() => String)
+	@IsUUID()
 	@IsNotEmpty()
-	@IsOptional()
-	// @ApiProperty()
-	name: string;
+	id: string;
 
-	@IsString()
-	@IsNotEmpty()
+	@Field(() => String, { nullable: true })
 	@IsOptional()
-	// @ApiProperty()
-	category: string;
+	name?: string;
 
-	@IsString()
+	@Field(() => String, { nullable: true })
 	@IsOptional()
-	// @ApiProperty()
-	description: string;
+	category?: string;
 
-	@IsNumber()
+	@Field(() => String, { nullable: true })
 	@IsOptional()
-	// @ApiProperty()
-	price: number;
+	description?: string;
 
-	// @ApiProperty()
+	@Field(() => Number, { nullable: true })
 	@IsOptional()
-	file: IFile;
+	price?: number;
+
+	@Field(() => String, { nullable: true })
+	@IsOptional()
+	@Transform(({ value }) => ({ id: value }))
+	file?: FileUploadInput;
+
+	@Field(() => [String], { nullable: true })
+	@Transform(({ value }) => value.map((id) => ({ id })))
+	@IsOptional()
+	attrsGroups?: string[];
 }
