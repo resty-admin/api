@@ -75,8 +75,8 @@ export class CompaniesService {
 			relations: [...this.findOneRelations, "places.commands"]
 		});
 
-		const isActiveOrdersPresent = company.places.some((place) =>
-			place.orders.some((el) => el.status !== OrderStatusEnum.CLOSED)
+		const isActiveOrdersPresent = company.places?.some((place) =>
+			place.orders?.some((el) => el.status !== OrderStatusEnum.CLOSED)
 		);
 
 		if (isActiveOrdersPresent) {
