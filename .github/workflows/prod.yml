@@ -4,11 +4,11 @@ name: Deploy to Dev
 on:
   push:
     branches:
-      - dev
+      - main
 
 env:
   REGISTRY: "registry.digitalocean.com/resty-registry"
-  API: "dev-nest-api"
+  API: "prod-nest-api"
 
 jobs:
   deploy:
@@ -29,11 +29,11 @@ jobs:
           script: |
             cd /home/resty/api
             git fetch
-            git checkout dev
+            git checkout main
             git pull
             docker system prune -f --volumes
             echo TEST: $API
-            docker build --no-cache -f Dockerfile.dev -t $(echo $REGISTRY)/$(echo $API):latest .
+            docker build --no-cache -f Dockerfile -t $(echo $REGISTRY)/$(echo $API):latest .
 
             doctl registry login
             docker push $(echo $REGISTRY)/$(echo $API):latest
@@ -41,5 +41,5 @@ jobs:
             cd /home/resty/k8s
             kubectl apply -f cloudflared.yaml
             cd /home/resty/api
-            kubectl delete -f api.dev.k8s.yaml
-            kubectl apply -f api.dev.k8s.yaml
+            kubectl delete -f api.k8s.yaml
+            kubectl apply -f api.k8s.yaml
