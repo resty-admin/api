@@ -13,6 +13,17 @@ import { LanguagesService } from "../services";
 export class LanguagesController {
 	constructor(private readonly _languagesService: LanguagesService) {}
 
+	// @Post()
+	// @ApiOperation({ summary: `Create language` })
+	// @ApiCreatedResponse({
+	// 	description: "The record has been successfully created.",
+	// 	type: LanguageEntity
+	// })
+	// @UseGuards(JwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	// async refreshLangauges(@Body() company: CreateLanguageDto): Promise<LanguageEntity> {
+	// 	return this._i18nService.refreshLanguages();
+	// }
+
 	@Post()
 	@ApiOperation({ summary: `Create language` })
 	@ApiCreatedResponse({

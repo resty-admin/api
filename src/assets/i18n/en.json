@@ -1,0 +1,304 @@
+{
+	"WELCOME": {
+		"TITLE": "Рад тебя видеть",
+		"SUBTITLE": "Напомни, пожалуйста, как к тебе обращаться",
+		"SUBMIT": "Подтвердить"
+	},
+	"WALLET": {
+		"TITLE": "Кошелек",
+		"MONEY": "Заработано за месяц с нами",
+		"COMMISSION": "Комиссия",
+		"DATE": "Дата последнего платежа",
+		"CARDS": "Карты",
+		"ADD": "Добавить карту"
+	},
+	"VERIFICATION_CODE": {
+		"TITLE": "Тайтл",
+		"DESCRIPTION": "Дескрипшн",
+		"DIDNT_COME": "Не пришел?",
+		"SEND_AGAIN": "Отправить еще раз",
+		"SEND": "Отправить"
+	},
+	"USERS": {
+		"TITLE": "Пользователи",
+		"ADD": "Добавить пользователя"
+	},
+	"TABLES": {
+		"TITLE": "Столы",
+		"ADD": "Добавить стол",
+		"CREATE_TABLE": "Стол создан",
+		"UPDATE_TABLE": "Стол обновлен",
+		"CONFIRM_TABLE": "Вы уверены, что хотите удалить стол?",
+		"DELETE_TABLE": "Стол удален"
+	},
+	"HISTORY_ORDER": {
+		"TITLE": "Заказ #"
+	},
+	"SIGN_IN": {
+		"OR": "Или",
+		"GOOGLE": "Google",
+		"TELEGRAM": "Telegram",
+		"SIGN_IN": "Войти",
+		"SIGN_UP": "Зарегестрироваться",
+		"FORGOT_PASSWORD": "Забыли пароль",
+		"PRIVACY_POLICY": "Политика безопасности"
+	},
+	"SHIFT": {
+		"TITLE": "Смена",
+		"CLOSE": "Закрыть смену",
+		"SUBTITLE": "Вам нужно выбрать столы перед тем как открыть смену",
+		"EDIT": "Редактировать",
+		"CREATE": "Создать",
+		"CREATE_SHIFT": "Смена создана",
+		"UPDATE_SHIFT": "Смена обновлена",
+		"CLOSE_SHIFT": "Смена закрыта"
+	},
+	"ROLE": {
+		"TITLE": "Выберите роль",
+		"SELECT": "Выбрать"
+	},
+	"RESET_PASSWORD": {
+		"PRIVACY_POLICY": "Политика безопасности"
+	},
+	"PROFILE": {
+		"TITLE": "Профиль",
+		"DELETE_PROFILE": "Удалить профиль",
+		"MANAGER": "Менеджер",
+		"ADMIN": "Админ",
+		"WAITER": "Официант",
+		"HOOKAH": "Кальянщик",
+		"HOSTESS": "Хостес"
+	},
+	"PRODUCTS": {
+		"ADD": "Добавить продукт",
+		"NAME": "Имя",
+		"DESCRIPTION": "Описание",
+		"CATEGORY": "Категория",
+		"PRICE": "Цена",
+		"CURRENCY": "грн",
+		"CREATE_PRODUCT": "Продукт создан",
+		"UPDATE_PRODUCT": "Продукт обновлен",
+		"DELETE_PRODUCT": "Продукт удален",
+		"CONFIRM_PRODUCT": "Вы уверены, что хотите удалить продукт"
+	},
+	"PLACES": {
+		"CREATE_PLACE": "Заведение создано",
+		"TITLE": "Выберите заведение"
+	},
+	"PAYMENT_SYSTEMS": {
+		"TITLE": "Платежные системы",
+		"CONNECTED": "Подключено"
+	},
+	"ORDERS": {
+		"TITLE": "Заказы",
+		"ADD": "Добавить заказ"
+	},
+	"NOTIFICATIONS": {
+		"TITLE": "Уведомления"
+	},
+	"MENU": {
+		"TITLE": "Меню"
+	},
+	"HISTORY_ORDERS": {
+		"CODE": "Код",
+		"DATE": "Дата",
+		"STATUS": "Статус",
+		"CLOSED": "Закрыт",
+		"CANCEL": "Отменен"
+	},
+	"HALLS": {
+		"TITLE": "Залы",
+		"ADD": "Добавить зал",
+		"CREATE_HALL": "Зал создан",
+		"UPDATE_HALL": "Зал обновлен",
+		"DELETE_HALL": "Зал удален"
+	},
+	"GUESTS": {
+		"TITLE": "Пользователи",
+		"ADD": "Добавить пользователя",
+		"NAME": "Имя",
+		"EMAIL": "Почта",
+		"TEL": "Телефон",
+		"ROLE": "Роль"
+	},
+	"FORM": {
+		"COMPANY_LABEL": "Компания",
+		"COMPANY_PLACEHOLDER": "Выберите компанию",
+		"PLACE_LABEL": "Заведение",
+		"PLACE_PLACEHOLDER": "Выберите заведение",
+		"PUBLIC_KEY_LABEL": "Публичный ключ",
+		"PUBLIC_KEY_DESCRIPTION": "Введите публичный ключ",
+		"PRIVATE_KEY_LABEL": "Приватный ключ",
+		"PRIVATE_KEY_PLACEHOLDER": "Введите приватный ключ",
+		"CONNECT": "Подключить",
+		"EDIT": "Редактировать",
+		"CREATE": "Создать",
+		"ADD": "Добавить",
+		"SUBMIT": "Подтвердиь",
+		"NAME_LABEL": "Название",
+		"NAME_PLACEHOLDER": "Введите название",
+		"ATTRIBUTES_LABEL": "Модификации",
+		"ATTRIBUTES_description": "Выберите модификации",
+		"TYPE_LABEL": "Тип",
+		"TYPE_PLACEHOLDER": "Выберите тип",
+		"MAX_ITEMS_LABEL": "Макс. кол-во",
+		"MAX_ITEMS_PLACEHOLDER": "Введите макс. кол-во",
+		"FILE_LABEL": "Файл",
+		"FILE_PLACEHOLDER": "Выберите файл",
+		"DESCRIPTION_LABEL": "Описание",
+		"DESCRIPTION_PLACEHOLDER": "Введите описание",
+		"CODE_LABEL": "Код",
+		"CODE_PLACEHOLDER": "Введите код",
+		"ADDRESS_LABEL": "Адрес",
+		"ADDRESS_PLACEHOLDER": "Введите адрес",
+		"PRICE_LABEL": "Цена",
+		"PRICE_PLACEHOLDER": "Введите цену",
+		"CATEGORY_LABEL": "Категория",
+		"CATEGORY_PLACEHOLDER": "Выберите категорию",
+		"ATTRIBUTE_GROUPS_LABEL": "Группа модификаций",
+		"ATTRIBUTE_GROUPS_PLACEHOLDER": "Выберите группы модификаций",
+		"EMAIL_LABEL": "Почта",
+		"EMAIL_PLACEHOLDER": "Введите почту",
+		"TEL_LABEL": "Телефон",
+		"TEL_PLACEHOLDER": "Введите телефон",
+		"PASSWORD_LABEL": "Пароль",
+		"PASSWORD_PLACEHOLDER": "Введите пароль",
+		"ROLE_LABEL": "Роль",
+		"ROLE_PLACEHOLDER": "Выберите роль",
+		"SEARCH_LABEL": "Поиск",
+		"SEARCH_PLACEHOLDER": "Начните писать...",
+		"MERCHANT_ID_LABEL": "Мерчант айди",
+		"MERCHANT_ID_PLACEHOLDER": "Введите мерчант айди..."
+	},
+	"FORGOT_PASSWORD": {
+		"SEND": "Отправить",
+		"SIGN_IN": "Войти",
+		"SIGN_UP": "Зарегестрироваться"
+	},
+	"EMPLOYEES": {
+		"TITLE": "Пользователи",
+		"ADD": "Добавить пользователя",
+		"NAME": "Имя",
+		"EMAIL": "Почта",
+		"TEL": "Телефон",
+		"ROLE": "Роль"
+	},
+	"CORE": {
+		"TITLE": "Admin",
+		"COMPANIES": "Компании",
+		"PLACES": "Заведения",
+		"STATISTIC": "Статистика",
+		"SHIFT": "Смена",
+		"ORDERS": "Заказы",
+		"MENU": "Меню",
+		"HALLS": "Залы",
+		"USERS": "Пользователи",
+		"COMMANDS": "Команды",
+		"ACCESS": "Доступы",
+		"WALLET": "Кошелек",
+		"CONTRACT": "Договов",
+		"ACCOUNTING_SYSTEMS": "Системы учета",
+		"PAYMENT_SYSTEMS": "Платежные системы",
+		"SUPPORT": "Поддержка",
+		"PROFILE": "Профиль",
+		"NOTIFICATIONS": "Уведомленяи",
+		"EXIT": "Выйти",
+		"MANAGER": "Менеджер",
+		"ADMIN": "Админ",
+		"WAITER": "Официант",
+		"HOOKAH": "Кальянщик",
+		"HOSTESS": "Хостес",
+		"CREATE_COMPANY": "Компания создана",
+		"CREATE_PLACE": "Заведение создано",
+		"UPDATE_COMPANY": "Компания обновлена",
+		"UPDATE_PLACE": "Заведение обнлвление",
+		"CONFIRM_COMPANY": "Вы уверены, что хотите удалить компанию?",
+		"CONFIRM_PLACE": "Вы уверены, что хотите удалить заведение?",
+		"DELETE_COMPANY": "Компания удалена",
+		"DELETE_PLACE": "Заведение удалено"
+	},
+	"CONTRACT": {
+		"TITLE": "Договор",
+		"SIGN": "Подписать"
+	},
+	"COMPANIES": {
+		"TITLE": "Выберите компанию",
+		"CREATE_COMPANY": "Компания создана"
+	},
+	"COMMANDS": {
+		"TITLE": "Команды",
+		"ADD": "Добавить команду",
+		"ADDED": "Добавлено",
+		"EDITED": "Отредактировано",
+		"DELETE": "Удалено",
+		"CREATE_COMMAND": "Команда создана",
+		"UPDATE_COMMAND": "Команда обновлена",
+		"CONFIRM_COMMAND": "Вы уврены что хотите удалить команду",
+		"DELETE_COMMAND": "Команда удалена"
+	},
+	"CATEGORIES": {
+		"ADD": "Добавить категорию",
+		"NAME": "Имя",
+		"DESCRIPTION": "Описание",
+		"PRICE": "Цена",
+		"CURRENCY": "грн",
+		"CREATE_CATEGORY": "Категория создан",
+		"UPDATE_CATEGORY": "Категория обновлен",
+		"DELETE_CATEGORY": "Категория удален",
+		"CONFIRM_CATEGORY": "Вы уверены, что хотите удалить категорию"
+	},
+	"AUTH": {
+		"PRIVACY_POLICY": "Политика безопасности"
+	},
+	"ATTRIBUTES": {
+		"ADD": "Добавить модификацию",
+		"NAME": "Имя",
+		"DESCRIPTION": "Описание",
+		"PRICE": "грн",
+		"CREATE_ATTRIBUTE_GROUP": "Группа Модификация создан",
+		"UPDATE_ATTRIBUTE_GROUP": "Группа Модификация обновлен",
+		"DELETE_ATTRIBUTE_GROUP": "Группа Модификация удален",
+		"CONFIRM_ATTRIBUTE_GROUP": "Вы уверены, что хотите удалить группу модфикацию",
+		"CREATE_ATTRIBUTE": "Модификация создан",
+		"UPDATE_ATTRIBUTE": "Модификация обновлен",
+		"DELETE_ATTRIBUTE": "Модификация удален",
+		"CONFIRM_ATTRIBUTE": "Вы уверены, что хотите удалить модфикацию"
+	},
+	"ACTIVE_ORDERS": {
+		"TITLE": "Активные заказы",
+		"ADD": "Добавить заказ",
+		"CREATE_ORDER": "Заказ создан",
+		"UPDATE_ORDER": "Заказ обновлен",
+		"DELETE_ORDER": "Заказ удаен",
+		"CLOSE_ORDER": "Заказ закрыт"
+	},
+	"ACTIVE_ORDER": {
+		"TITLE": "Заказ #",
+		"CANCEL": "Отменить",
+		"CONFIRM": "Подтвердить",
+		"REJECT": "Отклонить",
+		"COMMENT": "Комментарйи"
+	},
+	"ACCESS": {
+		"TITLE": "Доступы"
+	},
+	"STATISTIC": {
+		"TITLE": "Статистика",
+		"GUESTS": "Гости",
+		"EMPLOYEES": "Сотрудники",
+		"HALLS": "Залы",
+		"TABLES": "Столы",
+		"MONEY": "Заработано за месяц с нами",
+		"COMMISSION": "Комиссия",
+		"STATUS_LABEL": "Статус",
+		"STATUS_DESCRIPTION": "Описание статуса",
+		"STATUS_INFO": "Информация о статусе",
+		"CHANGE_STATUS": "Изменить статус",
+		"NOT_VERIFIED": "Тестовый",
+		"VERIFIED": "Продакшн"
+	},
+	"ACCOUNTING_SYSTEMS": {
+		"TITLE": "Системы учета",
+		"CONNECTED": "Подключено"
+	}
+}

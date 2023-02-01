@@ -33,10 +33,14 @@ export class I18nService {
 
 			for (const [key, value] of Object.entries(files)) {
 				fs.appendFile(`src/assets/i18n/${key}.json`, JSON.stringify(value), (err) => {
-					if (err) { throw err; }
+					if (err) {
+						throw err;
+					}
 					console.log("Saved!");
 				});
 			}
+
+			return;
 		}
 	}
 }
