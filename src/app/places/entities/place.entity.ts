@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType } from "@nestjs/graphql";
+import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 
 import { PlaceToAccountingSystemEntity } from "../../accounting-systems/entities";
@@ -82,6 +82,10 @@ export class PlaceEntity extends BaseEntity {
 		default: () => `('${JSON.stringify({})}')`
 	})
 	holidayDays: Map<Date, WorkingHoursDto>;
+
+	@Field(() => Int, { nullable: true })
+	@Column("int", { nullable: true })
+	waiterCode: number;
 
 	@OneToMany(() => AttributesGroupEntity, (attrGroups) => attrGroups.place, { nullable: true })
 	@Field(() => [AttributesGroupEntity])

@@ -1,12 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { GraphQLError } from "graphql/error";
 
 import { CompanyEntity } from "../../companies/entities";
 import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { FiltersArgsDto } from "../../shared/dtos";
 import type { PlaceVerificationStatusEnum } from "../../shared/enums";
-import { OrderStatusEnum, UserRoleEnum } from "../../shared/enums";
+import { ErrorsEnum, OrderStatusEnum, UserRoleEnum } from "../../shared/enums";
 import type { IUser } from "../../shared/interfaces";
 import { UserEntity } from "../../users/entities";
 import type { CreatePlaceInput, UpdatePlaceInput } from "../dtos";
@@ -106,7 +107,8 @@ export class PlacesService {
 	}
 
 	async createPlace(place: CreatePlaceInput): Promise<PlaceEntity> {
-		const savedPlace = await this._placesRepository.save({ ...place, company: { id: place.company } });
+		const waiterCode = Math.floor(Math.random() * 1_000_000_000);
+		const savedPlace = await this._placesRepository.save({ ...place, waiterCode, company: { id: place.company } });
 
 		return this._placesRepository.findOne({ where: { id: savedPlace.id } });
 	}
@@ -146,6 +148,25 @@ export class PlacesService {
 		const user = await this._usersRepository.findOne({ where: { id: employee.userId } });
 
 		return this._placesRepository.save({ ...place, employees: [...(place.employees || []), { ...user }] });
+	}
+
+	async addWaiterToPlace(code: number, user: IUser) {
+		const place = await this._placesRepository.findOne({
+			where: {
+				waiterCode: code
+			}
+		});
+
+		if (!place) {
+			throw new GraphQLError(ErrorsEnum.InvalidWaiterCode.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
+
+		const userEntity = await this._usersRepository.findOne({ where: { id: user.id } });
+		return this._placesRepository.save({ ...place, employees: [...(place.employees || []), { ...userEntity }] });
 	}
 
 	async removeEmployeeFromPlace(employee: AddEmployeeInput) {

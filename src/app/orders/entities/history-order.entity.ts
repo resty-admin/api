@@ -17,7 +17,7 @@ export class HistoryOrderEntity extends BaseEntity {
 	orderNumber: number;
 
 	@Column({
-		type: "json",
+		type: "jsonb",
 		default: () => `('${JSON.stringify({})}')`,
 		nullable: true
 	})

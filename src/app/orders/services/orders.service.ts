@@ -6,6 +6,7 @@ import { In } from "typeorm";
 
 import { PlaceEntity } from "../../places/entities";
 import { getFindOptionsByFilters } from "../../shared";
+import { getFindOptionsJsonUtil } from "../../shared/crud/utils/get-find-options-json.util";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { FiltersArgsDto } from "../../shared/dtos";
 import { ErrorsEnum, OrderStatusEnum, OrderTypeEnum, ProductToOrderStatusEnum } from "../../shared/enums";
@@ -80,19 +81,19 @@ export class OrdersService {
 		};
 	}
 
-	async getHistoryOrders({ take, skip, filtersArgs }: PaginationArgsDto) {
-		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
+	async getHistoryOrders(placeId: string, { take, skip, filtersArgs }: PaginationArgsDto) {
+		const repoBuilder = this._historyOrderRepository
+			.createQueryBuilder("order")
+			.innerJoinAndSelect("order.place", "place")
+			.where("place.id = :id", { id: placeId });
 
-		const [data, count] = await this._historyOrderRepository.findAndCount({
-			where: findOptions.where,
-			take,
-			skip,
-			relations: ["place"]
-		});
+		const builder = getFindOptionsJsonUtil(filtersArgs, repoBuilder, "order");
+
+		const data = await builder.take(take).skip(skip).getMany();
 
 		return {
 			data,
-			totalCount: count,
+			totalCount: data.length,
 			page: skip / take + 1
 		};
 	}

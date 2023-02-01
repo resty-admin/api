@@ -94,6 +94,12 @@ export class PlacesResolver {
 
 	@Mutation(() => PlaceEntity)
 	@UseGuards(GqlJwtGuard, PlaceEmployeeGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
+	async addWaiterToPlace(@Args("waiterCode") code: number, @UserGql() user: IUser) {
+		return this._placesService.addWaiterToPlace(code, user);
+	}
+
+	@Mutation(() => PlaceEntity)
+	@UseGuards(GqlJwtGuard, PlaceEmployeeGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
 	async removeEmployeeFromPlace(@Args("employeeData") employee: AddEmployeeInput) {
 		return this._placesService.removeEmployeeFromPlace(employee);
 	}

@@ -65,8 +65,8 @@ export class OrdersResolver {
 			UserRoleEnum.CLIENT
 		])
 	)
-	async historyOrders(@Args() args: PaginationArgsDto) {
-		return this._ordersService.getHistoryOrders(args);
+	async historyOrders(@Args("placeId") placeId: string, @Args() args: PaginationArgsDto) {
+		return this._ordersService.getHistoryOrders(placeId, args);
 	}
 
 	@Mutation(() => ActiveOrderEntity)

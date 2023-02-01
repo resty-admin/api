@@ -328,6 +328,7 @@ type PlaceEntity {
 	weekDays: String!
 	weekendDays: String!
 	holidayDays: String!
+	waiterCode: Int
 	attrGroups: [AttributesGroupEntity!]!
 	orders: [ActiveOrderEntity!]
 	commands: [CommandEntity!]
@@ -548,6 +549,7 @@ input PlaceEntityInput {
 	weekDays: String!
 	weekendDays: String!
 	holidayDays: String!
+	waiterCode: Int
 	attrGroups: [AttributesGroupEntityInput!]!
 	orders: [ActiveOrderEntityInput!]
 	commands: [CommandEntityInput!]
@@ -581,7 +583,7 @@ type Query {
 	companies(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedCompany!
 	order(id: String, filtersArgs: [FiltersArgsDto!]): ActiveOrderEntity
 	orders(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedActiveOrder!
-	historyOrders(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedHistoryOrder!
+	historyOrders(placeId: String!, skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedHistoryOrder!
 	product(id: String!): ProductEntity!
 	products(skip: Int = 0, take: Int = 10, filtersArgs: [FiltersArgsDto!]): PaginatedProduct!
 	category(id: String!): CategoryEntity!
@@ -625,6 +627,7 @@ type Mutation {
 	updatePlace(place: UpdatePlaceInput!): PlaceEntity!
 	deletePlace(placeId: String!): String!
 	addEmployeeToPlace(employeeData: AddEmployeeInput!): PlaceEntity!
+	addWaiterToPlace(waiterCode: Float!): PlaceEntity!
 	removeEmployeeFromPlace(employeeData: AddEmployeeInput!): PlaceEntity!
 	updatePlaceVerification(placeId: String!, status: PlaceVerificationStatusEnum!): PlaceEntity!
 	createUser(user: CreateUserInput!): UserEntity!
