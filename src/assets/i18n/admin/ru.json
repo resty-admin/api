@@ -1,0 +1,21 @@
+{
+	"AUTH.EMAIL": "Почта",
+	"AUTH.TEL": "Телефон",
+	"AUTH.OR": "Или",
+	"AUTH.GOOGLE": "Google",
+	"AUTH.TELEGRAM": "Telegram",
+	"AUTH.SIGN_IN": "Вход",
+	"AUTH.SIGN_UP": "Регистрация",
+	"AUTH.FORGOT_PASSWORD": "Забыли пароль?",
+	"AUTH.PRIVACY_POLICY": "Политика безопасности",
+	"FORM.EMAIL_LABEL": "Почта",
+	"FORM.EMAIL_PLACEHOLDER": "Введите почту",
+	"FORM.PASSWORD_LABEL": "Пароль",
+	"FORM.PASSWORD_PLACEHOLDER": "Введите пароль",
+	"FORM.CATEGORY_LABEL": "Категория",
+	"FORM.CATEGORY_DESCRIPTION": "Выберите категорию",
+	"FORM.TEL_LABEL": "Телефон",
+	"FORM.TEL_PLACEHOLDER": "Введите телефон",
+	"FORM.ROLE_LABEL": "Роль",
+	"FORM.ROLE_PLACEHOLDER": "Выберите роль"
+}

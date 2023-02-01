@@ -24,7 +24,7 @@ import { UsersModule } from "../../users";
 const { join } = require("path");
 
 export const GRAPHQL_CONFIG = {
-	autoSchemaFile: join(process.cwd(), "apps/nest/api/src/schema.gql"),
+	autoSchemaFile: join(process.cwd(), "schema.gql"),
 	include: [
 		UsersModule,
 		FilesModule,

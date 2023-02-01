@@ -10,6 +10,11 @@
 				"include": "./environments",
 				"outDir": "dist/",
 				"watchAssets": true
+			},
+			{
+				"include": "./assets",
+				"outDir": "dist/",
+				"watchAssets": true
 			}
 		],
 		"watchAssets": true

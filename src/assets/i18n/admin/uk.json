@@ -1,0 +1,21 @@
+{
+	"AUTH.EMAIL": "Пошта",
+	"AUTH.TEL": "Телефон",
+	"AUTH.OR": "Або",
+	"AUTH.GOOGLE": "Google",
+	"AUTH.TELEGRAM": "Телеграма",
+	"AUTH.SIGN_IN": "Вхід",
+	"AUTH.SIGN_UP": "Реєстрація",
+	"AUTH.FORGOT_PASSWORD": "Забули пароль?",
+	"AUTH.PRIVACY_POLICY": "Політика безпеки",
+	"FORM.EMAIL_LABEL": "Пошта",
+	"FORM.EMAIL_PLACEHOLDER": "Введіть пошту",
+	"FORM.PASSWORD_LABEL": "Пароль",
+	"FORM.PASSWORD_PLACEHOLDER": "Введіть пароль",
+	"FORM.CATEGORY_LABEL": "Категорія",
+	"FORM.CATEGORY_DESCRIPTION": "Оберіть категорію",
+	"FORM.TEL_LABEL": "Телефон",
+	"FORM.TEL_PLACEHOLDER": "Введіть телефон",
+	"FORM.ROLE_LABEL": "Роль",
+	"FORM.ROLE_PLACEHOLDER": "Виберіть роль"
+}
