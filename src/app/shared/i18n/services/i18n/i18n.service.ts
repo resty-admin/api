@@ -1,3 +1,4 @@
+import type { OnModuleInit } from "@nestjs/common";
 import { Injectable } from "@nestjs/common";
 import * as fs from "fs";
 import { GoogleSpreadsheet } from "google-spreadsheet";
@@ -5,9 +6,13 @@ import { GoogleSpreadsheet } from "google-spreadsheet";
 import { environment } from "../../../../../environments/environment";
 
 @Injectable()
-export class I18nService {
+export class I18nService implements OnModuleInit {
+	onModuleInit() {
+		// this.refreshLanguages().then();
+	}
+
 	async refreshLanguages() {
-		const doc = new GoogleSpreadsheet(environment.googleSpreadsheetPrivateKey);
+		const doc = new GoogleSpreadsheet(environment.googleSpreadsheetSheetId);
 
 		await doc.useServiceAccountAuth({
 			client_email: environment.googleSpreadsheetClientEmail,
@@ -16,31 +21,38 @@ export class I18nService {
 
 		await doc.loadInfo();
 
-		const files = {};
-
 		for (const [title, sheet] of Object.entries(doc.sheetsByTitle)) {
+			const files = {};
+
 			const rows = await sheet.getRows();
 
 			const [key, ...languages] = sheet.headerValues;
 
 			for (const language of languages) {
-				files[language] = { [title]: {} };
-
 				for (const row of rows) {
-					files[language][title] = { [row[key]]: row[language] };
+					files[language] = {
+						...(files[language] || {}),
+						[row[key]]: row[language]
+					};
 				}
 			}
 
-			for (const [key, value] of Object.entries(files)) {
-				fs.appendFile(`src/assets/i18n/${key}.json`, JSON.stringify(value), (err) => {
+			for (const [language, translates] of Object.entries(files)) {
+				const dir = `src/assets/i18n/${title}`;
+
+				if (!fs.existsSync(dir)) {
+					fs.mkdirSync(dir);
+				}
+
+				fs.appendFile(`${dir}/${language}.json`, JSON.stringify(translates), (err) => {
 					if (err) {
 						throw err;
 					}
 					console.log("Saved!");
 				});
 			}
-
-			return;
 		}
+
+		
 	}
 }
