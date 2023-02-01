@@ -11,7 +11,7 @@ export const configs = () =>
 
 export const typeOrmConfig = (pgContainer: any, entities?: any[]): ConnectionOptions => ({
 	type: "postgres",
-	host: "192.168.68.52",
+	host: "192.168.68.106",
 	port: pgContainer.getMappedPort(5432),
 	username: "test",
 	password: "test",

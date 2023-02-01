@@ -1,15 +1,12 @@
-import type { OnModuleInit } from "@nestjs/common";
 import { Injectable } from "@nestjs/common";
-import * as fs from "fs";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 
 import { environment } from "../../../../../environments/environment";
+import { SpacesService } from "../../../spaces";
 
 @Injectable()
-export class I18nService implements OnModuleInit {
-	onModuleInit() {
-		// this.refreshLanguages().then();
-	}
+export class I18nService {
+	constructor(private readonly _spacesService: SpacesService) {}
 
 	async refreshLanguages() {
 		const doc = new GoogleSpreadsheet(environment.googleSpreadsheetSheetId);
@@ -35,24 +32,14 @@ export class I18nService implements OnModuleInit {
 						[row[key]]: row[language]
 					};
 				}
-			}
 
-			for (const [language, translates] of Object.entries(files)) {
-				const dir = `src/assets/i18n/${title}`;
-
-				if (!fs.existsSync(dir)) {
-					fs.mkdirSync(dir);
-				}
-
-				fs.appendFile(`${dir}/${language}.json`, JSON.stringify(translates), (err) => {
-					if (err) {
-						throw err;
-					}
-					console.log("Saved!");
-				});
+				await this._spacesService.uploadToS3(
+					`i18n/${title}`,
+					`${language}.json`,
+					JSON.stringify(files[language]),
+					"application/json"
+				);
 			}
 		}
-
-		
 	}
 }
