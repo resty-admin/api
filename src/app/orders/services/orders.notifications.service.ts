@@ -119,7 +119,7 @@ export class OrdersNotificationsService {
 			// 	relations: ["place", "place.employees"]
 			// });
 
-			const uTps: UserToPlaceEntity[] = this._uTpRepository.find({
+			const uTps: UserToPlaceEntity[] = await this._uTpRepository.find({
 				where: {
 					role: UserRoleEnum.WAITER,
 					place: {
