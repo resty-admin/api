@@ -4,14 +4,12 @@ import { GraphQLError } from "graphql/error";
 
 import { CompanyEntity } from "../../companies/entities";
 import { getFindOptionsByFilters } from "../../shared";
-import type { PaginationArgsDto } from "../../shared/dtos";
-import type { FiltersArgsDto } from "../../shared/dtos";
+import type { FiltersArgsDto, PaginationArgsDto } from "../../shared/dtos";
 import type { PlaceVerificationStatusEnum } from "../../shared/enums";
 import { ErrorsEnum, OrderStatusEnum, UserRoleEnum } from "../../shared/enums";
 import type { IUser } from "../../shared/interfaces";
 import { UserEntity } from "../../users/entities";
-import type { CreatePlaceInput, UpdatePlaceInput } from "../dtos";
-import type { UserToPlaceInput } from "../dtos";
+import type { CreatePlaceInput, UpdatePlaceInput, UserToPlaceInput } from "../dtos";
 import type { AddEmployeeInput } from "../dtos/add-employee.dto";
 import { PlaceEntity, UserToPlaceEntity } from "../entities";
 
@@ -86,7 +84,9 @@ export class PlacesService {
 		const [data, count] = await this._placesRepository.findAndCount({
 			where: {
 				...findOptions.where,
-				...(user.role !== UserRoleEnum.ADMIN && user.role !== UserRoleEnum.CLIENT
+				...(user.role === UserRoleEnum.ADMIN || user.role === UserRoleEnum.CLIENT
+					? {}
+					: user.role === UserRoleEnum.MANAGER
 					? {
 							company: {
 								owner: {
@@ -94,7 +94,15 @@ export class PlacesService {
 								}
 							}
 					  }
-					: {})
+					: {
+							place: {
+								usersToPlaces: {
+									user: {
+										id: user.id
+									}
+								}
+							}
+					  })
 			},
 			relations: this.findRelations,
 			take,
