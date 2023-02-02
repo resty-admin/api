@@ -56,6 +56,7 @@ export class ShiftsService {
 	}
 
 	async createShift(shift: CreateShiftInput, user: IUser) {
+		console.log("here", shift);
 		const shiftPresent = await this._shiftsRepository.findOne({
 			where: { waiter: { id: user.id } },
 			relations: ["waiter"]
