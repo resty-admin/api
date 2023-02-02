@@ -211,11 +211,7 @@ export class PlacesService {
 		});
 
 		if (waiterExist) {
-			throw new GraphQLError(ErrorsEnum.WaiterExist.toString(), {
-				extensions: {
-					code: 500
-				}
-			});
+			return waiterExist;
 		}
 
 		const userEntity = await this._usersRepository.findOne({ where: { id: user.id } });
