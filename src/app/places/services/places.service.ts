@@ -11,15 +11,16 @@ import { ErrorsEnum, OrderStatusEnum, UserRoleEnum } from "../../shared/enums";
 import type { IUser } from "../../shared/interfaces";
 import { UserEntity } from "../../users/entities";
 import type { CreatePlaceInput, UpdatePlaceInput } from "../dtos";
+import type { UserToPlaceInput } from "../dtos";
 import type { AddEmployeeInput } from "../dtos/add-employee.dto";
-import { PlaceEntity } from "../entities";
+import { PlaceEntity, UserToPlaceEntity } from "../entities";
 
 @Injectable()
 export class PlacesService {
 	private findRelations = [
 		"company",
 		"company.owner",
-		"employees",
+		// "employees",
 		"halls",
 		"file",
 		// "guests",
@@ -30,7 +31,7 @@ export class PlacesService {
 	private findOneRelations = [
 		"company",
 		"company.owner",
-		"employees",
+		// "employees",
 		"halls",
 		"file",
 		// "guests",
@@ -41,7 +42,8 @@ export class PlacesService {
 	constructor(
 		@InjectRepository(PlaceEntity) private readonly _placesRepository,
 		@InjectRepository(CompanyEntity) private readonly _companiesRepository,
-		@InjectRepository(UserEntity) private readonly _usersRepository
+		@InjectRepository(UserEntity) private readonly _usersRepository,
+		@InjectRepository(UserToPlaceEntity) private readonly _uTpRepository
 	) {}
 
 	async getPlace(id: string, filtersArgs?: FiltersArgsDto[]) {
@@ -56,27 +58,27 @@ export class PlacesService {
 		});
 	}
 
-	async getPlaceGuests(id: string, { take, skip, filtersArgs }: PaginationArgsDto) {
-		const findOptions = filtersArgs?.length > 0 ? getFindOptionsByFilters(filtersArgs) : ([] as any);
-
-		const [data, count] = await this._usersRepository.findAndCount({
-			where: {
-				placesGuest: {
-					id
-				},
-				...findOptions.where
-			},
-			relations: ["place", "placesGuest"],
-			take,
-			skip
-		});
-
-		return {
-			data,
-			totalCount: count,
-			page: skip / take + 1
-		};
-	}
+	// async getPlaceGuests(id: string, { take, skip, filtersArgs }: PaginationArgsDto) {
+	// 	const findOptions = filtersArgs?.length > 0 ? getFindOptionsByFilters(filtersArgs) : ([] as any);
+	//
+	// 	const [data, count] = await this._usersRepository.findAndCount({
+	// 		where: {
+	// 			placesGuest: {
+	// 				id
+	// 			},
+	// 			...findOptions.where
+	// 		},
+	// 		relations: ["place", "placesGuest"],
+	// 		take,
+	// 		skip
+	// 	});
+	//
+	// 	return {
+	// 		data,
+	// 		totalCount: count,
+	// 		page: skip / take + 1
+	// 	};
+	// }
 
 	async getPlaces({ take, skip, filtersArgs }: PaginationArgsDto, user: IUser) {
 		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
@@ -95,6 +97,25 @@ export class PlacesService {
 					: {})
 			},
 			relations: this.findRelations,
+			take,
+			skip
+		});
+
+		return {
+			data,
+			totalCount: count,
+			page: skip / take + 1
+		};
+	}
+
+	async getUserToPlace({ take, skip, filtersArgs }: PaginationArgsDto) {
+		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
+
+		const [data, count] = await this._uTpRepository.findAndCount({
+			where: {
+				...findOptions.where
+			},
+			relations: ["user", "place"],
 			take,
 			skip
 		});
@@ -137,18 +158,30 @@ export class PlacesService {
 		return `${id} deleted`;
 	}
 
-	async addEmployeeToPlace(employee: AddEmployeeInput) {
+	async addUserToPlace(data: UserToPlaceInput) {
 		const place = await this._placesRepository.findOne({
 			where: {
-				id: employee.placeId
-			},
-			relations: ["employees"]
+				id: data.place
+			}
 		});
 
-		const user = await this._usersRepository.findOne({ where: { id: employee.userId } });
+		const user = await this._usersRepository.findOne({ where: { id: data.user } });
 
-		return this._placesRepository.save({ ...place, employees: [...(place.employees || []), { ...user }] });
+		return this._uTpRepository.save({ role: data.role, place, user });
 	}
+
+	// async addEmployeeToPlace(employee: AddEmployeeInput) {
+	// 	const place = await this._placesRepository.findOne({
+	// 		where: {
+	// 			id: employee.placeId
+	// 		},
+	// 		relations: ["employees"]
+	// 	});
+	//
+	// 	const user = await this._usersRepository.findOne({ where: { id: employee.userId } });
+	//
+	// 	return this._placesRepository.save({ ...place, employees: [...(place.employees || []), { ...user }] });
+	// }
 
 	async addWaiterToPlace(code: number, user: IUser) {
 		const place = await this._placesRepository.findOne({

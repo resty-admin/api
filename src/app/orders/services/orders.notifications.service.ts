@@ -1,7 +1,9 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
+import { UserToPlaceEntity } from "../../places/entities";
 import { ProductsService } from "../../products/services";
+import { UserRoleEnum } from "../../shared/enums";
 import type { IUser } from "../../shared/interfaces";
 import { ActiveShiftEntity } from "../../shifts/entities";
 import { TablesService } from "../../tables/services";
@@ -16,6 +18,7 @@ export class OrdersNotificationsService {
 	constructor(
 		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository,
 		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository,
+		@InjectRepository(UserToPlaceEntity) private readonly _uTpRepository,
 		private readonly _orderGateway: OrdersGateway,
 		@Inject(forwardRef(() => OrdersService)) private readonly _orderService: OrdersService,
 		private readonly _productService: ProductsService,
@@ -111,13 +114,22 @@ export class OrdersNotificationsService {
 				waiters.push(el.waiter);
 			}
 		} else {
-			const order: ActiveOrderEntity = await this._ordersRepository.findOne({
-				where: { id: orderId },
-				relations: ["place", "place.employees"]
+			// const order: ActiveOrderEntity = await this._ordersRepository.findOne({
+			// 	where: { id: orderId },
+			// 	relations: ["place", "place.employees"]
+			// });
+
+			const uTps: UserToPlaceEntity[] = this._uTpRepository.find({
+				where: {
+					role: UserRoleEnum.WAITER,
+					place: {
+						id: order.place.id
+					}
+				}
 			});
 
-			for (const el of order.place.employees) {
-				waiters.push(el);
+			for (const el of uTps) {
+				waiters.push(el.user);
 			}
 		}
 

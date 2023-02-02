@@ -14,7 +14,6 @@ import { BaseEntity } from "../../shared/entities";
 import { Pagination } from "../../shared/entities/pagination.type";
 import { PlaceStatusEnum, PlaceVerificationStatusEnum } from "../../shared/enums";
 import { IFile } from "../../shared/interfaces";
-import { UserEntity } from "../../users/entities";
 import { PLACES } from "../constant";
 import { WorkingHoursDto } from "../dtos";
 
@@ -99,9 +98,9 @@ export class PlaceEntity extends BaseEntity {
 	@OneToMany(() => CommandEntity, (command) => command.place, { nullable: true })
 	commands?: CommandEntity[];
 
-	@Field(() => [UserEntity], { nullable: true })
-	@OneToMany(() => UserEntity, (user) => user.place, { nullable: true })
-	employees?: UserEntity[];
+	// @Field(() => [UserEntity], { nullable: true })
+	// @OneToMany(() => UserEntity, (user) => user.place, { nullable: true })
+	// employees?: UserEntity[];
 
 	@Field(() => Boolean)
 	@Column("boolean", { default: false })
