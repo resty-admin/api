@@ -16,6 +16,7 @@ import { PlaceStatusEnum, PlaceVerificationStatusEnum } from "../../shared/enums
 import { IFile } from "../../shared/interfaces";
 import { PLACES } from "../constant";
 import { WorkingHoursDto } from "../dtos";
+import { UserToPlaceEntity } from "./user-to-place.entity";
 
 @ObjectType()
 @InputType("PlaceEntityInput")
@@ -113,6 +114,10 @@ export class PlaceEntity extends BaseEntity {
 	@Field(() => [PlaceToAccountingSystemEntity], { nullable: true })
 	@OneToMany(() => PlaceToAccountingSystemEntity, (pTa) => pTa.place, { nullable: true })
 	accountingSystems: PlaceToAccountingSystemEntity[];
+
+	@Field(() => [UserToPlaceEntity], { nullable: true })
+	@OneToMany(() => UserToPlaceEntity, (uTp) => uTp.place, { nullable: true })
+	usersToPlaces: UserToPlaceEntity[];
 
 	// @Field(() => [UserEntity], { nullable: true })
 	// @ManyToMany(() => UserEntity, { nullable: true })

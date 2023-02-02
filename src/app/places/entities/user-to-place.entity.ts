@@ -16,7 +16,7 @@ export class UserToPlaceEntity extends BaseEntity {
 	user: UserEntity;
 
 	@Field(() => PlaceEntity)
-	@ManyToOne(() => PlaceEntity, { onDelete: "CASCADE" })
+	@ManyToOne(() => PlaceEntity, (place) => place.usersToPlaces, { onDelete: "CASCADE" })
 	place: PlaceEntity;
 
 	@Field(() => UserRoleEnum)

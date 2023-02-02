@@ -10,8 +10,8 @@ import { CompanyEntity } from "../entities";
 
 @Injectable()
 export class CompaniesService {
-	private findRelations = ["owner", "places", "logo"];
-	private findOneRelations = ["owner", "places", "logo"];
+	private findRelations = ["owner", "places", "places.usersToPlaces", "logo"];
+	private findOneRelations = ["owner", "places", "places.usersToPlaces", "logo"];
 
 	constructor(@InjectRepository(CompanyEntity) private readonly _companiesRepository) {}
 
@@ -34,7 +34,15 @@ export class CompaniesService {
 								id: user.id
 							}
 					  }
-					: {})
+					: {
+							places: {
+								usersToPlaces: {
+									user: {
+										id: user.id
+									}
+								}
+							}
+					  })
 			},
 			relations: this.findRelations,
 			take,
