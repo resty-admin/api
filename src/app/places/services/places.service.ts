@@ -199,7 +199,7 @@ export class PlacesService {
 		}
 
 		const userEntity = await this._usersRepository.findOne({ where: { id: user.id } });
-		return this._placesRepository.save({ ...place, employees: [...(place.employees || []), { ...userEntity }] });
+		return this._uTpRepository.save({ user: userEntity, place, role: UserRoleEnum.WAITER });
 	}
 
 	async removeEmployeeFromPlace(employee: AddEmployeeInput) {

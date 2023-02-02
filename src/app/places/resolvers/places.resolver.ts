@@ -113,8 +113,8 @@ export class PlacesResolver {
 	// 	return this._placesService.addEmployeeToPlace(employee);
 	// }
 
-	@Mutation(() => PlaceEntity)
-	@UseGuards(GqlJwtGuard, PlaceEmployeeGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
+	@Mutation(() => UserToPlaceEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
 	async addWaiterToPlace(@Args("waiterCode") code: number, @UserGql() user: IUser) {
 		return this._placesService.addWaiterToPlace(code, user);
 	}
