@@ -180,23 +180,23 @@ export class OrdersResolver {
 		return this._ordersService.addTableToOrder(orderId, tableId);
 	}
 
-	// @Mutation(() => ActiveOrderEntity)
-	// @UseGuards(
-	// 	GqlJwtGuard,
-	// 	RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.WAITER, UserRoleEnum.HOSTESS])
-	// )
-	// async approveTableInOrder(@Args("orderId") orderId: string) {
-	// 	return this._ordersService.approveTableInOrder(orderId);
-	// }
+	@Mutation(() => ActiveOrderEntity)
+	@UseGuards(
+		GqlJwtGuard,
+		RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.WAITER, UserRoleEnum.HOSTESS])
+	)
+	async approveTableInOrder(@Args("orderId") orderId: string) {
+		return this._ordersService.approveTableInOrder(orderId);
+	}
 
-	// @Mutation(() => ActiveOrderEntity)
-	// @UseGuards(
-	// 	GqlJwtGuard,
-	// 	RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.WAITER, UserRoleEnum.HOSTESS])
-	// )
-	// async rejectTableInOrder(@Args("orderId") orderId: string) {
-	// 	return this._ordersService.rejectTableInOrder(orderId);
-	// }
+	@Mutation(() => ActiveOrderEntity)
+	@UseGuards(
+		GqlJwtGuard,
+		RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.WAITER, UserRoleEnum.HOSTESS])
+	)
+	async rejectTableInOrder(@Args("orderId") orderId: string) {
+		return this._ordersService.rejectTableInOrder(orderId);
+	}
 
 	@Mutation(() => ActiveOrderEntity)
 	@UseGuards(

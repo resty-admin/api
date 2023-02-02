@@ -288,17 +288,17 @@ export class OrdersService {
 		});
 	}
 
-	// async approveTableInOrder(orderId: string) {
-	// 	await this._ordersNotificationService.approveTableInOrderEvent(orderId);
-	//
-	// 	return this._ordersRepository.save({ id: orderId, tableStatus: TableStatusEnum.APPROVED });
-	// }
-	//
-	// async rejectTableInOrder(orderId: string) {
-	// 	await this._ordersNotificationService.rejectTableInOrderEvent(orderId);
-	//
-	// 	return this._ordersRepository.save({ id: orderId, tableStatus: TableStatusEnum.REJECTED });
-	// }
+	async approveTableInOrder(orderId: string) {
+		await this._ordersNotificationService.approveTableInOrderEvent(orderId);
+
+		return this._ordersRepository.save({ id: orderId, tableStatus: TableStatusEnum.APPROVED });
+	}
+
+	async rejectTableInOrder(orderId: string) {
+		await this._ordersNotificationService.rejectTableInOrderEvent(orderId);
+
+		return this._ordersRepository.save({ id: orderId, tableStatus: TableStatusEnum.REJECTED });
+	}
 
 	async removeTableFrom(orderId: string) {
 		await this._ordersNotificationService.removeTableFromOrderEvent(orderId);
