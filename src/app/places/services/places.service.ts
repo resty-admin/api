@@ -21,6 +21,7 @@ export class PlacesService {
 		// "employees",
 		"halls",
 		"file",
+		"usersToPlaces",
 		// "guests",
 		"paymentSystems",
 		"paymentSystems.paymentSystem"
@@ -32,6 +33,7 @@ export class PlacesService {
 		// "employees",
 		"halls",
 		"file",
+		"usersToPlaces",
 		// "guests",
 		"paymentSystems",
 		"paymentSystems.paymentSystem"
@@ -95,11 +97,9 @@ export class PlacesService {
 							}
 					  }
 					: {
-							place: {
-								usersToPlaces: {
-									user: {
-										id: user.id
-									}
+							usersToPlaces: {
+								user: {
+									id: user.id
 								}
 							}
 					  })
