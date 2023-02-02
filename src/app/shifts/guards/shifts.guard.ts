@@ -36,7 +36,14 @@ export class ShiftsGuard implements CanActivate {
 			where: {
 				id: In(tables)
 			},
-			relations: ["hall", "hall.place", "hall.place.usersToPlaces", "hall.place.company", "hall.place.company.owner"]
+			relations: [
+				"hall",
+				"hall.place",
+				"hall.place.usersToPlaces",
+				"hall.place.usersToPlaces.user",
+				"hall.place.company",
+				"hall.place.company.owner"
+			]
 		});
 
 		if (currTable) {
@@ -59,7 +66,13 @@ export class ShiftsGuard implements CanActivate {
 			where: {
 				id: shift
 			},
-			relations: ["tables", "tables.place", "tables.place.usersToPlace", "tables.place.owner"]
+			relations: [
+				"tables",
+				"tables.place",
+				"tables.place.usersToPlaces",
+				"hall.place.usersToPlaces.user",
+				"tables.place.owner"
+			]
 		});
 
 		const worker = currShift.tables[0].hall.place.usersToPlaces.find(
