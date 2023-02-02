@@ -49,8 +49,8 @@ export class OrdersResolver {
 			UserRoleEnum.CLIENT
 		])
 	)
-	async orders(@Args() args: PaginationArgsDto) {
-		return this._ordersService.getOrders(args);
+	async orders(@Args() args: PaginationArgsDto, @UserGql() user: IUser) {
+		return this._ordersService.getOrders(args, user);
 	}
 
 	@Query(() => PaginatedHistoryOrder)
@@ -180,23 +180,23 @@ export class OrdersResolver {
 		return this._ordersService.addTableToOrder(orderId, tableId);
 	}
 
-	@Mutation(() => ActiveOrderEntity)
-	@UseGuards(
-		GqlJwtGuard,
-		RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.WAITER, UserRoleEnum.HOSTESS])
-	)
-	async approveTableInOrder(@Args("orderId") orderId: string) {
-		return this._ordersService.approveTableInOrder(orderId);
-	}
+	// @Mutation(() => ActiveOrderEntity)
+	// @UseGuards(
+	// 	GqlJwtGuard,
+	// 	RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.WAITER, UserRoleEnum.HOSTESS])
+	// )
+	// async approveTableInOrder(@Args("orderId") orderId: string) {
+	// 	return this._ordersService.approveTableInOrder(orderId);
+	// }
 
-	@Mutation(() => ActiveOrderEntity)
-	@UseGuards(
-		GqlJwtGuard,
-		RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.WAITER, UserRoleEnum.HOSTESS])
-	)
-	async rejectTableInOrder(@Args("orderId") orderId: string) {
-		return this._ordersService.rejectTableInOrder(orderId);
-	}
+	// @Mutation(() => ActiveOrderEntity)
+	// @UseGuards(
+	// 	GqlJwtGuard,
+	// 	RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.WAITER, UserRoleEnum.HOSTESS])
+	// )
+	// async rejectTableInOrder(@Args("orderId") orderId: string) {
+	// 	return this._ordersService.rejectTableInOrder(orderId);
+	// }
 
 	@Mutation(() => ActiveOrderEntity)
 	@UseGuards(
@@ -259,7 +259,8 @@ export class OrdersResolver {
 			UserRoleEnum.MANAGER,
 			UserRoleEnum.WAITER,
 			UserRoleEnum.HOSTESS,
-			UserRoleEnum.HOOKAH
+			UserRoleEnum.HOOKAH,
+			UserRoleEnum.CLIENT
 		])
 	)
 	async cancelOrder(@Args("orderId") orderId: string) {

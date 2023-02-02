@@ -7,8 +7,7 @@ import { In } from "typeorm";
 import { PlaceEntity, UserToPlaceEntity } from "../../places/entities";
 import { getFindOptionsByFilters } from "../../shared";
 import { getFindOptionsJsonUtil } from "../../shared/crud/utils/get-find-options-json.util";
-import type { PaginationArgsDto } from "../../shared/dtos";
-import type { FiltersArgsDto } from "../../shared/dtos";
+import type { FiltersArgsDto, PaginationArgsDto } from "../../shared/dtos";
 import { ErrorsEnum, OrderStatusEnum, OrderTypeEnum, ProductToOrderStatusEnum, UserRoleEnum } from "../../shared/enums";
 import { TableStatusEnum } from "../../shared/enums/orders/table-status.enum";
 import type { IUser } from "../../shared/interfaces";
@@ -29,6 +28,7 @@ export class OrdersService {
 		"table",
 		"table.hall",
 		"place",
+		"waiters",
 		"users"
 	];
 
@@ -40,6 +40,7 @@ export class OrdersService {
 		"table",
 		"table.hall",
 		"place",
+		"waiters",
 		"users"
 	];
 
@@ -65,11 +66,38 @@ export class OrdersService {
 		});
 	}
 
-	async getOrders({ take, skip, filtersArgs }: PaginationArgsDto) {
+	async getOrders({ take, skip, filtersArgs }: PaginationArgsDto, user: IUser) {
 		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
 		const [data, count] = await this._ordersRepository.findAndCount({
-			where: findOptions.where,
+			where: {
+				...findOptions.where,
+				...(user.role === UserRoleEnum.ADMIN
+					? {}
+					: user.role === UserRoleEnum.MANAGER
+					? {
+							place: {
+								company: {
+									owner: {
+										id: user.id
+									}
+								}
+							}
+					  }
+					: user.role === UserRoleEnum.CLIENT
+					? {
+							users: {
+								id: user.id
+							}
+					  }
+					: {
+							waiters: {
+								user: {
+									id: user.id
+								}
+							}
+					  })
+			},
 			relations: this.findRelations,
 			take,
 			skip
@@ -260,17 +288,17 @@ export class OrdersService {
 		});
 	}
 
-	async approveTableInOrder(orderId: string) {
-		await this._ordersNotificationService.approveTableInOrderEvent(orderId);
-
-		return this._ordersRepository.save({ id: orderId, tableStatus: TableStatusEnum.APPROVED });
-	}
-
-	async rejectTableInOrder(orderId: string) {
-		await this._ordersNotificationService.rejectTableInOrderEvent(orderId);
-
-		return this._ordersRepository.save({ id: orderId, tableStatus: TableStatusEnum.REJECTED });
-	}
+	// async approveTableInOrder(orderId: string) {
+	// 	await this._ordersNotificationService.approveTableInOrderEvent(orderId);
+	//
+	// 	return this._ordersRepository.save({ id: orderId, tableStatus: TableStatusEnum.APPROVED });
+	// }
+	//
+	// async rejectTableInOrder(orderId: string) {
+	// 	await this._ordersNotificationService.rejectTableInOrderEvent(orderId);
+	//
+	// 	return this._ordersRepository.save({ id: orderId, tableStatus: TableStatusEnum.REJECTED });
+	// }
 
 	async removeTableFrom(orderId: string) {
 		await this._ordersNotificationService.removeTableFromOrderEvent(orderId);

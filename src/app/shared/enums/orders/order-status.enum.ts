@@ -6,5 +6,7 @@ export enum OrderStatusEnum {
 
 	CREATED = "CREATED",
 	CANCEL = "CANCEL",
-	CLOSED = "CLOSED"
+	CLOSED = "CLOSED",
+	APPROVED = "APPROVED",
+	REJECTED = "REJECTED"
 }
