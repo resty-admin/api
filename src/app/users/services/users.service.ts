@@ -29,7 +29,7 @@ export class UsersService {
 
 		const [data, count] = await this._userRepository.findAndCount({
 			where: findOptions.where,
-			relations: ["placesGuest"],
+			relations: [],
 			take,
 			skip
 		});

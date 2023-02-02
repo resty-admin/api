@@ -4,12 +4,12 @@ import * as console from "console";
 import { GraphQLError } from "graphql/error";
 import { In } from "typeorm";
 
-import { PlaceEntity } from "../../places/entities";
+import { PlaceEntity, UserToPlaceEntity } from "../../places/entities";
 import { getFindOptionsByFilters } from "../../shared";
 import { getFindOptionsJsonUtil } from "../../shared/crud/utils/get-find-options-json.util";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { FiltersArgsDto } from "../../shared/dtos";
-import { ErrorsEnum, OrderStatusEnum, OrderTypeEnum, ProductToOrderStatusEnum } from "../../shared/enums";
+import { ErrorsEnum, OrderStatusEnum, OrderTypeEnum, ProductToOrderStatusEnum, UserRoleEnum } from "../../shared/enums";
 import { TableStatusEnum } from "../../shared/enums/orders/table-status.enum";
 import type { IUser } from "../../shared/interfaces";
 import { ActiveShiftEntity } from "../../shifts/entities";
@@ -48,6 +48,7 @@ export class OrdersService {
 		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository,
 		@InjectRepository(ProductToOrderEntity) private readonly productToOrderRepository,
 		@InjectRepository(HistoryOrderEntity) private readonly _historyOrderRepository,
+		@InjectRepository(UserToPlaceEntity) private readonly _uTpRepository,
 		@InjectRepository(PlaceEntity) private readonly _placeRepository,
 		@InjectRepository(UserEntity) private readonly _userRepository,
 		@Inject(forwardRef(() => OrdersNotificationsService))
@@ -225,9 +226,7 @@ export class OrdersService {
 				}
 			});
 
-			await this._userRepository.save(
-				users.map((u) => ({ ...u, placesGuest: [...(u.placesGuest || []), order.place] }))
-			);
+			await this._uTpRepository.save(users.map((u) => ({ place: order.place.id, user: u, role: UserRoleEnum.CLIENT })));
 
 			await this._historyOrderRepository.save({ ...order, place: { id: order.place.id } });
 			await this._ordersRepository.delete(order.id);
