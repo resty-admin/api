@@ -198,6 +198,26 @@ export class PlacesService {
 			});
 		}
 
+		const waiterExist = await this._uTpRepository.findOne({
+			where: {
+				user: {
+					id: user.id
+				},
+				place: {
+					id: place.id
+				}
+			},
+			relations: ["place", "user"]
+		});
+
+		if (waiterExist) {
+			throw new GraphQLError(ErrorsEnum.WaiterExist.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
+
 		const userEntity = await this._usersRepository.findOne({ where: { id: user.id } });
 		return this._uTpRepository.save({ user: userEntity, place, role: UserRoleEnum.WAITER });
 	}
