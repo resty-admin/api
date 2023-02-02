@@ -71,10 +71,11 @@ export class ShiftsGuard implements CanActivate {
 			},
 			relations: [
 				"tables",
-				"tables.place",
-				"tables.place.usersToPlaces",
-				"tables.place.usersToPlaces.user",
-				"tables.place.owner"
+				"tables.hall.place",
+				"tables.hall.place.usersToPlaces",
+				"tables.hall.place.usersToPlaces.user",
+				"tables.hall.place.company",
+				"tables.hall.place.company.owner"
 			]
 		});
 
