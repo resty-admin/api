@@ -1,3 +1,5 @@
 import type { User } from "typegram/manage";
 
-export type ITelegramUser = User;
+import type { UserRoleEnum } from "../../enums";
+
+export type ITelegramUser = User & { role: UserRoleEnum };
