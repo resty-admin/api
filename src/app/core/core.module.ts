@@ -1,7 +1,6 @@
 import type { ApolloDriverConfig } from "@nestjs/apollo";
 import { Module } from "@nestjs/common";
 import { GraphQLModule } from "@nestjs/graphql";
-import { ServeStaticModule } from "@nestjs/serve-static";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
 import { AccountingSystemsModule } from "../accounting-systems/accounting-systems.module";
@@ -26,7 +25,7 @@ import { ShiftsModule } from "../shifts/shifts.module";
 import { StatisticModule } from "../statistics/statistic.module";
 import { TablesModule } from "../tables/tables.module";
 import { UsersModule } from "../users";
-import { API_CONFIG, CRYPTO_CONFIG, GRAPHQL_CONFIG, SERVER_STATIC_CONFIG, TYPEORM_CONFIG } from "./configs";
+import { API_CONFIG, CRYPTO_CONFIG, GRAPHQL_CONFIG, TYPEORM_CONFIG } from "./configs";
 import { CORE_FILTERS } from "./filters";
 import { CORE_INTERCEPTORS } from "./interceptors";
 
@@ -36,7 +35,6 @@ import { CORE_INTERCEPTORS } from "./interceptors";
 		GraphQLModule.forRoot<ApolloDriverConfig>(GRAPHQL_CONFIG),
 		ApiModule.forRoot(API_CONFIG),
 		CryptoModule.forRoot(CRYPTO_CONFIG),
-		ServeStaticModule.forRoot(SERVER_STATIC_CONFIG),
 		UsersModule,
 		FilesModule,
 		CommandsModule,
