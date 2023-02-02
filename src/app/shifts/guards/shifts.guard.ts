@@ -36,8 +36,20 @@ export class ShiftsGuard implements CanActivate {
 			where: {
 				id: In(tables)
 			},
-			relations: ["hall", "hall.place", "hall.place.company", "hall.place.company.owner"]
+			relations: ["hall", "hall.place", "hall.place.usersToPlaces", "hall.place.company", "hall.place.company.owner"]
 		});
+
+		if (currTable) {
+			return false;
+		}
+
+		const worker = currTable.hall.place.usersToPlaces.find(
+			(el) => el.user.id === userId && el.user.role !== UserRoleEnum.CLIENT
+		);
+
+		if (worker) {
+			return true;
+		}
 
 		return currTable.hall.place.company.owner.id === userId;
 	}
@@ -47,8 +59,16 @@ export class ShiftsGuard implements CanActivate {
 			where: {
 				id: shift
 			},
-			relations: ["tables", "tables.place", "tables.place.owner"]
+			relations: ["tables", "tables.place", "tables.place.usersToPlace", "tables.place.owner"]
 		});
+
+		const worker = currShift.tables[0].hall.place.usersToPlaces.find(
+			(el) => el.user.id === userId && el.user.role !== UserRoleEnum.CLIENT
+		);
+
+		if (worker) {
+			return true;
+		}
 
 		return currShift.tables[0].hall.place.company.owner.id === userId;
 	}
