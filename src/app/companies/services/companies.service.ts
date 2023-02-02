@@ -28,12 +28,14 @@ export class CompaniesService {
 		const [data, totalCount] = await this._companiesRepository.findAndCount({
 			where: {
 				...findOptions.where,
-				...(user.role !== UserRoleEnum.ADMIN && user.role === UserRoleEnum.MANAGER
+				...(user.role === UserRoleEnum.MANAGER
 					? {
 							owner: {
 								id: user.id
 							}
 					  }
+					: user.role === UserRoleEnum.ADMIN
+					? {}
 					: {
 							places: {
 								usersToPlaces: {
