@@ -114,7 +114,7 @@ export class PlacesResolver {
 	// }
 
 	@Mutation(() => UserToPlaceEntity)
-	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.WAITER]))
 	async addWaiterToPlace(@Args("waiterCode") code: number, @UserGql() user: IUser) {
 		return this._placesService.addWaiterToPlace(code, user);
 	}
