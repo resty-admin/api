@@ -26,11 +26,8 @@ export class ShiftsResolver {
 			UserRoleEnum.HOOKAH
 		])
 	)
-	async shift(
-		@Args("id", { type: () => String }) id: string,
-		@Args("filtersArgs", { type: () => [FiltersArgsDto], nullable: true }) filtersArgs: FiltersArgsDto[]
-	) {
-		return this._shiftsService.getShift(id, filtersArgs);
+	async shift(@Args("filtersArgs", { type: () => [FiltersArgsDto] }) filtersArgs: FiltersArgsDto[]) {
+		return this._shiftsService.getShift(filtersArgs);
 	}
 
 	@Query(() => PaginatedActiveShift)
