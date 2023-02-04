@@ -14,23 +14,13 @@ export class PlacesCronsService {
 	) {}
 
 	// 0 * * * *  - every hour
-	@Cron(CronExpression.EVERY_HOUR)
+	@Cron(CronExpression.EVERY_DAY_AT_1AM)
 	async handlePlacesStatus() {
-		// const places = await this._placesRepository.find();
-		// const currentHours = new Date().getHours();
-		//
-		// for (const place of places) {
-		// 	const shouldStatusBeClosed = place.endTime === currentHours;
-		// 	const shouldStatusBeOpened = place.startTime === currentHours;
-		//
-		// 	if (!shouldStatusBeClosed && !shouldStatusBeOpened) {
-		// 		return;
-		// 	}
-		//
-		// 	await this._placesService.updatePlace(place.id, {
-		// 		...place,
-		// 		status: shouldStatusBeOpened ? PlaceStatusEnum.OPENED : PlaceStatusEnum.CLOSED
-		// 	});
-		// }
+		const places = await this._placesRepository.find();
+
+		for (const place of places) {
+			const waiterCode = Math.floor(Math.random() * 10_000);
+			await this._placesRepository.save({ ...place, waiterCode });
+		}
 	}
 }

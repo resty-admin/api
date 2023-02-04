@@ -4,7 +4,7 @@ import { UserRoleEnum } from "src/app/shared/enums";
 
 import { GqlJwtGuard } from "../../auth";
 import { RolesGuard, UserGql } from "../../shared";
-import { PaginationArgsDto } from "../../shared/dtos";
+import { FiltersArgsDto, PaginationArgsDto } from "../../shared/dtos";
 import { IUser } from "../../shared/interfaces";
 import { CreateShiftInput, UpdateShiftInput } from "../dtos";
 import { ActiveShiftEntity, PaginatedActiveShift } from "../entities";
@@ -26,8 +26,11 @@ export class ShiftsResolver {
 			UserRoleEnum.HOOKAH
 		])
 	)
-	async shift(@Args("id", { type: () => String }) id: string) {
-		return this._shiftsService.getShift(id);
+	async shift(
+		@Args("id", { type: () => String }) id: string,
+		@Args("filtersArgs", { type: () => [FiltersArgsDto], nullable: true }) filtersArgs: FiltersArgsDto[]
+	) {
+		return this._shiftsService.getShift(id, filtersArgs);
 	}
 
 	@Query(() => PaginatedActiveShift)

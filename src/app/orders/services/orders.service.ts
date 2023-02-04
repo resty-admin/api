@@ -127,11 +127,14 @@ export class OrdersService {
 		};
 	}
 
-	async creatOrder(order: CreateOrderInput, user: IUser): Promise<ActiveOrderEntity> {
+	async createOrder(order: CreateOrderInput, user: IUser): Promise<ActiveOrderEntity> {
 		const date = new Date();
+
+		const waiters = await this.createWaitersForInPlaceOrder(order);
 
 		const savedOrder: ActiveOrderEntity = await this._ordersRepository.save({
 			...order,
+			waiters,
 			users: [{ id: user.id }],
 			...(order.productsToOrder?.length
 				? {
@@ -254,7 +257,20 @@ export class OrdersService {
 				}
 			});
 
-			await this._uTpRepository.save(users.map((u) => ({ place: order.place.id, user: u, role: UserRoleEnum.CLIENT })));
+			for (const user of users) {
+				const userExist = await this._uTpRepository.findOne({
+					where: {
+						user: {
+							id: user.id
+						}
+					},
+					relations: ["user"]
+				});
+
+				await (userExist
+					? this._uTpRepository.save({ ...user, visits: user.visits++ })
+					: this._uTpRepository.save({ place: order.place.id, user, role: UserRoleEnum.CLIENT, visits: 0 }));
+			}
 
 			await this._historyOrderRepository.save({ ...order, place: { id: order.place.id } });
 			await this._ordersRepository.delete(order.id);
@@ -303,5 +319,21 @@ export class OrdersService {
 	async removeTableFrom(orderId: string) {
 		await this._ordersNotificationService.removeTableFromOrderEvent(orderId);
 		return this._ordersRepository.save({ id: orderId, table: null });
+	}
+
+	async createWaitersForInPlaceOrder(order: CreateOrderInput) {
+		if (order.type !== OrderTypeEnum.IN_PLACE) {
+			return [];
+		}
+
+		const tableShifts: ActiveShiftEntity[] = await this._shiftsRepository.find({
+			where: {
+				tables: {
+					id: In([(order.table as unknown as { id: string }).id])
+				}
+			}
+		});
+
+		return tableShifts.map((el) => el.waiter);
 	}
 }

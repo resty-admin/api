@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType } from "@nestjs/graphql";
+import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, ManyToOne } from "typeorm";
 
 import { BaseEntity } from "../../shared";
@@ -22,6 +22,10 @@ export class UserToPlaceEntity extends BaseEntity {
 	@Field(() => UserRoleEnum)
 	@Column("enum", { enum: UserRoleEnum, default: UserRoleEnum.CLIENT })
 	role: UserRoleEnum;
+
+	@Field(() => Int, { nullable: true })
+	@Column("int", { nullable: true })
+	visits: number;
 }
 
 @ObjectType()

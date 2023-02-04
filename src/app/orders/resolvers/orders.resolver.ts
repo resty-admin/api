@@ -81,7 +81,7 @@ export class OrdersResolver {
 		])
 	)
 	async createOrder(@Args("order") order: CreateOrderInput, @UserGql() user: IUser) {
-		return this._ordersService.creatOrder(order, user);
+		return this._ordersService.createOrder(order, user);
 	}
 
 	@Mutation(() => ActiveOrderEntity)

@@ -1,8 +1,8 @@
 export enum UserRoleEnum {
 	ADMIN = "ADMIN",
 	MANAGER = "MANAGER",
-	HOSTESS = "HOSTESS",
 	WAITER = "WAITER",
+	HOSTESS = "HOSTESS",
 	HOOKAH = "HOOKAH",
 	CLIENT = "CLIENT"
 }

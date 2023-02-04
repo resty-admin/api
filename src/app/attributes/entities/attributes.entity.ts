@@ -14,9 +14,9 @@ export class AttributesEntity extends BaseEntity {
 	@Field(() => String)
 	name: string;
 
-	@Field(() => [AttributesGroupEntity])
-	@ManyToMany(() => AttributesGroupEntity, (attrGroup) => attrGroup.attributes, { onDelete: "CASCADE" })
-	attributesGroup: AttributesGroupEntity[];
+	@Field(() => [AttributesGroupEntity], { nullable: true })
+	@ManyToMany(() => AttributesGroupEntity, (attrGroup) => attrGroup.attributes, { nullable: true, onDelete: "CASCADE" })
+	attributesGroup?: AttributesGroupEntity[];
 
 	@Field(() => Int)
 	@Column({ nullable: true })

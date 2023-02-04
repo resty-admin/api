@@ -23,6 +23,6 @@ import { ORDERS_SERVICES } from "./services";
 		forwardRef(() => UsersModule)
 	],
 	providers: [...ORDERS_SERVICES, ...ORDERS_RESOLVERS, ...ORDERS_GATEWAYS],
-	exports: [TypeOrmModule]
+	exports: [TypeOrmModule, ...ORDERS_SERVICES]
 })
 export class OrdersModule {}
