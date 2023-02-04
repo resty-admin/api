@@ -20,7 +20,6 @@ export class ShiftsGuard implements CanActivate {
 		const { shiftId = null } = request.body.variables;
 		const { tables = [], id = null } = request.body.variables.shift || {};
 
-		console.log("here");
 		if (request.user.role === UserRoleEnum.ADMIN) {
 			return true;
 		}
@@ -33,7 +32,6 @@ export class ShiftsGuard implements CanActivate {
 	}
 
 	async createGuard(tables: string[], userId) {
-		console.log("here2");
 		const currTable = await this._tableRepository.findOne({
 			where: {
 				id: In(tables)
@@ -52,7 +50,6 @@ export class ShiftsGuard implements CanActivate {
 			return false;
 		}
 
-		console.log("userid", userId);
 		const worker = currTable.hall.place.usersToPlaces.find(
 			(el) => el.user.id === userId && el.user.role !== UserRoleEnum.CLIENT
 		);

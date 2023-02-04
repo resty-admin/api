@@ -1,5 +1,6 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Not } from "typeorm";
 
 import { UserToPlaceEntity } from "../../places/entities";
 import { ProductsService } from "../../products/services";
@@ -7,6 +8,7 @@ import { UserRoleEnum } from "../../shared/enums";
 import type { IUser } from "../../shared/interfaces";
 import { ActiveShiftEntity } from "../../shifts/entities";
 import { TablesService } from "../../tables/services";
+import type { UserEntity } from "../../users/entities";
 import type { ProductToOrderEntity } from "../entities";
 import { ActiveOrderEntity } from "../entities";
 import { OrdersGateway } from "../gateways";
@@ -27,15 +29,16 @@ export class OrdersNotificationsService {
 
 	async createOrderEvent(orderId: string) {
 		const order = await this._orderService.getOrder(orderId);
-		const waiters = await this.buildWaitersList(orderId);
-		this._orderGateway.emitEvent(ORDERS_EVENTS.CREATED, { order, waiters });
+		const employees = await this.buildEmployeesList(orderId);
+
+		this._orderGateway.emitEvent(ORDERS_EVENTS.CREATED, { order, employees });
 	}
 
 	async closeOrderEvent(orderId: string) {
 		const order = await this._orderService.getOrder(orderId);
-		const waiters = await this.buildWaitersList(orderId);
+		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.CLOSED, { order, waiters });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.CLOSED, { order, employees });
 	}
 
 	async cancelOrderEvent(order: ActiveOrderEntity) {
@@ -52,31 +55,31 @@ export class OrdersNotificationsService {
 
 	async confirmOrderEvent(orderId: string) {
 		const order = await this._orderService.getOrder(orderId);
-		const waiters = await this.buildWaitersList(orderId);
+		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.CONFIRM, { order, waiters });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.CONFIRM, { order, employees });
 	}
 
 	async waitingForManualPayOrderEvent(orderId: string) {
 		const order = await this._orderService.getOrder(orderId);
-		const waiters = await this.buildWaitersList(orderId);
+		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.WAITING_FOR_MANUAL_PAY, { order, waiters });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.WAITING_FOR_MANUAL_PAY, { order, employees });
 	}
 
 	async addUserToOrderEvent(orderId: string, user: IUser) {
 		const order = await this._orderService.getOrder(orderId);
-		const waiters = await this.buildWaitersList(orderId);
+		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.USER_ADDED, { order, waiters, user });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.USER_ADDED, { order, employees, user });
 	}
 
 	async addTableToOrderEvent(orderId: string, tableId: string) {
 		const order = await this._orderService.getOrder(orderId);
 		const table = await this._tableService.getTable(tableId);
-		const waiters = await this.buildWaitersList(orderId);
+		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.TABLE_ADDED, { order, waiters, table });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.TABLE_ADDED, { order, employees, table });
 	}
 
 	async approveTableInOrderEvent(orderId) {
@@ -91,48 +94,52 @@ export class OrdersNotificationsService {
 
 	async removeTableFromOrderEvent(orderId: string) {
 		const order = await this._orderService.getOrder(orderId);
-		const waiters = await this.buildWaitersList(orderId);
+		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.TABLE_REMOVED, { order, waiters });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.TABLE_REMOVED, { order, employees });
 	}
 
-	async buildWaitersList(orderId: string): Promise<IUser[]> {
+	async buildEmployeesList(orderId: string): Promise<UserEntity[]> {
 		const order: ActiveOrderEntity = await this._orderService.getOrder(orderId);
-		const waiters = [];
 
-		if (order.table) {
-			const activeShifts: ActiveShiftEntity[] = await this._shiftsRepository.find({
-				where: {
-					tables: {
-						id: order.table.id
-					}
-				},
-				relations: ["tables", "waiter"]
-			});
-
-			for (const el of activeShifts) {
-				waiters.push(el.waiter);
-			}
-		} else {
-			// const order: ActiveOrderEntity = await this._ordersRepository.findOne({
-			// 	where: { id: orderId },
-			// 	relations: ["place", "place.employees"]
-			// });
-
-			const uTps: UserToPlaceEntity[] = await this._uTpRepository.find({
-				where: {
-					role: UserRoleEnum.WAITER,
-					place: {
-						id: order.place.id
-					}
-				}
-			});
-
-			for (const el of uTps) {
-				waiters.push(el.user);
-			}
+		if (order.waiters) {
+			return order.waiters;
 		}
 
-		return waiters;
+		const otherWorkers: UserToPlaceEntity[] = await this._uTpRepository.find({
+			where: {
+				place: {
+					id: order.place.id
+				},
+				user: {
+					role: Not(UserRoleEnum.CLIENT)
+				}
+			}
+		});
+
+		return this.findExistedWorkersByPriority(otherWorkers);
+	}
+
+	private findExistedWorkersByPriority(fetchedWorkers: UserToPlaceEntity[]) {
+		const existedWorkers = [];
+		const roles = [UserRoleEnum.WAITER, UserRoleEnum.HOSTESS, UserRoleEnum.MANAGER];
+		let tmp = UserRoleEnum.MANAGER;
+
+		for (const [idx, _] of roles.entries()) {
+			if (existedWorkers.length > 0) {
+				return;
+			}
+
+			for (const fetchedWorker of fetchedWorkers) {
+				if (fetchedWorker.user.role === tmp) {
+					existedWorkers.push(fetchedWorker.user);
+				}
+			}
+
+			if (existedWorkers.length === 0) {
+				tmp = roles[idx + 1];
+			}
+		}
+		return existedWorkers;
 	}
 }

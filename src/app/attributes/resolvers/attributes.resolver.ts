@@ -7,7 +7,6 @@ import { RolesGuard } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
 import { CreateAttributeInput, UpdateAttributeInput } from "../dtos";
 import { AttributesEntity, PaginatedAttributes } from "../entities";
-import { AttributesGuard } from "../guards";
 import { AttributesService } from "../services";
 
 @Resolver(() => AttributesEntity)
@@ -47,19 +46,19 @@ export class AttributesResolver {
 	}
 
 	@Mutation(() => AttributesEntity)
-	@UseGuards(GqlJwtGuard, AttributesGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
 	async createAttr(@Args("attr") attr: CreateAttributeInput) {
 		return this._attributesService.createAttribute(attr);
 	}
 
 	@Mutation(() => AttributesEntity)
-	@UseGuards(GqlJwtGuard, AttributesGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
 	async updateAttr(@Args("attr") attr: UpdateAttributeInput) {
 		return this._attributesService.updateAttribute(attr.id, attr);
 	}
 
 	@Mutation(() => String)
-	@UseGuards(GqlJwtGuard, AttributesGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
 	async deleteAttr(@Args("attrId") id: string) {
 		return this._attributesService.deleteAttribute(id);
 	}

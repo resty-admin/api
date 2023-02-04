@@ -1,9 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { GraphQLError } from "graphql/error";
+import { Between, Repository } from "typeorm";
 
+import { ActiveOrderEntity } from "../../orders/entities";
+import { OrdersNotificationsService } from "../../orders/services";
 import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
+import type { FiltersArgsDto } from "../../shared/dtos";
 import { ErrorsEnum } from "../../shared/enums";
 import type { IUser } from "../../shared/interfaces";
 import type { CreateShiftInput, UpdateShiftInput } from "../dtos";
@@ -17,12 +21,19 @@ export class ShiftsService {
 
 	constructor(
 		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository,
-		@InjectRepository(HistoryShiftEntity) private readonly _historyShiftsRepository
+		@InjectRepository(HistoryShiftEntity) private readonly _historyShiftsRepository,
+		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository: Repository<ActiveOrderEntity>,
+		private readonly _ordersNotificationService: OrdersNotificationsService
 	) {}
 
-	async getShift(id: string) {
+	async getShift(id: string, filtersArgs?: FiltersArgsDto[]) {
+		const findOptions = filtersArgs?.length > 0 ? getFindOptionsByFilters(filtersArgs) : ([] as any);
+
 		return this._shiftsRepository.findOne({
-			where: { id },
+			where: {
+				id,
+				...findOptions.where
+			},
 			relations: this.findOneRelations
 		});
 	}
@@ -56,7 +67,6 @@ export class ShiftsService {
 	}
 
 	async createShift(shift: CreateShiftInput, user: IUser) {
-		console.log("here", shift);
 		const shiftPresent = await this._shiftsRepository.findOne({
 			where: { waiter: { id: user.id } },
 			relations: ["waiter"]
@@ -73,6 +83,30 @@ export class ShiftsService {
 			...shift,
 			waiter: { id: user.id }
 		});
+
+		const startDate = new Date(new Date().setHours(6, 0, 0));
+		const endDate = new Date(new Date().setHours(24, 0, 0));
+
+		const orders = await this._ordersRepository.find({
+			where: {
+				startDate: Between(startDate, endDate),
+				place: {
+					id: shift.place
+				}
+			}
+		});
+
+		if (orders.length > 0) {
+			await this._ordersRepository.save(
+				orders.map((o) => ({
+					...o,
+					waiters: [{ id: user.id }]
+				}))
+			);
+			for (const o of orders) {
+				await this._ordersNotificationService.createOrderEvent(o.id);
+			}
+		}
 
 		return this._shiftsRepository.findOne({
 			where: { id: savedShift.id }
