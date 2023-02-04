@@ -16,12 +16,14 @@ export class UsersService {
 	async getUser(where: FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[], filtersArgs?: FiltersArgsDto[]) {
 		const findOptions = filtersArgs?.length > 0 ? getFindOptionsByFilters(filtersArgs) : ([] as any);
 
-		return this._userRepository.findOne({
-			where: {
-				...(where || []),
-				...findOptions.where
-			}
-		});
+		return this._userRepository
+			.findOne({
+				where: {
+					...(where || []),
+					...findOptions.where
+				}
+			})
+			.catch(() => null);
 	}
 
 	async getUsers({ take, skip, filtersArgs }: PaginationArgsDto) {
