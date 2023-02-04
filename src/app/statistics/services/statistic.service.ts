@@ -27,7 +27,7 @@ export class StatisticService {
 			where: {
 				id: placeId
 			},
-			relations: ["halls", "halls.tables", "employees"]
+			relations: ["halls", "halls.tables"]
 		});
 
 		const ordersStatistic = orders.reduce(
@@ -41,7 +41,7 @@ export class StatisticService {
 
 		const result: StatisticType = {
 			...ordersStatistic,
-			employees: place.employees.length,
+			employees: 0,
 			tax: ordersStatistic.totalAmount * 0.05,
 			halls: place.halls.length,
 			tables: place.halls.reduce((pre, curr) => pre + curr.tables.length, 0)

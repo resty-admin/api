@@ -10,8 +10,8 @@ import { CompanyEntity } from "../entities";
 
 @Injectable()
 export class CompaniesService {
-	private findRelations = ["owner", "places", "logo"];
-	private findOneRelations = ["owner", "places", "logo"];
+	private findRelations = ["owner", "places", "places.usersToPlaces", "logo"];
+	private findOneRelations = ["owner", "places", "places.usersToPlaces", "logo"];
 
 	constructor(@InjectRepository(CompanyEntity) private readonly _companiesRepository) {}
 
@@ -28,13 +28,23 @@ export class CompaniesService {
 		const [data, totalCount] = await this._companiesRepository.findAndCount({
 			where: {
 				...findOptions.where,
-				...(user.role !== UserRoleEnum.ADMIN
+				...(user.role === UserRoleEnum.MANAGER
 					? {
 							owner: {
 								id: user.id
 							}
 					  }
-					: {})
+					: user.role === UserRoleEnum.ADMIN
+					? {}
+					: {
+							places: {
+								usersToPlaces: {
+									user: {
+										id: user.id
+									}
+								}
+							}
+					  })
 			},
 			relations: this.findRelations,
 			take,

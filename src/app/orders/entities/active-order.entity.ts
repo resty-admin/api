@@ -57,6 +57,11 @@ export class ActiveOrderEntity extends BaseEntity {
 	@OneToMany(() => ProductToOrderEntity, (pTo) => pTo.order, { nullable: true, cascade: true })
 	productsToOrders?: ProductToOrderEntity[];
 
+	@Field(() => [UserEntity], { nullable: true })
+	@ManyToMany(() => UserEntity, { cascade: true, nullable: true })
+	@JoinTable()
+	waiters?: UserEntity[];
+
 	@Field(() => Date)
 	@Column()
 	createdAt: Date;

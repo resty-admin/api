@@ -49,8 +49,8 @@ export class OrdersResolver {
 			UserRoleEnum.CLIENT
 		])
 	)
-	async orders(@Args() args: PaginationArgsDto) {
-		return this._ordersService.getOrders(args);
+	async orders(@Args() args: PaginationArgsDto, @UserGql() user: IUser) {
+		return this._ordersService.getOrders(args, user);
 	}
 
 	@Query(() => PaginatedHistoryOrder)
@@ -65,12 +65,21 @@ export class OrdersResolver {
 			UserRoleEnum.CLIENT
 		])
 	)
-	async historyOrders(@Args() args: PaginationArgsDto) {
-		return this._ordersService.getHistoryOrders(args);
+	async historyOrders(@Args("placeId") placeId: string, @Args() args: PaginationArgsDto) {
+		return this._ordersService.getHistoryOrders(placeId, args);
 	}
 
 	@Mutation(() => ActiveOrderEntity)
-	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.CLIENT]))
+	@UseGuards(
+		GqlJwtGuard,
+		RolesGuard([
+			UserRoleEnum.ADMIN,
+			UserRoleEnum.MANAGER,
+			UserRoleEnum.WAITER,
+			UserRoleEnum.HOSTESS,
+			UserRoleEnum.CLIENT
+		])
+	)
 	async createOrder(@Args("order") order: CreateOrderInput, @UserGql() user: IUser) {
 		return this._ordersService.creatOrder(order, user);
 	}
@@ -259,7 +268,8 @@ export class OrdersResolver {
 			UserRoleEnum.MANAGER,
 			UserRoleEnum.WAITER,
 			UserRoleEnum.HOSTESS,
-			UserRoleEnum.HOOKAH
+			UserRoleEnum.HOOKAH,
+			UserRoleEnum.CLIENT
 		])
 	)
 	async cancelOrder(@Args("orderId") orderId: string) {

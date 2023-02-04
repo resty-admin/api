@@ -6,10 +6,9 @@ import { GqlJwtGuard } from "../../auth";
 import { RolesGuard, UserGql } from "../../shared";
 import { FiltersArgsDto, PaginationArgsDto } from "../../shared/dtos";
 import { IUser } from "../../shared/interfaces";
-import { PaginatedUser } from "../../users/entities";
-import { CreatePlaceInput, UpdatePlaceInput } from "../dtos";
+import { CreatePlaceInput, UpdatePlaceInput, UserToPlaceInput } from "../dtos";
 import { AddEmployeeInput } from "../dtos/add-employee.dto";
-import { PaginatedPlace, PlaceEntity } from "../entities";
+import { PaginatedPlace, PaginatedUserToPlace, PlaceEntity, UserToPlaceEntity } from "../entities";
 import { PlaceGuard } from "../guards";
 import { PlaceEmployeeGuard } from "../guards/place-employee.guard";
 import { PlacesService } from "../services";
@@ -37,20 +36,20 @@ export class PlacesResolver {
 		return this._placesService.getPlace(id, filtersArgs);
 	}
 
-	@Query(() => PaginatedUser)
-	@UseGuards(
-		GqlJwtGuard,
-		RolesGuard([
-			UserRoleEnum.ADMIN,
-			UserRoleEnum.MANAGER,
-			UserRoleEnum.WAITER,
-			UserRoleEnum.HOSTESS,
-			UserRoleEnum.HOOKAH
-		])
-	)
-	async placeGuests(@Args("placeId", { type: () => String }) id: string, @Args() args: PaginationArgsDto) {
-		return this._placesService.getPlaceGuests(id, args);
-	}
+	// @Query(() => PaginatedUser)
+	// @UseGuards(
+	// 	GqlJwtGuard,
+	// 	RolesGuard([
+	// 		UserRoleEnum.ADMIN,
+	// 		UserRoleEnum.MANAGER,
+	// 		UserRoleEnum.WAITER,
+	// 		UserRoleEnum.HOSTESS,
+	// 		UserRoleEnum.HOOKAH
+	// 	])
+	// )
+	// async placeGuests(@Args("placeId", { type: () => String }) id: string, @Args() args: PaginationArgsDto) {
+	// 	return this._placesService.getPlaceGuests(id, args);
+	// }
 
 	@Query(() => PaginatedPlace)
 	@UseGuards(
@@ -66,6 +65,22 @@ export class PlacesResolver {
 	)
 	async places(@Args() args: PaginationArgsDto, @UserGql() user: IUser) {
 		return this._placesService.getPlaces(args, user);
+	}
+
+	@Query(() => PaginatedUserToPlace)
+	@UseGuards(
+		GqlJwtGuard,
+		RolesGuard([
+			UserRoleEnum.ADMIN,
+			UserRoleEnum.MANAGER,
+			UserRoleEnum.WAITER,
+			UserRoleEnum.HOSTESS,
+			UserRoleEnum.HOOKAH,
+			UserRoleEnum.CLIENT
+		])
+	)
+	async usersToPlaces(@Args() args: PaginationArgsDto) {
+		return this._placesService.getUserToPlace(args);
 	}
 
 	@Mutation(() => PlaceEntity)
@@ -86,10 +101,22 @@ export class PlacesResolver {
 		return this._placesService.deletePlace(id);
 	}
 
-	@Mutation(() => PlaceEntity)
-	@UseGuards(GqlJwtGuard, PlaceEmployeeGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
-	async addEmployeeToPlace(@Args("employeeData") employee: AddEmployeeInput) {
-		return this._placesService.addEmployeeToPlace(employee);
+	@Mutation(() => UserToPlaceEntity)
+	@UseGuards(GqlJwtGuard)
+	async addUserToPlace(@Args("data") data: UserToPlaceInput) {
+		return this._placesService.addUserToPlace(data);
+	}
+
+	// @Mutation(() => PlaceEntity)
+	// @UseGuards(GqlJwtGuard, PlaceEmployeeGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
+	// async addEmployeeToPlace(@Args("employeeData") employee: AddEmployeeInput) {
+	// 	return this._placesService.addEmployeeToPlace(employee);
+	// }
+
+	@Mutation(() => UserToPlaceEntity)
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.WAITER]))
+	async addWaiterToPlace(@Args("waiterCode") code: number, @UserGql() user: IUser) {
+		return this._placesService.addWaiterToPlace(code, user);
 	}
 
 	@Mutation(() => PlaceEntity)

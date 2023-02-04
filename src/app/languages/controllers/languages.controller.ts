@@ -4,6 +4,7 @@ import { UserRoleEnum } from "src/app/shared/enums";
 
 import { JwtGuard } from "../../auth";
 import { RolesGuard } from "../../shared";
+import { I18nService } from "../../shared/i18n/services";
 import { LANGUAGES } from "../constants";
 import { CreateLanguageDto, UpdateLanguageDto } from "../dtos";
 import { LanguageEntity } from "../entities";
@@ -11,7 +12,13 @@ import { LanguagesService } from "../services";
 
 @Controller(LANGUAGES)
 export class LanguagesController {
-	constructor(private readonly _languagesService: LanguagesService) {}
+	constructor(private readonly _languagesService: LanguagesService, private readonly _i18nService: I18nService) {}
+
+	@Post("refresh")
+	@ApiOperation({ summary: `Refresh languages` })
+	async refreshLangauges() {
+		return this._i18nService.refreshLanguages();
+	}
 
 	@Post()
 	@ApiOperation({ summary: `Create language` })

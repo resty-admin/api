@@ -4,11 +4,11 @@ import * as console from "console";
 import { GraphQLError } from "graphql/error";
 import { In } from "typeorm";
 
-import { PlaceEntity } from "../../places/entities";
+import { PlaceEntity, UserToPlaceEntity } from "../../places/entities";
 import { getFindOptionsByFilters } from "../../shared";
-import type { PaginationArgsDto } from "../../shared/dtos";
-import type { FiltersArgsDto } from "../../shared/dtos";
-import { ErrorsEnum, OrderStatusEnum, OrderTypeEnum, ProductToOrderStatusEnum } from "../../shared/enums";
+import { getFindOptionsJsonUtil } from "../../shared/crud/utils/get-find-options-json.util";
+import type { FiltersArgsDto, PaginationArgsDto } from "../../shared/dtos";
+import { ErrorsEnum, OrderStatusEnum, OrderTypeEnum, ProductToOrderStatusEnum, UserRoleEnum } from "../../shared/enums";
 import { TableStatusEnum } from "../../shared/enums/orders/table-status.enum";
 import type { IUser } from "../../shared/interfaces";
 import { ActiveShiftEntity } from "../../shifts/entities";
@@ -28,6 +28,7 @@ export class OrdersService {
 		"table",
 		"table.hall",
 		"place",
+		"waiters",
 		"users"
 	];
 
@@ -39,6 +40,7 @@ export class OrdersService {
 		"table",
 		"table.hall",
 		"place",
+		"waiters",
 		"users"
 	];
 
@@ -47,6 +49,7 @@ export class OrdersService {
 		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository,
 		@InjectRepository(ProductToOrderEntity) private readonly productToOrderRepository,
 		@InjectRepository(HistoryOrderEntity) private readonly _historyOrderRepository,
+		@InjectRepository(UserToPlaceEntity) private readonly _uTpRepository,
 		@InjectRepository(PlaceEntity) private readonly _placeRepository,
 		@InjectRepository(UserEntity) private readonly _userRepository,
 		@Inject(forwardRef(() => OrdersNotificationsService))
@@ -63,11 +66,38 @@ export class OrdersService {
 		});
 	}
 
-	async getOrders({ take, skip, filtersArgs }: PaginationArgsDto) {
+	async getOrders({ take, skip, filtersArgs }: PaginationArgsDto, user: IUser) {
 		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
 		const [data, count] = await this._ordersRepository.findAndCount({
-			where: findOptions.where,
+			where: {
+				...findOptions.where,
+				...(user.role === UserRoleEnum.ADMIN
+					? {}
+					: user.role === UserRoleEnum.MANAGER
+					? {
+							place: {
+								company: {
+									owner: {
+										id: user.id
+									}
+								}
+							}
+					  }
+					: user.role === UserRoleEnum.CLIENT
+					? {
+							users: {
+								id: user.id
+							}
+					  }
+					: {
+							waiters: {
+								user: {
+									id: user.id
+								}
+							}
+					  })
+			},
 			relations: this.findRelations,
 			take,
 			skip
@@ -80,19 +110,19 @@ export class OrdersService {
 		};
 	}
 
-	async getHistoryOrders({ take, skip, filtersArgs }: PaginationArgsDto) {
-		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
+	async getHistoryOrders(placeId: string, { take, skip, filtersArgs }: PaginationArgsDto) {
+		const repoBuilder = this._historyOrderRepository
+			.createQueryBuilder("order")
+			.innerJoinAndSelect("order.place", "place")
+			.where("place.id = :id", { id: placeId });
 
-		const [data, count] = await this._historyOrderRepository.findAndCount({
-			where: findOptions.where,
-			take,
-			skip,
-			relations: ["place"]
-		});
+		const builder = getFindOptionsJsonUtil(filtersArgs, repoBuilder, "order");
+
+		const data = await builder.take(take).skip(skip).getMany();
 
 		return {
 			data,
-			totalCount: count,
+			totalCount: data.length,
 			page: skip / take + 1
 		};
 	}
@@ -224,9 +254,7 @@ export class OrdersService {
 				}
 			});
 
-			await this._userRepository.save(
-				users.map((u) => ({ ...u, placesGuest: [...(u.placesGuest || []), order.place] }))
-			);
+			await this._uTpRepository.save(users.map((u) => ({ place: order.place.id, user: u, role: UserRoleEnum.CLIENT })));
 
 			await this._historyOrderRepository.save({ ...order, place: { id: order.place.id } });
 			await this._ordersRepository.delete(order.id);

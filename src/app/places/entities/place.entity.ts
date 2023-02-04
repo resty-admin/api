@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType } from "@nestjs/graphql";
+import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 
 import { PlaceToAccountingSystemEntity } from "../../accounting-systems/entities";
@@ -14,9 +14,9 @@ import { BaseEntity } from "../../shared/entities";
 import { Pagination } from "../../shared/entities/pagination.type";
 import { PlaceStatusEnum, PlaceVerificationStatusEnum } from "../../shared/enums";
 import { IFile } from "../../shared/interfaces";
-import { UserEntity } from "../../users/entities";
 import { PLACES } from "../constant";
 import { WorkingHoursDto } from "../dtos";
+import { UserToPlaceEntity } from "./user-to-place.entity";
 
 @ObjectType()
 @InputType("PlaceEntityInput")
@@ -83,6 +83,10 @@ export class PlaceEntity extends BaseEntity {
 	})
 	holidayDays: Map<Date, WorkingHoursDto>;
 
+	@Field(() => Int, { nullable: true })
+	@Column("int", { nullable: true })
+	waiterCode: number;
+
 	@OneToMany(() => AttributesGroupEntity, (attrGroups) => attrGroups.place, { nullable: true })
 	@Field(() => [AttributesGroupEntity])
 	attrGroups?: AttributesGroupEntity[];
@@ -95,9 +99,9 @@ export class PlaceEntity extends BaseEntity {
 	@OneToMany(() => CommandEntity, (command) => command.place, { nullable: true })
 	commands?: CommandEntity[];
 
-	@Field(() => [UserEntity], { nullable: true })
-	@OneToMany(() => UserEntity, (user) => user.place, { nullable: true })
-	employees?: UserEntity[];
+	// @Field(() => [UserEntity], { nullable: true })
+	// @OneToMany(() => UserEntity, (user) => user.place, { nullable: true })
+	// employees?: UserEntity[];
 
 	@Field(() => Boolean)
 	@Column("boolean", { default: false })
@@ -110,6 +114,10 @@ export class PlaceEntity extends BaseEntity {
 	@Field(() => [PlaceToAccountingSystemEntity], { nullable: true })
 	@OneToMany(() => PlaceToAccountingSystemEntity, (pTa) => pTa.place, { nullable: true })
 	accountingSystems: PlaceToAccountingSystemEntity[];
+
+	@Field(() => [UserToPlaceEntity], { nullable: true })
+	@OneToMany(() => UserToPlaceEntity, (uTp) => uTp.place, { nullable: true })
+	usersToPlaces: UserToPlaceEntity[];
 
 	// @Field(() => [UserEntity], { nullable: true })
 	// @ManyToMany(() => UserEntity, { nullable: true })

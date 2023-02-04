@@ -1,7 +1,8 @@
 import { Field, ID, InputType } from "@nestjs/graphql";
 
 // import GraphQLLong from 'graphql-type-long';
-import { IsNotEmpty, IsOptional, IsString } from "../../shared";
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from "../../shared";
+import { UserRoleEnum } from "../../shared/enums";
 import type { ITelegramUser } from "../../shared/interfaces";
 
 @InputType()
@@ -37,4 +38,8 @@ export class TelegramUserInput implements ITelegramUser {
 	@Field(() => Boolean, { nullable: true })
 	@IsOptional()
 	added_to_attachment_menu?: true;
+
+	@Field(() => UserRoleEnum)
+	@IsEnum(UserRoleEnum)
+	role: UserRoleEnum;
 }

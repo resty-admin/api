@@ -27,5 +27,7 @@ export enum ErrorsEnum {
 	NoActiveProductsExist = 1025,
 	InvalidOrderDate = 1026,
 	TableAlreadyReserved = 1027,
-	PosterTokenNotExist = 1028
+	PosterTokenNotExist = 1028,
+	InvalidWaiterCode = 1029,
+	WaiterExist = 1030
 }

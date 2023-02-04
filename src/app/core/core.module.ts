@@ -20,6 +20,7 @@ import { PlacesModule } from "../places/places.module";
 import { ProductsModule } from "../products/products.module";
 import { ApiModule } from "../shared/api";
 import { CryptoModule } from "../shared/crypto";
+import { I18nModule } from "../shared/i18n/i18n.module";
 import { ShiftsModule } from "../shifts/shifts.module";
 import { StatisticModule } from "../statistics/statistic.module";
 import { TablesModule } from "../tables/tables.module";
@@ -52,7 +53,8 @@ import { CORE_INTERCEPTORS } from "./interceptors";
 		AccountingSystemsModule,
 		AttributesModule,
 		ShiftsModule,
-		StatisticModule
+		StatisticModule,
+		I18nModule
 	],
 	providers: [...CORE_INTERCEPTORS, ...CORE_FILTERS]
 })

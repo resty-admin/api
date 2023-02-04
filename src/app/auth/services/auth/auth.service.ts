@@ -244,7 +244,7 @@ export class AuthService {
 		return `${domain}${removeFirstSlash("ADMIN_ROUTES.GOOGLE.absolutePath")}/${accessToken}`;
 	}
 
-	async telegram({ id, first_name, last_name }: ITelegramUser) {
+	async telegram({ id, first_name, last_name, role }: ITelegramUser) {
 		const existUser = await this._usersService.getUser({ telegramId: id });
 
 		if (existUser) {
@@ -254,7 +254,8 @@ export class AuthService {
 		const createdUser = await this._usersService.createUser({
 			telegramId: id,
 			name: `${first_name || ""} ${last_name || ""}`,
-			status: UserStatusEnum.VERIFIED
+			status: UserStatusEnum.VERIFIED,
+			role
 		});
 
 		return this._jwtService.getAccessToken(createdUser);

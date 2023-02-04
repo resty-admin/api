@@ -20,6 +20,7 @@ export class ShiftsGuard implements CanActivate {
 		const { shiftId = null } = request.body.variables;
 		const { tables = [], id = null } = request.body.variables.shift || {};
 
+		console.log("here");
 		if (request.user.role === UserRoleEnum.ADMIN) {
 			return true;
 		}
@@ -32,12 +33,33 @@ export class ShiftsGuard implements CanActivate {
 	}
 
 	async createGuard(tables: string[], userId) {
+		console.log("here2");
 		const currTable = await this._tableRepository.findOne({
 			where: {
 				id: In(tables)
 			},
-			relations: ["hall", "hall.place", "hall.place.company", "hall.place.company.owner"]
+			relations: [
+				"hall",
+				"hall.place",
+				"hall.place.usersToPlaces",
+				"hall.place.usersToPlaces.user",
+				"hall.place.company",
+				"hall.place.company.owner"
+			]
 		});
+
+		if (!currTable) {
+			return false;
+		}
+
+		console.log("userid", userId);
+		const worker = currTable.hall.place.usersToPlaces.find(
+			(el) => el.user.id === userId && el.user.role !== UserRoleEnum.CLIENT
+		);
+
+		if (worker) {
+			return true;
+		}
 
 		return currTable.hall.place.company.owner.id === userId;
 	}
@@ -47,8 +69,23 @@ export class ShiftsGuard implements CanActivate {
 			where: {
 				id: shift
 			},
-			relations: ["tables", "tables.place", "tables.place.owner"]
+			relations: [
+				"tables",
+				"tables.hall.place",
+				"tables.hall.place.usersToPlaces",
+				"tables.hall.place.usersToPlaces.user",
+				"tables.hall.place.company",
+				"tables.hall.place.company.owner"
+			]
 		});
+
+		const worker = currShift.tables[0].hall.place.usersToPlaces.find(
+			(el) => el.user.id === userId && el.user.role !== UserRoleEnum.CLIENT
+		);
+
+		if (worker) {
+			return true;
+		}
 
 		return currShift.tables[0].hall.place.company.owner.id === userId;
 	}
