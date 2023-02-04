@@ -1,5 +1,6 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { GraphQLError } from "graphql/error";
 import type { IUser } from "src/app/shared/interfaces";
 import type { FindOptionsWhere } from "typeorm";
 import { Repository } from "typeorm";
@@ -7,6 +8,7 @@ import { Repository } from "typeorm";
 import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import type { FiltersArgsDto } from "../../shared/dtos";
+import { ErrorsEnum } from "../../shared/enums";
 import { UserEntity } from "../entities";
 
 @Injectable()
@@ -16,14 +18,22 @@ export class UsersService {
 	async getUser(where: FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[], filtersArgs?: FiltersArgsDto[]) {
 		const findOptions = filtersArgs?.length > 0 ? getFindOptionsByFilters(filtersArgs) : ([] as any);
 
-		return this._userRepository
-			.findOne({
-				where: {
-					...(where || []),
-					...findOptions.where
+		const user = await this._userRepository.findOne({
+			where: {
+				...(where || []),
+				...findOptions.where
+			}
+		});
+
+		if (!user) {
+			throw new GraphQLError(ErrorsEnum.NotFound.toString(), {
+				extensions: {
+					code: 500
 				}
-			})
-			.catch(() => null);
+			});
+		}
+
+		return user;
 	}
 
 	async getUsers({ take, skip, filtersArgs }: PaginationArgsDto) {
