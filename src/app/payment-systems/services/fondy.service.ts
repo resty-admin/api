@@ -39,7 +39,7 @@ export class FondyService {
 			where: {
 				id: In(pTos)
 			},
-			relations: ["product", "order", "order.users", "order.place", "attributes"]
+			relations: ["product", "order", "order.users", "order.place", "attributesToProduct"]
 		});
 
 		const baseUrl = false && environment.production ? `https://dev-api.resty.od.ua` : `http://192.168.68.103:3000`;
@@ -50,7 +50,7 @@ export class FondyService {
 				(pre, curr) =>
 					pre +
 					curr.count *
-						((curr.attributes.length > 0 ? curr.attributes.reduce((pre, curr) => pre + curr.price, 0) : 0) +
+						((curr.attributesToProduct || []).reduce((pre, curr) => pre + curr.attribute.price, 0) +
 							curr.product.price),
 				0
 			);

@@ -121,9 +121,15 @@ export class ProductToOrderService {
 				user: {
 					id: user.id
 				},
-				...(productToOrder.attributesIds.length > 0
-					? { attributes: productToOrder.attributesIds.map((el) => ({ id: el })) }
-					: {}),
+				attributesToProduct: Object.entries(
+					(productToOrder.attributesIds || []).reduce(
+						(pre, curr) => ({
+							...pre,
+							[curr]: pre[curr] ? pre[curr] + 1 : 1
+						}),
+						{}
+					)
+				).map(([id, count]) => ({ attribute: { id }, count })),
 				count: productToOrder.count
 			}))
 		);
