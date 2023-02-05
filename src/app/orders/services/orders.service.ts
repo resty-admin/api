@@ -92,9 +92,7 @@ export class OrdersService {
 					  }
 					: {
 							waiters: {
-								user: {
-									id: user.id
-								}
+								id: user.id
 							}
 					  })
 			},
