@@ -13,7 +13,7 @@ import { UsersService } from "../services";
 export class UsersResolver {
 	constructor(private readonly _usersService: UsersService) {}
 
-	@Query(() => UserEntity)
+	@Query(() => UserEntity, { nullable: true })
 	@UseGuards(
 		GqlJwtGuard,
 		RolesGuard([
