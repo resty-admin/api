@@ -15,7 +15,7 @@ import { ShiftsService } from "../services";
 export class ShiftsResolver {
 	constructor(private readonly _shiftsService: ShiftsService) {}
 
-	@Query(() => ActiveShiftEntity)
+	@Query(() => ActiveShiftEntity, { nullable: true })
 	@UseGuards(
 		GqlJwtGuard,
 		RolesGuard([
