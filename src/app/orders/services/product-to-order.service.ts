@@ -121,6 +121,9 @@ export class ProductToOrderService {
 				user: {
 					id: user.id
 				},
+				...(productToOrder.attributesIds.length > 0
+					? { attributes: productToOrder.attributesIds.map((el) => ({ id: el })) }
+					: {}),
 				count: productToOrder.count
 			}))
 		);
