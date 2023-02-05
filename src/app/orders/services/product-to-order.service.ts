@@ -158,7 +158,8 @@ export class ProductToOrderService {
 			relations: [
 				"productsToOrders",
 				"productsToOrders.product",
-				"productsToOrders.attributes",
+				"productsToOrders.attributesToProduct",
+				"productsToOrders.attributesToProduct.attribute",
 				"productsToOrders.user"
 			]
 		});
@@ -228,8 +229,8 @@ export class ProductToOrderService {
 				(pre, curr) =>
 					pre +
 					curr.count *
-						((curr.attributes && curr.attributes.length > 0
-							? curr.attributes.reduce((pre, curr) => pre + curr.price, 0)
+						((curr.attributesToProduct && curr.attributesToProduct.length > 0
+							? curr.attributesToProduct.reduce((pre, curr) => pre + curr.attribute.price, 0)
 							: 0) +
 							curr.product.price),
 				0

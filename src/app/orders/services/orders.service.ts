@@ -24,7 +24,7 @@ export class OrdersService {
 		"productsToOrders",
 		"productsToOrders.user",
 		"productsToOrders.product",
-		"productsToOrders.attributes",
+		"productsToOrders.attributesToProduct",
 		"table",
 		"table.hall",
 		"place",
@@ -36,7 +36,7 @@ export class OrdersService {
 		"productsToOrders",
 		"productsToOrders.user",
 		"productsToOrders.product",
-		"productsToOrders.attributes",
+		"productsToOrders.attributesToProduct",
 		"table",
 		"table.hall",
 		"place",
@@ -142,7 +142,15 @@ export class OrdersService {
 							},
 							count: el.count,
 							product: el.productId,
-							attributes: el.attributesIds,
+							attributesToProduct: Object.entries(
+								(el.attributesIds || []).reduce(
+									(pre, curr) => ({
+										...pre,
+										[curr]: pre[curr] ? pre[curr] + 1 : 1
+									}),
+									{}
+								)
+							).map(([id, count]) => ({ attribute: { id }, count })),
 							status: ProductToOrderStatusEnum.WAITING_FOR_APPROVE
 						}))
 				  }
