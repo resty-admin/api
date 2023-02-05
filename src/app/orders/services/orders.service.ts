@@ -92,9 +92,7 @@ export class OrdersService {
 					  }
 					: {
 							waiters: {
-								user: {
-									id: user.id
-								}
+								id: user.id
 							}
 					  })
 			},
@@ -201,20 +199,36 @@ export class OrdersService {
 	}
 
 	async cancelOrder(orderId: string) {
-		const order = await this._ordersRepository.findOne({
-			where: { id: orderId },
-			relations: this.findOneRelations
-		});
+		const order = await this._ordersRepository
+			.findOne({
+				where: { id: orderId },
+				relations: this.findOneRelations
+			})
+			.catch(() => {
+				throw new GraphQLError(ErrorsEnum.AlreadyArchived.toString(), {
+					extensions: {
+						code: 500
+					}
+				});
+			});
 
 		await this._ordersNotificationService.cancelOrderEvent(order);
 		return this.archiveOrder({ ...order, status: OrderStatusEnum.CANCEL });
 	}
 
 	async closeOrder(orderId: string) {
-		const order = await this._ordersRepository.findOne({
-			where: { id: orderId },
-			relations: this.findOneRelations
-		});
+		const order = await this._ordersRepository
+			.findOne({
+				where: { id: orderId },
+				relations: this.findOneRelations
+			})
+			.catch(() => {
+				throw new GraphQLError(ErrorsEnum.AlreadyArchived.toString(), {
+					extensions: {
+						code: 500
+					}
+				});
+			});
 
 		await this._ordersNotificationService.closeOrderEvent(orderId);
 		return this.archiveOrder({ ...order, status: OrderStatusEnum.CLOSED });
@@ -268,7 +282,7 @@ export class OrdersService {
 				});
 
 				await (userExist
-					? this._uTpRepository.save({ ...user, visits: user.visits++ })
+					? this._uTpRepository.save({ ...userExist, visits: userExist.visits++ })
 					: this._uTpRepository.save({ place: order.place.id, user, role: UserRoleEnum.CLIENT, visits: 0 }));
 			}
 

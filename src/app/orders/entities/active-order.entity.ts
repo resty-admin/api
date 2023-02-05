@@ -5,6 +5,7 @@ import { PlaceEntity } from "../../places/entities";
 import { BaseEntity } from "../../shared";
 import { Pagination } from "../../shared/entities/pagination.type";
 import { OrderStatusEnum, OrderTypeEnum } from "../../shared/enums";
+import { TableStatusEnum } from "../../shared/enums/orders/table-status.enum";
 import { TableEntity } from "../../tables/entities";
 import { UserEntity } from "../../users/entities";
 import { ACTIVE_ORDERS } from "../constant";
@@ -27,9 +28,9 @@ export class ActiveOrderEntity extends BaseEntity {
 	@ManyToOne(() => TableEntity, (table) => table.orders, { nullable: true })
 	table?: TableEntity;
 
-	// @Field(() => TableStatusEnum)
-	// @Column("enum", { enum: TableStatusEnum, default: TableStatusEnum.EMPTY })
-	// tableStatus: TableStatusEnum;
+	@Field(() => TableStatusEnum)
+	@Column("enum", { enum: TableStatusEnum, default: TableStatusEnum.EMPTY })
+	tableStatus: TableStatusEnum;
 
 	@Field(() => [UserEntity], { nullable: true })
 	@ManyToMany(() => UserEntity, (user) => user.orders, { nullable: true })

@@ -33,7 +33,10 @@ export class AttributesService {
 	}
 
 	async createAttribute(attributeDto: CreateAttributeInput): Promise<AttributesEntity> {
-		const savedAttribute = await this._attributesRepository.save({ ...attributeDto });
+		const savedAttribute = await this._attributesRepository.save({
+			...attributeDto,
+			place: { id: attributeDto.place }
+		});
 
 		return this._attributesRepository.findOne({
 			where: { id: savedAttribute.id }

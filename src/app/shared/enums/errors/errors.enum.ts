@@ -29,5 +29,5 @@ export enum ErrorsEnum {
 	TableAlreadyReserved = 1027,
 	PosterTokenNotExist = 1028,
 	InvalidWaiterCode = 1029,
-	WaiterExist = 1030
+	AlreadyArchived = 1031
 }

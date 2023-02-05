@@ -26,12 +26,11 @@ export class ShiftsService {
 		private readonly _ordersNotificationService: OrdersNotificationsService
 	) {}
 
-	async getShift(id: string, filtersArgs?: FiltersArgsDto[]) {
+	async getShift(filtersArgs: FiltersArgsDto[]) {
 		const findOptions = filtersArgs?.length > 0 ? getFindOptionsByFilters(filtersArgs) : ([] as any);
 
 		return this._shiftsRepository.findOne({
 			where: {
-				id,
 				...findOptions.where
 			},
 			relations: this.findOneRelations

@@ -15,6 +15,11 @@ export class CreateAttributeInput {
 	@IsNotEmpty()
 	price: number;
 
+	@Field(() => String)
+	@IsString()
+	@IsNotEmpty()
+	place: string;
+
 	@Field(() => [String])
 	@Transform(({ value }) => value.map((id) => ({ id })))
 	@IsArray()

@@ -21,7 +21,7 @@ export class SignUpDto {
 	@IsCryptedLength(5)
 	password: string;
 
-	@IsEnum(UserRoleEnum)
+	@IsEnum([UserRoleEnum.WAITER, UserRoleEnum.CLIENT, UserRoleEnum.HOSTESS, UserRoleEnum.MANAGER, UserRoleEnum.HOOKAH])
 	@IsNotEmpty()
 	role: UserRoleEnum;
 }
@@ -44,6 +44,6 @@ export class SignUpInput {
 	password: string;
 
 	@Field(() => UserRoleEnum)
-	@IsEnum(UserRoleEnum)
+	@IsEnum([UserRoleEnum.WAITER, UserRoleEnum.CLIENT, UserRoleEnum.HOSTESS, UserRoleEnum.MANAGER, UserRoleEnum.HOOKAH])
 	role: UserRoleEnum;
 }

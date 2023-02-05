@@ -1,6 +1,7 @@
 import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
-import { Column, Entity, ManyToMany } from "typeorm";
+import { Column, Entity, ManyToMany, ManyToOne } from "typeorm";
 
+import { PlaceEntity } from "../../places/entities";
 import { BaseEntity } from "../../shared";
 import { Pagination } from "../../shared/entities/pagination.type";
 import { ATTRIBUTES } from "../constant";
@@ -17,6 +18,10 @@ export class AttributesEntity extends BaseEntity {
 	@Field(() => [AttributesGroupEntity], { nullable: true })
 	@ManyToMany(() => AttributesGroupEntity, (attrGroup) => attrGroup.attributes, { nullable: true, onDelete: "CASCADE" })
 	attributesGroup?: AttributesGroupEntity[];
+
+	@Field(() => PlaceEntity, { nullable: true })
+	@ManyToOne(() => PlaceEntity, { nullable: true })
+	place: PlaceEntity;
 
 	@Field(() => Int)
 	@Column({ nullable: true })

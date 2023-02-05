@@ -7,7 +7,7 @@ spec:
   selector:
     matchLabels:
       app: dev-nest-api-k8s
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
@@ -18,6 +18,7 @@ spec:
           image: registry.digitalocean.com/resty-registry/dev-nest-api:latest
           ports:
             - containerPort: 3000
+            - containerPort: 8081
 ---
 apiVersion: v1
 kind: Service
@@ -28,5 +29,10 @@ spec:
     app: dev-nest-api-k8s
   ports:
     - protocol: TCP
+      name: http
       port: 8080
       targetPort: 3000
+    - protocol: TCP
+      name: ws
+      port: 8081
+      targetPort: 8081
