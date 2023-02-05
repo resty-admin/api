@@ -37,6 +37,7 @@ export class OrdersService {
 		"productsToOrders.user",
 		"productsToOrders.product",
 		"productsToOrders.attributesToProduct",
+		"productsToOrders.attributesToProduct.attribute",
 		"table",
 		"table.hall",
 		"place",

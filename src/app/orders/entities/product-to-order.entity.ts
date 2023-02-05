@@ -26,7 +26,7 @@ export class ProductToOrderEntity extends BaseEntity {
 	// attributes?: AttributesEntity[];
 
 	@Field(() => [AttributeToProductEntity], { nullable: true })
-	@OneToMany(() => AttributeToProductEntity, (aTo) => aTo.attribute, { nullable: true, cascade: true })
+	@OneToMany(() => AttributeToProductEntity, (aTo) => aTo.productToOrder, { nullable: true, cascade: true })
 	attributesToProduct?: AttributeToProductEntity[];
 
 	@Field(() => ActiveOrderEntity)
