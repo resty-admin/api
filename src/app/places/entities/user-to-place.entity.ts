@@ -23,8 +23,8 @@ export class UserToPlaceEntity extends BaseEntity {
 	@Column("enum", { enum: UserRoleEnum, default: UserRoleEnum.CLIENT })
 	role: UserRoleEnum;
 
-	@Field(() => Int, { nullable: true })
-	@Column("int", { nullable: true })
+	@Field(() => Int)
+	@Column("int", { default: 1 })
 	visits: number;
 }
 
