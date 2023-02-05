@@ -165,7 +165,7 @@ export class ProductToOrderService {
 			where: {
 				id: In(productToOrderIds)
 			},
-			relations: ["order", "order.users"]
+			relations: ["order", "order.table", "product", "order.users"]
 		});
 
 		const updatedPtos = pTos.map((el) => ({ ...el, status: ProductToOrderStatusEnum.REJECTED }));
@@ -178,7 +178,7 @@ export class ProductToOrderService {
 			where: {
 				id: In(productToOrderIds)
 			},
-			relations: ["order", "order.users"]
+			relations: ["order", "order.table", "product", "order.users"]
 		});
 
 		const updatedPtos = pTos.map((el) => ({ ...el, status: ProductToOrderStatusEnum.APPROVED }));
@@ -191,7 +191,7 @@ export class ProductToOrderService {
 			where: {
 				id: In(productToOrderIds)
 			},
-			relations: ["order", "order.users"]
+			relations: ["order", "order.table", "product", "order.users"]
 		});
 
 		const updatedPtos = pTos.map((el) => ({ ...el, paidStatus: ProductToOrderPaidStatusEnum.WAITING }));
@@ -204,7 +204,7 @@ export class ProductToOrderService {
 			where: {
 				id: In(productToOrderIds)
 			},
-			relations: ["order", "order.users"]
+			relations: ["order", "order.table", "product", "order.users"]
 		});
 
 		const updatedPtos = pTos.map((el) => ({ ...el, paidStatus: ProductToOrderPaidStatusEnum.PAID }));
