@@ -19,8 +19,8 @@ export class AttributesEntity extends BaseEntity {
 	@ManyToMany(() => AttributesGroupEntity, (attrGroup) => attrGroup.attributes, { nullable: true, onDelete: "CASCADE" })
 	attributesGroup?: AttributesGroupEntity[];
 
-	@Field(() => PlaceEntity)
-	@ManyToOne(() => PlaceEntity, { cascade: true })
+	@Field(() => PlaceEntity, { nullable: true })
+	@ManyToOne(() => PlaceEntity, { nullable: true })
 	place: PlaceEntity;
 
 	@Field(() => Int)
