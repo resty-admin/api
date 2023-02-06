@@ -3,6 +3,7 @@ import * as fs from "fs";
 import { DataSource } from "typeorm";
 
 import { environment } from "../../../environments/environment";
+import { Admin1675617506058 } from "../../../migrations/1675617506058-admin";
 import { ACCOUNTING_SYSTEMS_ENTITIES } from "../../accounting-systems/entities";
 import { ATTRIBUTES_ENTITIES } from "../../attributes/entities";
 import { CATEGORIES_ENITITES } from "../../categories/entities";
@@ -26,7 +27,6 @@ export const TYPEORM_CONFIG: TypeOrmModuleOptions = {
 	username: environment.databaseUsername,
 	password: environment.databasePassword,
 	database: environment.databaseName,
-	// entities: [join(__dirname, '**', '*.entity.{ts,js}')],
 	entities: [
 		...USERS_ENITITES,
 		...FILES_ENTITIES,
@@ -46,9 +46,8 @@ export const TYPEORM_CONFIG: TypeOrmModuleOptions = {
 	],
 	synchronize: true,
 	migrationsTableName: "resty-api-migrations",
-	migrations: [],
+	migrations: [Admin1675617506058],
 	migrationsRun: false,
-	// environment.production,
 	...(environment.production
 		? {
 				ssl: {

@@ -194,7 +194,7 @@ export class AuthService {
 		}
 
 		const token = this._jwtService.getAccessToken(existedUser);
-		const resetPasswordLink = `http://192.168.68.102:4200/auth/reset-password/${token}`;
+		const resetPasswordLink = `http://192.168.68.103:4200/auth/reset-password/${token}`;
 
 		if ("email" in body) {
 			await this._mailsService.send(body.email, resetPasswordLink);

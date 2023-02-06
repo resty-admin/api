@@ -121,6 +121,15 @@ export class ProductToOrderService {
 				user: {
 					id: user.id
 				},
+				attributesToProduct: Object.entries(
+					(productToOrder.attributesIds || []).reduce(
+						(pre, curr) => ({
+							...pre,
+							[curr]: pre[curr] ? pre[curr] + 1 : 1
+						}),
+						{}
+					)
+				).map(([id, count]) => ({ attribute: { id }, count })),
 				count: productToOrder.count
 			}))
 		);
@@ -149,7 +158,8 @@ export class ProductToOrderService {
 			relations: [
 				"productsToOrders",
 				"productsToOrders.product",
-				"productsToOrders.attributes",
+				"productsToOrders.attributesToProduct",
+				"productsToOrders.attributesToProduct.attribute",
 				"productsToOrders.user"
 			]
 		});
@@ -165,7 +175,7 @@ export class ProductToOrderService {
 			where: {
 				id: In(productToOrderIds)
 			},
-			relations: ["order"]
+			relations: ["order", "order.table", "product", "order.users"]
 		});
 
 		const updatedPtos = pTos.map((el) => ({ ...el, status: ProductToOrderStatusEnum.REJECTED }));
@@ -178,7 +188,7 @@ export class ProductToOrderService {
 			where: {
 				id: In(productToOrderIds)
 			},
-			relations: ["order"]
+			relations: ["order", "order.table", "product", "order.users"]
 		});
 
 		const updatedPtos = pTos.map((el) => ({ ...el, status: ProductToOrderStatusEnum.APPROVED }));
@@ -191,7 +201,7 @@ export class ProductToOrderService {
 			where: {
 				id: In(productToOrderIds)
 			},
-			relations: ["order"]
+			relations: ["order", "order.table", "product", "order.users"]
 		});
 
 		const updatedPtos = pTos.map((el) => ({ ...el, paidStatus: ProductToOrderPaidStatusEnum.WAITING }));
@@ -204,7 +214,7 @@ export class ProductToOrderService {
 			where: {
 				id: In(productToOrderIds)
 			},
-			relations: ["order"]
+			relations: ["order", "order.table", "product", "order.users"]
 		});
 
 		const updatedPtos = pTos.map((el) => ({ ...el, paidStatus: ProductToOrderPaidStatusEnum.PAID }));
@@ -219,8 +229,8 @@ export class ProductToOrderService {
 				(pre, curr) =>
 					pre +
 					curr.count *
-						((curr.attributes && curr.attributes.length > 0
-							? curr.attributes.reduce((pre, curr) => pre + curr.price, 0)
+						((curr.attributesToProduct && curr.attributesToProduct.length > 0
+							? curr.attributesToProduct.reduce((pre, curr) => pre + curr.attribute.price, 0)
 							: 0) +
 							curr.product.price),
 				0
