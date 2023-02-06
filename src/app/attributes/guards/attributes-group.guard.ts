@@ -43,7 +43,6 @@ export class AttributesGroupGuard implements CanActivate {
 	}
 
 	async updateGuard(attrGroupId: string, userId: string) {
-		console.log("here");
 		const currPlace = await this._placeRepository.findOne({
 			where: {
 				attrGroups: {
