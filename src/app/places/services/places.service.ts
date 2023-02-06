@@ -83,7 +83,6 @@ export class PlacesService {
 	async getPlaces({ take, skip, filtersArgs }: PaginationArgsDto, user: IUser) {
 		const findOptions = getFindOptionsByFilters(filtersArgs) as any;
 
-		console.log("xyi1");
 		const [data, count] = await this._placesRepository.findAndCount({
 			where: {
 				...findOptions.where,

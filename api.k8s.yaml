@@ -28,12 +28,11 @@ spec:
   selector:
     app: prod-nest-api-k8s
   ports:
-    ports:
-      - protocol: TCP
-        name: http
-        port: 8080
-        targetPort: 3000
-      - protocol: TCP
-        name: ws
-        port: 8081
-        targetPort: 8081
+    - protocol: TCP
+      name: http
+      port: 8080
+      targetPort: 3000
+    - protocol: TCP
+      name: ws
+      port: 8081
+      targetPort: 8081
