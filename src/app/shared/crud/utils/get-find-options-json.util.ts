@@ -18,9 +18,12 @@ export const getFindOptionsJsonUtil = (filters: Filter[], queryBuilder: any, fie
 				? { [rootKey]: value }
 				: fieldsKeys.reduce((pre: any, curr, idx) => ({ [fieldsKeys[fieldsKeys.length - 1 - idx]]: pre }), value);
 
+		const isJsonOperator = operator === "@>[]" || operator === "@>";
+
 		return {
 			...pre,
-			[`${fieldName}.${rootKey} ${operator} :${rootKey}`]: jsonValue
+			[`${fieldName}.${rootKey} ${isJsonOperator ? "@>" : operator} :${rootKey}`]:
+				operator === "@>[]" ? { [rootKey]: JSON.stringify([jsonValue[rootKey]]) } : jsonValue
 		};
 	}, {});
 

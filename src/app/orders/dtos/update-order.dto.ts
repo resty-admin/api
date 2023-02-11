@@ -1,8 +1,8 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { Transform } from "class-transformer";
-import { OrderStatusEnum, OrderTypeEnum } from "src/app/shared/enums";
+import { OrderTypeEnum } from "src/app/shared/enums";
 
-import { IsEnum, IsOptional } from "../../shared";
+import { IsDate, IsEnum, IsOptional } from "../../shared";
 
 @InputType()
 export class UpdateOrderInput {
@@ -14,14 +14,10 @@ export class UpdateOrderInput {
 	@Transform(({ value }) => ({ id: value }))
 	table?: string;
 
-	@Field(() => [String], { nullable: true })
+	@Field(() => Date, { nullable: true })
 	@IsOptional()
-	@Transform(({ value }) => value.map((id) => ({ id })))
-	users?: string[];
-
-	@Field(() => OrderStatusEnum, { nullable: true })
-	@IsOptional()
-	status?: OrderStatusEnum;
+	@IsDate()
+	startDate?: string;
 
 	@Field(() => OrderTypeEnum, { nullable: true })
 	@IsOptional()

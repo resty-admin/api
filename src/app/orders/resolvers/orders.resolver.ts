@@ -7,7 +7,14 @@ import { RolesGuard, UserGql } from "../../shared";
 import { FiltersArgsDto, PaginationArgsDto } from "../../shared/dtos";
 import { IUser } from "../../shared/interfaces";
 import { ConfirmProductToOrderInput, CreateOrderInput, UpdateOrderInput } from "../dtos";
-import { ActiveOrderEntity, PaginatedActiveOrder, PaginatedHistoryOrder, ProductToOrderEntity } from "../entities";
+import {
+	ActiveOrderEntity,
+	HistoryOrderEntity,
+	PaginatedActiveOrder,
+	PaginatedHistoryOrder,
+	ProductToOrderEntity
+} from "../entities";
+import { ORDERS_EVENTS } from "../gateways/events/order.event";
 import { OrdersGuard } from "../guards/orders.guard";
 import { OrdersService, ProductToOrderService } from "../services";
 
@@ -53,6 +60,22 @@ export class OrdersResolver {
 		return this._ordersService.getOrders(args, user);
 	}
 
+	@Query(() => ORDERS_EVENTS)
+	@UseGuards(
+		GqlJwtGuard,
+		RolesGuard([
+			UserRoleEnum.ADMIN,
+			UserRoleEnum.MANAGER,
+			UserRoleEnum.WAITER,
+			UserRoleEnum.HOSTESS,
+			UserRoleEnum.HOOKAH,
+			UserRoleEnum.CLIENT
+		])
+	)
+	async ordersEvents() {
+		return ORDERS_EVENTS;
+	}
+
 	@Query(() => PaginatedHistoryOrder)
 	@UseGuards(
 		GqlJwtGuard,
@@ -67,6 +90,38 @@ export class OrdersResolver {
 	)
 	async historyOrders(@Args("placeId") placeId: string, @Args() args: PaginationArgsDto) {
 		return this._ordersService.getHistoryOrders(placeId, args);
+	}
+
+	@Query(() => HistoryOrderEntity)
+	@UseGuards(
+		GqlJwtGuard,
+		RolesGuard([
+			UserRoleEnum.ADMIN,
+			UserRoleEnum.MANAGER,
+			UserRoleEnum.WAITER,
+			UserRoleEnum.HOSTESS,
+			UserRoleEnum.HOOKAH,
+			UserRoleEnum.CLIENT
+		])
+	)
+	async clientHistoryOrder(@UserGql() user: IUser, @Args("orderId") orderId: string) {
+		return this._ordersService.clientHistoryOrder(user, orderId);
+	}
+
+	@Query(() => PaginatedHistoryOrder)
+	@UseGuards(
+		GqlJwtGuard,
+		RolesGuard([
+			UserRoleEnum.ADMIN,
+			UserRoleEnum.MANAGER,
+			UserRoleEnum.WAITER,
+			UserRoleEnum.HOSTESS,
+			UserRoleEnum.HOOKAH,
+			UserRoleEnum.CLIENT
+		])
+	)
+	async clientHistoryOrders(@UserGql() user: IUser, @Args() args: PaginationArgsDto) {
+		return this._ordersService.clientHistoryOrders(user, args);
 	}
 
 	@Mutation(() => ActiveOrderEntity)
@@ -87,7 +142,7 @@ export class OrdersResolver {
 	@Mutation(() => ActiveOrderEntity)
 	@UseGuards(
 		GqlJwtGuard,
-		OrdersGuard,
+		// OrdersGuard,
 		RolesGuard([
 			UserRoleEnum.ADMIN,
 			UserRoleEnum.MANAGER,
@@ -194,8 +249,8 @@ export class OrdersResolver {
 		GqlJwtGuard,
 		RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.WAITER, UserRoleEnum.HOSTESS])
 	)
-	async approveTableInOrder(@Args("orderId") orderId: string) {
-		return this._ordersService.approveTableInOrder(orderId);
+	async approveOrder(@Args("orderId") orderId: string) {
+		return this._ordersService.approveOrder(orderId);
 	}
 
 	@Mutation(() => ActiveOrderEntity)
@@ -203,8 +258,8 @@ export class OrdersResolver {
 		GqlJwtGuard,
 		RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.WAITER, UserRoleEnum.HOSTESS])
 	)
-	async rejectTableInOrder(@Args("orderId") orderId: string) {
-		return this._ordersService.rejectTableInOrder(orderId);
+	async rejectOrder(@Args("orderId") orderId: string) {
+		return this._ordersService.rejectOrder(orderId);
 	}
 
 	@Mutation(() => ActiveOrderEntity)

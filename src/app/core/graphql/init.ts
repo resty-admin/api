@@ -12,8 +12,7 @@ import {
 	UserStatusEnum
 } from "src/app/shared/enums";
 
-import { TableStatusEnum } from "../../shared/enums/orders/table-status.enum";
-import { OrdersEvents } from "../../shared/events";
+import { ORDERS_EVENTS } from "../../orders/gateways/events/order.event";
 
 export function initGraphql() {
 	registerEnumType(UserRoleEnum, { name: "UserRoleEnum" });
@@ -25,7 +24,7 @@ export function initGraphql() {
 	registerEnumType(AttributeGroupTypeEnum, { name: "AttributeGroupTypeEnum" });
 	registerEnumType(ProductToOrderStatusEnum, { name: "ProductToOrderStatusEnum" });
 	registerEnumType(ProductToOrderPaidStatusEnum, { name: "ProductToOrderPaidStatusEnum" });
-	registerEnumType(TableStatusEnum, { name: "TableStatusEnum" });
+	// registerEnumType(TableStatusEnum, { name: "TableStatusEnum" });
 	registerEnumType(PlaceVerificationStatusEnum, { name: "PlaceVerificationStatusEnum" });
-	registerEnumType(OrdersEvents, { name: "OrdersEvents" });
+	registerEnumType(ORDERS_EVENTS, { name: "OrdersEvents" });
 }

@@ -26,9 +26,9 @@ async function bootstrap() {
 
 	await app.listen(environment.port);
 
-	Logger.log(`🚀 Application is running on: http://172.30.8.211:${environment.port}/api`, "Bootstrap");
-	Logger.log(`🚀 Swagger is running on: http://172.30.8.211:${environment.port}/api/swagger`, "Bootstrap");
-	Logger.log(`🚀 Graphql playground is running on: http://172.30.8.211:${environment.port}/graphql`, "Bootstrap");
+	Logger.log(`🚀 Application is running on: http://192.168.68.101:${environment.port}/api`, "Bootstrap");
+	Logger.log(`🚀 Swagger is running on: http://192.168.68.101:${environment.port}/api/swagger`, "Bootstrap");
+	Logger.log(`🚀 Graphql playground is running on: http://192.168.68.101:${environment.port}/graphql`, "Bootstrap");
 }
 
 bootstrap().then();

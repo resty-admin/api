@@ -41,16 +41,23 @@ export class OrdersNotificationsService {
 		this._orderGateway.emitEvent(ORDERS_EVENTS.CLOSED, { order, employees });
 	}
 
+	async requestToConfirmOrderEvent(orderId) {
+		const order = await this._orderService.getOrder(orderId);
+		const employees = await this.buildEmployeesList(orderId);
+
+		this._orderGateway.emitEvent(ORDERS_EVENTS.REQUEST_TO_CONFIRM, { order, employees });
+	}
+
 	async cancelOrderEvent(order: ActiveOrderEntity) {
 		this._orderGateway.emitEvent(ORDERS_EVENTS.CANCELED, { order });
 	}
 
-	async rejectOrderEvent(order: ActiveOrderEntity, pTos: ProductToOrderEntity[]) {
-		this._orderGateway.emitEvent(ORDERS_EVENTS.REJECTED, { order, pTos });
+	async rejectOrderPtosEvent(order: ActiveOrderEntity, pTos: ProductToOrderEntity[]) {
+		this._orderGateway.emitEvent(ORDERS_EVENTS.PTO_REJECTED, { order, pTos });
 	}
 
-	async approveOrderEvent(order: ActiveOrderEntity, pTos: ProductToOrderEntity[]) {
-		this._orderGateway.emitEvent(ORDERS_EVENTS.APPROVED, { order, pTos });
+	async approveOrderPtosEvent(order: ActiveOrderEntity, pTos: ProductToOrderEntity[]) {
+		this._orderGateway.emitEvent(ORDERS_EVENTS.PTO_APPROVED, { order, pTos });
 	}
 
 	async confirmOrderEvent(orderId: string) {
@@ -82,14 +89,14 @@ export class OrdersNotificationsService {
 		this._orderGateway.emitEvent(ORDERS_EVENTS.TABLE_ADDED, { order, employees, table });
 	}
 
-	async approveTableInOrderEvent(orderId) {
+	async approveOrderEvent(orderId) {
 		const order = await this._orderService.getOrder(orderId);
-		this._orderGateway.emitEvent(ORDERS_EVENTS.TABLE_APPROVED, { order });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.APPROVED, { order });
 	}
 
-	async rejectTableInOrderEvent(orderId) {
+	async rejectOrderEvent(orderId) {
 		const order = await this._orderService.getOrder(orderId);
-		this._orderGateway.emitEvent(ORDERS_EVENTS.TABLE_REJECTED, { order });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.REJECTED, { order });
 	}
 
 	async removeTableFromOrderEvent(orderId: string) {
@@ -122,8 +129,9 @@ export class OrdersNotificationsService {
 
 	private findExistedWorkersByPriority(fetchedWorkers: UserToPlaceEntity[]) {
 		const existedWorkers = [];
-		const roles = [UserRoleEnum.WAITER, UserRoleEnum.HOSTESS, UserRoleEnum.MANAGER];
-		let tmp = UserRoleEnum.MANAGER;
+		// const roles = [UserRoleEnum.WAITER, UserRoleEnum.HOSTESS, UserRoleEnum.MANAGER];
+		const roles = [UserRoleEnum.WAITER, UserRoleEnum.HOSTESS];
+		let tmp = UserRoleEnum.HOSTESS;
 
 		for (const [idx, _] of roles.entries()) {
 			if (existedWorkers.length > 0) {

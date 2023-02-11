@@ -19,7 +19,7 @@ export class PlacesCronsService {
 		const places = await this._placesRepository.find();
 
 		for (const place of places) {
-			const waiterCode = Math.floor(Math.random() * 10_000);
+			const waiterCode = Math.floor(1000 + Math.random() * 9999);
 			await this._placesRepository.save({ ...place, waiterCode });
 		}
 	}
