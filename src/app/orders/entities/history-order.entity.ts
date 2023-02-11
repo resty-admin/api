@@ -27,7 +27,7 @@ export class HistoryOrderEntity extends BaseEntity {
 	@Column({
 		type: "jsonb",
 		array: false,
-		default: () => "'[]'",
+		default: () => `('${JSON.stringify({})}')`,
 		nullable: true
 	})
 	@Field(() => [GraphQLJSONObject])
