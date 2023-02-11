@@ -210,8 +210,8 @@ export class OrdersResolver {
 		GqlJwtGuard,
 		RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.WAITER, UserRoleEnum.HOSTESS])
 	)
-	async approveTableInOrder(@Args("orderId") orderId: string) {
-		return this._ordersService.approveTableInOrder(orderId);
+	async approveOrder(@Args("orderId") orderId: string) {
+		return this._ordersService.approveOrder(orderId);
 	}
 
 	@Mutation(() => ActiveOrderEntity)
@@ -219,8 +219,8 @@ export class OrdersResolver {
 		GqlJwtGuard,
 		RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.WAITER, UserRoleEnum.HOSTESS])
 	)
-	async rejectTableInOrder(@Args("orderId") orderId: string) {
-		return this._ordersService.rejectTableInOrder(orderId);
+	async rejectOrder(@Args("orderId") orderId: string) {
+		return this._ordersService.rejectOrder(orderId);
 	}
 
 	@Mutation(() => ActiveOrderEntity)

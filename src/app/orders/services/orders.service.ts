@@ -9,7 +9,6 @@ import { getFindOptionsByFilters } from "../../shared";
 import { getFindOptionsJsonUtil } from "../../shared/crud/utils/get-find-options-json.util";
 import type { FiltersArgsDto, PaginationArgsDto } from "../../shared/dtos";
 import { ErrorsEnum, OrderStatusEnum, OrderTypeEnum, ProductToOrderStatusEnum, UserRoleEnum } from "../../shared/enums";
-import { TableStatusEnum } from "../../shared/enums/orders/table-status.enum";
 import type { IUser } from "../../shared/interfaces";
 import { ActiveShiftEntity } from "../../shifts/entities";
 import { UserEntity } from "../../users/entities";
@@ -127,9 +126,12 @@ export class OrdersService {
 	}
 
 	async clientHistoryOrders(user: IUser, { take, skip }: PaginationArgsDto) {
-		const repoBuilder = this._historyOrderRepository.createQueryBuilder("order").where("order.users @> :users", {
-			users: JSON.stringify([{ id: user.id }])
-		});
+		const repoBuilder = this._historyOrderRepository
+			.createQueryBuilder("order")
+			.innerJoinAndSelect("order.place", "place")
+			.where("order.users @> :users", {
+				users: JSON.stringify([{ id: user.id }])
+			});
 
 		const data = await repoBuilder.take(take).skip(skip).getMany();
 
@@ -336,21 +338,20 @@ export class OrdersService {
 		return this._ordersRepository.save({
 			id: orderId,
 			table: { id: tableId },
-			tableStatus:
-				order.type === OrderTypeEnum.IN_PLACE ? TableStatusEnum.APPROVED : TableStatusEnum.WAITING_FOR_APPROVE
+			status: OrderStatusEnum.REQUEST_TO_CONFIRM
 		});
 	}
 
-	async approveTableInOrder(orderId: string) {
-		await this._ordersNotificationService.approveTableInOrderEvent(orderId);
+	async approveOrder(orderId: string) {
+		// await this._ordersNotificationService.approveTableInOrderEvent(orderId);
 
-		return this._ordersRepository.save({ id: orderId, tableStatus: TableStatusEnum.APPROVED });
+		return this._ordersRepository.save({ id: orderId, status: OrderStatusEnum.APPROVED });
 	}
 
-	async rejectTableInOrder(orderId: string) {
-		await this._ordersNotificationService.rejectTableInOrderEvent(orderId);
+	async rejectOrder(orderId: string) {
+		// await this._ordersNotificationService.rejectTableInOrderEvent(orderId);
 
-		return this._ordersRepository.save({ id: orderId, tableStatus: TableStatusEnum.REJECTED });
+		return this._ordersRepository.save({ id: orderId, status: OrderStatusEnum.REJECTED });
 	}
 
 	async removeTableFrom(orderId: string) {
