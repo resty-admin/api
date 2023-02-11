@@ -142,6 +142,18 @@ export class OrdersService {
 		};
 	}
 
+	async clientHistoryOrder(user: IUser, orderId: string) {
+		const repoBuilder = this._historyOrderRepository
+			.createQueryBuilder("order")
+			.innerJoinAndSelect("order.place", "place")
+			.where("order.id = :orderId", { orderId })
+			.andWhere("order.users @> :users", {
+				users: JSON.stringify([{ id: user.id }])
+			});
+
+		return repoBuilder.getOne();
+	}
+
 	async createOrder(order: CreateOrderInput, user: IUser): Promise<ActiveOrderEntity> {
 		const date = new Date();
 

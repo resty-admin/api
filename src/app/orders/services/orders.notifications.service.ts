@@ -45,12 +45,12 @@ export class OrdersNotificationsService {
 		this._orderGateway.emitEvent(ORDERS_EVENTS.CANCELED, { order });
 	}
 
-	async rejectOrderEvent(order: ActiveOrderEntity, pTos: ProductToOrderEntity[]) {
-		this._orderGateway.emitEvent(ORDERS_EVENTS.REJECTED, { order, pTos });
+	async rejectOrderPtosEvent(order: ActiveOrderEntity, pTos: ProductToOrderEntity[]) {
+		this._orderGateway.emitEvent(ORDERS_EVENTS.PTO_REJECTED, { order, pTos });
 	}
 
-	async approveOrderEvent(order: ActiveOrderEntity, pTos: ProductToOrderEntity[]) {
-		this._orderGateway.emitEvent(ORDERS_EVENTS.APPROVED, { order, pTos });
+	async approveOrderPtosEvent(order: ActiveOrderEntity, pTos: ProductToOrderEntity[]) {
+		this._orderGateway.emitEvent(ORDERS_EVENTS.PTO_APPROVED, { order, pTos });
 	}
 
 	async confirmOrderEvent(orderId: string) {

@@ -179,7 +179,7 @@ export class ProductToOrderService {
 		});
 
 		const updatedPtos = pTos.map((el) => ({ ...el, status: ProductToOrderStatusEnum.REJECTED }));
-		await this._ordersNotificationService.rejectOrderEvent(pTos[0].order, updatedPtos);
+		await this._ordersNotificationService.rejectOrderPtosEvent(pTos[0].order, updatedPtos);
 		return this.productToOrderRepository.save(updatedPtos);
 	}
 
@@ -192,7 +192,7 @@ export class ProductToOrderService {
 		});
 
 		const updatedPtos = pTos.map((el) => ({ ...el, status: ProductToOrderStatusEnum.APPROVED }));
-		await this._ordersNotificationService.approveOrderEvent(pTos[0].order, updatedPtos);
+		await this._ordersNotificationService.approveOrderPtosEvent(pTos[0].order, updatedPtos);
 		return this.productToOrderRepository.save(updatedPtos);
 	}
 
