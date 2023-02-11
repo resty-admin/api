@@ -42,7 +42,7 @@ export class FondyService {
 			relations: ["product", "order", "order.users", "order.place", "attributesToProduct"]
 		});
 
-		const baseUrl = false && environment.production ? `https://dev-api.resty.od.ua` : `http://172.30.8.211:3000`;
+		const baseUrl = false && environment.production ? `https://dev-api.resty.od.ua` : `http://192.168.68.101:3000`;
 
 		const totalPrice =
 			10_000 *

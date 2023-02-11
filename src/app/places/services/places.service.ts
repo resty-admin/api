@@ -140,7 +140,7 @@ export class PlacesService {
 	}
 
 	async createPlace(place: CreatePlaceInput): Promise<PlaceEntity> {
-		const waiterCode = Math.floor(Math.random() * 10_000);
+		const waiterCode = Math.floor(1000 + Math.random() * 9999);
 		const savedPlace = await this._placesRepository.save({ ...place, waiterCode, company: { id: place.company } });
 
 		return this._placesRepository.findOne({ where: { id: savedPlace.id } });

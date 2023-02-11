@@ -122,8 +122,9 @@ export class OrdersNotificationsService {
 
 	private findExistedWorkersByPriority(fetchedWorkers: UserToPlaceEntity[]) {
 		const existedWorkers = [];
-		const roles = [UserRoleEnum.WAITER, UserRoleEnum.HOSTESS, UserRoleEnum.MANAGER];
-		let tmp = UserRoleEnum.MANAGER;
+		// const roles = [UserRoleEnum.WAITER, UserRoleEnum.HOSTESS, UserRoleEnum.MANAGER];
+		const roles = [UserRoleEnum.WAITER, UserRoleEnum.HOSTESS];
+		let tmp = UserRoleEnum.HOSTESS;
 
 		for (const [idx, _] of roles.entries()) {
 			if (existedWorkers.length > 0) {

@@ -158,7 +158,7 @@ export class OrdersService {
 				: {}),
 			createdAt: date,
 			startDate: date,
-			code: Math.floor(Math.random() * 9999)
+			code: Math.floor(1000 + Math.random() * 9999)
 		});
 
 		await this._ordersNotificationService.createOrderEvent(savedOrder.id);
