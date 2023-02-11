@@ -45,7 +45,7 @@ export class FondyService {
 		const baseUrl = false && environment.production ? `https://dev-api.resty.od.ua` : `http://192.168.68.101:3000`;
 
 		const totalPrice =
-			10_000 *
+			100 *
 			productsToOrders.reduce(
 				(pre, curr) =>
 					pre +
