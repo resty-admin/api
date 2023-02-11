@@ -355,13 +355,13 @@ export class OrdersService {
 	}
 
 	async approveOrder(orderId: string) {
-		// await this._ordersNotificationService.approveTableInOrderEvent(orderId);
+		await this._ordersNotificationService.approveOrderEvent(orderId);
 
 		return this._ordersRepository.save({ id: orderId, status: OrderStatusEnum.APPROVED });
 	}
 
 	async rejectOrder(orderId: string) {
-		// await this._ordersNotificationService.rejectTableInOrderEvent(orderId);
+		await this._ordersNotificationService.rejectOrderEvent(orderId);
 
 		return this._ordersRepository.save({ id: orderId, status: OrderStatusEnum.REJECTED });
 	}

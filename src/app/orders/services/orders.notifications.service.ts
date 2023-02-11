@@ -82,14 +82,14 @@ export class OrdersNotificationsService {
 		this._orderGateway.emitEvent(ORDERS_EVENTS.TABLE_ADDED, { order, employees, table });
 	}
 
-	async approveTableInOrderEvent(orderId) {
+	async approveOrderEvent(orderId) {
 		const order = await this._orderService.getOrder(orderId);
-		this._orderGateway.emitEvent(ORDERS_EVENTS.TABLE_APPROVED, { order });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.APPROVED, { order });
 	}
 
-	async rejectTableInOrderEvent(orderId) {
+	async rejectOrderEvent(orderId) {
 		const order = await this._orderService.getOrder(orderId);
-		this._orderGateway.emitEvent(ORDERS_EVENTS.TABLE_REJECTED, { order });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.REJECTED, { order });
 	}
 
 	async removeTableFromOrderEvent(orderId: string) {
