@@ -14,6 +14,6 @@ export class FondyController {
 		const baseUrl = environment.production ? `https://dev.resty.od.ua/` : `http://192.168.68.101:4201`;
 
 		const paymentStatus = await this._fondyService.verifyOrder(orderId);
-		return response.redirect(`${baseUrl}/orders/${orderId}/payment-status?status=${paymentStatus}`);
+		return response.redirect(`${baseUrl}/active-orders/${orderId}/payment-status?status=${paymentStatus}`);
 	}
 }
