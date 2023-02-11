@@ -79,7 +79,7 @@ export class FondyService {
 			currency: "UAH",
 			amount: totalPrice,
 			receivers,
-			response_url: `${baseUrl}/api/fondy/check?orderId=${fondyOrderId}`
+			response_url: `${baseUrl}/api/fondy/check?orderId=${orderId}`
 		};
 
 		const result = await this.fondy.Checkout(requestData);
