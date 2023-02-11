@@ -164,6 +164,8 @@ export class ProductToOrderService {
 			]
 		});
 
+		console.log("x", this.calculateTotalPrice(order.productsToOrders));
+
 		return this._ordersRepository.save({
 			...order,
 			totalPrice: this.calculateTotalPrice(order.productsToOrders)
@@ -222,16 +224,14 @@ export class ProductToOrderService {
 		return this.productToOrderRepository.save(updatedPtos);
 	}
 
-	calculateTotalPrice(productsToOrders) {
+	calculateTotalPrice(productsToOrders: ProductToOrderEntity[]) {
 		return (
 			100 *
 			productsToOrders.reduce(
 				(pre, curr) =>
 					pre +
 					curr.count *
-						((curr.attributesToProduct && curr.attributesToProduct.length > 0
-							? curr.attributesToProduct.reduce((pre, curr) => pre + curr.attribute.price, 0)
-							: 0) +
+						((curr.attributesToProduct || []).reduce((pre, curr) => pre + curr.attribute.price * curr.count, 0) +
 							curr.product.price),
 				0
 			)
