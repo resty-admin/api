@@ -14,6 +14,7 @@ import {
 	PaginatedHistoryOrder,
 	ProductToOrderEntity
 } from "../entities";
+import { ORDERS_EVENTS } from "../gateways/events/order.event";
 import { OrdersGuard } from "../guards/orders.guard";
 import { OrdersService, ProductToOrderService } from "../services";
 
@@ -57,6 +58,22 @@ export class OrdersResolver {
 	)
 	async orders(@Args() args: PaginationArgsDto, @UserGql() user: IUser) {
 		return this._ordersService.getOrders(args, user);
+	}
+
+	@Query(() => ORDERS_EVENTS)
+	@UseGuards(
+		GqlJwtGuard,
+		RolesGuard([
+			UserRoleEnum.ADMIN,
+			UserRoleEnum.MANAGER,
+			UserRoleEnum.WAITER,
+			UserRoleEnum.HOSTESS,
+			UserRoleEnum.HOOKAH,
+			UserRoleEnum.CLIENT
+		])
+	)
+	async ordersEvents() {
+		return ORDERS_EVENTS;
 	}
 
 	@Query(() => PaginatedHistoryOrder)
