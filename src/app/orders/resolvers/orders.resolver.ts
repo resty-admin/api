@@ -69,6 +69,22 @@ export class OrdersResolver {
 		return this._ordersService.getHistoryOrders(placeId, args);
 	}
 
+	@Query(() => PaginatedHistoryOrder)
+	@UseGuards(
+		GqlJwtGuard,
+		RolesGuard([
+			UserRoleEnum.ADMIN,
+			UserRoleEnum.MANAGER,
+			UserRoleEnum.WAITER,
+			UserRoleEnum.HOSTESS,
+			UserRoleEnum.HOOKAH,
+			UserRoleEnum.CLIENT
+		])
+	)
+	async clientHistoryOrders(@UserGql() user: IUser, @Args() args: PaginationArgsDto) {
+		return this._ordersService.clientHistoryOrders(user, args);
+	}
+
 	@Mutation(() => ActiveOrderEntity)
 	@UseGuards(
 		GqlJwtGuard,

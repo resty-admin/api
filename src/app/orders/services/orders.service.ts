@@ -126,6 +126,20 @@ export class OrdersService {
 		};
 	}
 
+	async clientHistoryOrders(user: IUser, { take, skip }: PaginationArgsDto) {
+		const repoBuilder = this._historyOrderRepository.createQueryBuilder("order").where("order.users @> :users", {
+			users: JSON.stringify([{ id: user.id }])
+		});
+
+		const data = await repoBuilder.take(take).skip(skip).getMany();
+
+		return {
+			data,
+			totalCount: data.length,
+			page: skip / take + 1
+		};
+	}
+
 	async createOrder(order: CreateOrderInput, user: IUser): Promise<ActiveOrderEntity> {
 		const date = new Date();
 
