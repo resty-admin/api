@@ -41,6 +41,13 @@ export class OrdersNotificationsService {
 		this._orderGateway.emitEvent(ORDERS_EVENTS.CLOSED, { order, employees });
 	}
 
+	async requestToConfirmOrderEvent(orderId) {
+		const order = await this._orderService.getOrder(orderId);
+		const employees = await this.buildEmployeesList(orderId);
+
+		this._orderGateway.emitEvent(ORDERS_EVENTS.REQUEST_TO_CONFIRM, { order, employees });
+	}
+
 	async cancelOrderEvent(order: ActiveOrderEntity) {
 		this._orderGateway.emitEvent(ORDERS_EVENTS.CANCELED, { order });
 	}

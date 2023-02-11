@@ -125,7 +125,7 @@ export class OrdersResolver {
 	@Mutation(() => ActiveOrderEntity)
 	@UseGuards(
 		GqlJwtGuard,
-		OrdersGuard,
+		// OrdersGuard,
 		RolesGuard([
 			UserRoleEnum.ADMIN,
 			UserRoleEnum.MANAGER,

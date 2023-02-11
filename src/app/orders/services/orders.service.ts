@@ -200,6 +200,8 @@ export class OrdersService {
 	async updateOrder(id: string, order: UpdateOrderInput): Promise<ActiveOrderEntity> {
 		await this._ordersRepository.save({ id, status: OrderStatusEnum.REQUEST_TO_CONFIRM, ...order });
 
+		await this._ordersNotificationService.requestToConfirmOrderEvent(order.id);
+
 		return this._ordersRepository.findOne({
 			where: { id },
 			relations: this.findOneRelations
