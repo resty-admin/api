@@ -2,6 +2,7 @@ import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Not } from "typeorm";
 
+import { COMMAND_EMITTED } from "../../gateways/events";
 import { UserToPlaceEntity } from "../../places/entities";
 import { ProductsService } from "../../products/services";
 import { UserRoleEnum } from "../../shared/enums";
@@ -46,6 +47,10 @@ export class OrdersNotificationsService {
 		const employees = await this.buildEmployeesList(orderId);
 
 		this._orderGateway.emitEvent(ORDERS_EVENTS.REQUEST_TO_CONFIRM, { order, employees });
+	}
+
+	async emitOrderCommand(orderId, command) {
+		this._orderGateway.emitEvent(COMMAND_EMITTED, command);
 	}
 
 	async closeOrderEvent(order: ActiveOrderEntity) {

@@ -47,7 +47,7 @@ export class CommandsResolver {
 	}
 
 	@Mutation(() => String)
-	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.CLIENT]))
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.CLIENT]))
 	async emitCommand(@Args("commandId") commandId: string, @Args("orderId") orderId: string) {
 		return this._commandsService.emitCommand(commandId, orderId);
 	}

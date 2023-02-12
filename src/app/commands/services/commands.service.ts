@@ -2,7 +2,6 @@ import { HttpService } from "@nestjs/axios";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
-import { COMMAND_EMITTED } from "../../gateways/events";
 import { GatewaysService } from "../../gateways/services";
 import { ActiveOrderEntity } from "../../orders/entities";
 import { OrdersNotificationsService } from "../../orders/services";
@@ -27,14 +26,14 @@ export class CommandsService {
 
 	async emitCommand(commandId: string, orderId: string) {
 		const command = await this._commandsRepository.findOne({ where: { id: commandId } });
-		const waiters = this._ordersNotifications.buildEmployeesList(orderId);
+		const waiters = await this._ordersNotifications.buildEmployeesList(orderId);
 
 		const order = await this._ordersRepository.findOne({
 			where: { id: orderId },
 			relations: ["table"]
 		});
 
-		this._gatewaysService.emitEvent(COMMAND_EMITTED, { command, table: order.table, waiters });
+		await this._ordersNotifications.emitOrderCommand(orderId, { command, table: order.table, waiters });
 
 		return commandId;
 	}
