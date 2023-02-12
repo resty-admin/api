@@ -124,7 +124,7 @@ export class FondyService {
 			});
 		}
 
-		await this._ordersNotificationService.paymentSuccessOrderEvent(orderId);
+		await this._ordersNotificationService.paymentSuccessOrderEvent(orderId, productsToOrders);
 		return "success";
 	}
 
