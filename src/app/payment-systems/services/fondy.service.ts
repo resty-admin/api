@@ -51,7 +51,8 @@ export class FondyService {
 			]
 		});
 
-		const baseUrl = environment.production ? `https://dev-api.resty.od.ua` : `http://192.168.68.101:3000`;
+		const baseUrl = environment.production ? `http://192.168.0.6:3000` : `http://192.168.68.101:3000`;
+		// const baseUrl = environment.production ? `https://dev-api.resty.od.ua` : `http://192.168.68.101:3000`;
 
 		const totalPrice =
 			100 *
@@ -80,7 +81,10 @@ export class FondyService {
 			}
 		];
 
-		const fondyOrderId = `${orderId}_${users.reduce((pre, curr) => `${pre}${curr}$`, "$")}_${new Date().toISOString()}`;
+		const fondyOrderId = `${orderId}_${pTos.reduce((pre, curr) => `${pre}${curr}@`, "@")}_${users.reduce(
+			(pre, curr) => `${pre}${curr}$`,
+			"$"
+		)}_${new Date().toISOString()}`;
 
 		const requestData = {
 			order_id: fondyOrderId,
@@ -103,16 +107,24 @@ export class FondyService {
 		}
 		const [orderId] = fondyOrderId.split("_");
 
-		const users = fondyOrderId.match(/(?<=\$)(.*?)(?=\$)/g);
+		// const users = fondyOrderId.match(/(?<=\$)(.*?)(?=\$)/g);
+		const pTos = fondyOrderId.match(/(?<=@)(.*?)(?=@)/g);
+
+		// const productsToOrders = await this.productToOrderRepository.find({
+		// 	where: {
+		// 		user: {
+		// 			id: In(users)
+		// 		},
+		// 		order: {
+		// 			id: orderId
+		// 		}
+		// 	},
+		// 	relations: ["product", "user", "order"]
+		// });
 
 		const productsToOrders = await this.productToOrderRepository.find({
 			where: {
-				user: {
-					id: In(users)
-				},
-				order: {
-					id: orderId
-				}
+				id: In(pTos)
 			},
 			relations: ["product", "user", "order"]
 		});
