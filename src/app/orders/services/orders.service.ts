@@ -251,7 +251,7 @@ export class OrdersService {
 				});
 			});
 
-		await this._ordersNotificationService.cancelOrderEvent(order);
+		await this._ordersNotificationService.cancelOrderEvent(order.id);
 		return this.archiveOrder({ ...order, status: OrderStatusEnum.CANCEL });
 	}
 
