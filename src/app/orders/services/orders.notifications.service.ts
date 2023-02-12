@@ -60,6 +60,10 @@ export class OrdersNotificationsService {
 		this._orderGateway.emitEvent(ORDERS_EVENTS.PTO_APPROVED, { order, pTos });
 	}
 
+	async manualPaymentSuccessEvent(order: ActiveOrderEntity) {
+		this._orderGateway.emitEvent(ORDERS_EVENTS.MANUAL_PAYMENT_SUCCESS, { order });
+	}
+
 	async confirmOrderEvent(orderId: string) {
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);

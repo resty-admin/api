@@ -117,7 +117,7 @@ export class AuthService {
 			});
 		}
 
-		const verificationCode = this._random.integer(1000, 9999);
+		const verificationCode = this._random.integer(1000, 9000);
 
 		const createdUser = await this._usersService.createUser({ ...body, verificationCode });
 
