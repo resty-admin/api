@@ -5,6 +5,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { COMMAND_EMITTED } from "../../gateways/events";
 import { GatewaysService } from "../../gateways/services";
 import { ActiveOrderEntity } from "../../orders/entities";
+import { OrdersNotificationsService } from "../../orders/services";
 import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import { ActiveShiftEntity } from "../../shifts/entities";
@@ -18,31 +19,22 @@ export class CommandsService {
 		@InjectRepository(CommandEntity) private readonly _commandsRepository,
 		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository,
 		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository,
+		private readonly _ordersNotifications: OrdersNotificationsService,
 		private readonly _tablesService: TablesService,
 		private readonly _httpService: HttpService,
 		private readonly _gatewaysService: GatewaysService
 	) {}
 
-	async emitCommand(commandId: string, tableId: string) {
+	async emitCommand(commandId: string, orderId: string) {
 		const command = await this._commandsRepository.findOne({ where: { id: commandId } });
-		const waiters = [];
+		const waiters = this._ordersNotifications.buildEmployeesList(orderId);
 
-		const shifts: ActiveShiftEntity[] = await this._shiftsRepository.find({
-			where: {
-				tables: {
-					id: tableId
-				}
-			},
-			relations: ["waiter", "tables"]
+		const order = await this._ordersRepository.findOne({
+			where: { id: orderId },
+			relations: ["table"]
 		});
 
-		const table = shifts[0].tables.find((el) => el.id === tableId);
-
-		for (const shift of shifts) {
-			waiters.push(shift.waiter);
-		}
-
-		this._gatewaysService.emitEvent(COMMAND_EMITTED, { command, table, waiters });
+		this._gatewaysService.emitEvent(COMMAND_EMITTED, { command, table: order.table, waiters });
 
 		return commandId;
 	}
