@@ -14,6 +14,10 @@ export const environment = {
 		secretAccessKey: "",
 		bucketName: ""
 	},
+	fondy: {
+		redirectUrl: "",
+		baseUrl: ""
+	},
 	googleId: "",
 	googleSecret: "",
 	googleCallback: "",
