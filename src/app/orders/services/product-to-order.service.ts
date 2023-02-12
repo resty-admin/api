@@ -218,7 +218,7 @@ export class ProductToOrderService {
 		});
 
 		const updatedPtos = pTos.map((el) => ({ ...el, paidStatus: ProductToOrderPaidStatusEnum.PAID }));
-		await this._ordersNotificationService.manualPaymentSuccessEvent(pTos[0].order.id);
+		await this._ordersNotificationService.manualPaymentSuccessEvent(pTos[0].order);
 		return this.productToOrderRepository.save(updatedPtos);
 	}
 
