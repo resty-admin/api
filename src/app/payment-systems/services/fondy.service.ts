@@ -8,6 +8,7 @@ import { In, Repository } from "typeorm";
 import { environment } from "../../../environments/environment";
 import { CompaniesService } from "../../companies/services";
 import { ActiveOrderEntity, ProductToOrderEntity } from "../../orders/entities";
+import { OrdersNotificationsService } from "../../orders/services";
 import { ProductToOrderPaidStatusEnum } from "../../shared/enums";
 import { PaymentSystemEntity } from "../entities";
 import { PlaceToPaymentSystemEntity } from "../entities/place-to-payment-system.entity";
@@ -25,7 +26,8 @@ export class FondyService {
 		@InjectRepository(ProductToOrderEntity) private readonly productToOrderRepository: Repository<ProductToOrderEntity>,
 		private readonly _apiService: ApiService,
 		private readonly _cryptoService: CryptoService,
-		private readonly _companiesService: CompaniesService
+		private readonly _companiesService: CompaniesService,
+		private readonly _ordersNotificationService: OrdersNotificationsService
 	) {
 		this.fondy = new CloudIpsp({
 			merchantId: 1_396_424,
@@ -122,6 +124,7 @@ export class FondyService {
 			});
 		}
 
+		await this._ordersNotificationService.paymentSuccessOrderEvent(orderId);
 		return "success";
 	}
 

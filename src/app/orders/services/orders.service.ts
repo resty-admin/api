@@ -269,7 +269,7 @@ export class OrdersService {
 				});
 			});
 
-		await this._ordersNotificationService.closeOrderEvent(orderId);
+		await this._ordersNotificationService.closeOrderEvent(order);
 		return this.archiveOrder({ ...order, status: OrderStatusEnum.CLOSED });
 	}
 

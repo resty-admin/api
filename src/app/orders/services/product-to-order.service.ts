@@ -164,8 +164,6 @@ export class ProductToOrderService {
 			]
 		});
 
-		console.log("x", this.calculateTotalPrice(order.productsToOrders));
-
 		return this._ordersRepository.save({
 			...order,
 			totalPrice: this.calculateTotalPrice(order.productsToOrders)
