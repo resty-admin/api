@@ -51,8 +51,8 @@ export class FondyService {
 			]
 		});
 
-		const baseUrl = environment.production ? `http://192.168.0.6:3000` : `http://192.168.68.101:3000`;
-		// const baseUrl = environment.production ? `https://dev-api.resty.od.ua` : `http://192.168.68.101:3000`;
+		// const baseUrl = environment.production ? `http://192.168.0.6:3000` : `http://192.168.68.101:3000`;
+		const baseUrl = environment.production ? `https://dev-api.resty.od.ua` : `http://192.168.68.101:3000`;
 
 		const totalPrice =
 			100 *
