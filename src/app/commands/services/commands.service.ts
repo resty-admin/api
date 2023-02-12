@@ -2,7 +2,6 @@ import { HttpService } from "@nestjs/axios";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
-import { COMMAND_EMITTED } from "../../gateways/events";
 import { GatewaysService } from "../../gateways/services";
 import { ActiveOrderEntity } from "../../orders/entities";
 import { OrdersNotificationsService } from "../../orders/services";
@@ -34,7 +33,7 @@ export class CommandsService {
 			relations: ["table"]
 		});
 
-		this._gatewaysService.emitEvent(COMMAND_EMITTED, { command, table: order.table, waiters });
+		await this._ordersNotifications.emitOrderCommand(orderId, { command, table: order.table, waiters });
 
 		return commandId;
 	}
