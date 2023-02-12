@@ -34,11 +34,11 @@ export class OrdersNotificationsService {
 		this._orderGateway.emitEvent(ORDERS_EVENTS.CREATED, { order, employees });
 	}
 
-	async closeOrderEvent(orderId: string) {
+	async cancelOrderEvent(orderId: string) {
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.CLOSED, { order, employees });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.CANCELED, { order, employees });
 	}
 
 	async requestToConfirmOrderEvent(orderId) {
@@ -48,8 +48,10 @@ export class OrdersNotificationsService {
 		this._orderGateway.emitEvent(ORDERS_EVENTS.REQUEST_TO_CONFIRM, { order, employees });
 	}
 
-	async cancelOrderEvent(order: ActiveOrderEntity) {
-		this._orderGateway.emitEvent(ORDERS_EVENTS.CANCELED, { order });
+	async closeOrderEvent(order: ActiveOrderEntity) {
+		const currOrder = await this._orderService.getOrder(order.id);
+		const employees = await this.buildEmployeesList(order.id);
+		this._orderGateway.emitEvent(ORDERS_EVENTS.CLOSED, { order: currOrder, employees });
 	}
 
 	async rejectOrderPtosEvent(order: ActiveOrderEntity, pTos: ProductToOrderEntity[]) {
@@ -60,6 +62,17 @@ export class OrdersNotificationsService {
 		this._orderGateway.emitEvent(ORDERS_EVENTS.PTO_APPROVED, { order, pTos });
 	}
 
+	async waitingForManualPayOrderEvent(orderId: string, pTos: ProductToOrderEntity[]) {
+		const order = await this._orderService.getOrder(orderId);
+		const employees = await this.buildEmployeesList(orderId);
+
+		this._orderGateway.emitEvent(ORDERS_EVENTS.WAITING_FOR_MANUAL_PAY, { order, pTos, employees });
+	}
+
+	async manualPaymentSuccessEvent(order: ActiveOrderEntity) {
+		this._orderGateway.emitEvent(ORDERS_EVENTS.MANUAL_PAYMENT_SUCCESS, { order });
+	}
+
 	async confirmOrderEvent(orderId: string) {
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);
@@ -67,11 +80,11 @@ export class OrdersNotificationsService {
 		this._orderGateway.emitEvent(ORDERS_EVENTS.CONFIRM, { order, employees });
 	}
 
-	async waitingForManualPayOrderEvent(orderId: string) {
+	async paymentSuccessOrderEvent(orderId: string, pTos: ProductToOrderEntity[]) {
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.WAITING_FOR_MANUAL_PAY, { order, employees });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.PAYMENT_SUCCESS, { order, pTos, employees });
 	}
 
 	async addUserToOrderEvent(orderId: string, user: IUser) {
@@ -109,7 +122,7 @@ export class OrdersNotificationsService {
 	async buildEmployeesList(orderId: string): Promise<UserEntity[]> {
 		const order: ActiveOrderEntity = await this._orderService.getOrder(orderId);
 
-		if (order.waiters) {
+		if (order.waiters.length > 0) {
 			return order.waiters;
 		}
 
@@ -121,7 +134,8 @@ export class OrdersNotificationsService {
 				user: {
 					role: Not(UserRoleEnum.CLIENT)
 				}
-			}
+			},
+			relations: ["user"]
 		});
 
 		return this.findExistedWorkersByPriority(otherWorkers);
@@ -131,11 +145,11 @@ export class OrdersNotificationsService {
 		const existedWorkers = [];
 		// const roles = [UserRoleEnum.WAITER, UserRoleEnum.HOSTESS, UserRoleEnum.MANAGER];
 		const roles = [UserRoleEnum.WAITER, UserRoleEnum.HOSTESS];
-		let tmp = UserRoleEnum.HOSTESS;
+		let tmp = UserRoleEnum.WAITER;
 
 		for (const [idx, _] of roles.entries()) {
 			if (existedWorkers.length > 0) {
-				return;
+				return existedWorkers;
 			}
 
 			for (const fetchedWorker of fetchedWorkers) {

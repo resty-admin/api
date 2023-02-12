@@ -8,6 +8,7 @@ import { In, Repository } from "typeorm";
 import { environment } from "../../../environments/environment";
 import { CompaniesService } from "../../companies/services";
 import { ActiveOrderEntity, ProductToOrderEntity } from "../../orders/entities";
+import { OrdersNotificationsService } from "../../orders/services";
 import { ProductToOrderPaidStatusEnum } from "../../shared/enums";
 import { PaymentSystemEntity } from "../entities";
 import { PlaceToPaymentSystemEntity } from "../entities/place-to-payment-system.entity";
@@ -25,7 +26,8 @@ export class FondyService {
 		@InjectRepository(ProductToOrderEntity) private readonly productToOrderRepository: Repository<ProductToOrderEntity>,
 		private readonly _apiService: ApiService,
 		private readonly _cryptoService: CryptoService,
-		private readonly _companiesService: CompaniesService
+		private readonly _companiesService: CompaniesService,
+		private readonly _ordersNotificationService: OrdersNotificationsService
 	) {
 		this.fondy = new CloudIpsp({
 			merchantId: 1_396_424,
@@ -49,6 +51,7 @@ export class FondyService {
 			]
 		});
 
+		// const baseUrl = environment.production ? `http://192.168.0.6:3000` : `http://192.168.68.101:3000`;
 		const baseUrl = environment.production ? `https://dev-api.resty.od.ua` : `http://192.168.68.101:3000`;
 
 		const totalPrice =
@@ -78,7 +81,10 @@ export class FondyService {
 			}
 		];
 
-		const fondyOrderId = `${orderId}_${users.reduce((pre, curr) => `${pre}${curr}$`, "$")}_${new Date().toISOString()}`;
+		const fondyOrderId = `${orderId}_${pTos.reduce((pre, curr) => `${pre}${curr}@`, "@")}_${users.reduce(
+			(pre, curr) => `${pre}${curr}$`,
+			"$"
+		)}_${new Date().toISOString()}`;
 
 		const requestData = {
 			order_id: fondyOrderId,
@@ -101,16 +107,24 @@ export class FondyService {
 		}
 		const [orderId] = fondyOrderId.split("_");
 
-		const users = fondyOrderId.match(/(?<=\$)(.*?)(?=\$)/g);
+		// const users = fondyOrderId.match(/(?<=\$)(.*?)(?=\$)/g);
+		const pTos = fondyOrderId.match(/(?<=@)(.*?)(?=@)/g);
+
+		// const productsToOrders = await this.productToOrderRepository.find({
+		// 	where: {
+		// 		user: {
+		// 			id: In(users)
+		// 		},
+		// 		order: {
+		// 			id: orderId
+		// 		}
+		// 	},
+		// 	relations: ["product", "user", "order"]
+		// });
 
 		const productsToOrders = await this.productToOrderRepository.find({
 			where: {
-				user: {
-					id: In(users)
-				},
-				order: {
-					id: orderId
-				}
+				id: In(pTos)
 			},
 			relations: ["product", "user", "order"]
 		});
@@ -122,6 +136,7 @@ export class FondyService {
 			});
 		}
 
+		await this._ordersNotificationService.paymentSuccessOrderEvent(orderId, productsToOrders);
 		return "success";
 	}
 

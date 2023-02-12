@@ -186,7 +186,7 @@ export class OrdersService {
 				: {}),
 			createdAt: date,
 			startDate: date,
-			code: Math.floor(1000 + Math.random() * 9999)
+			code: Math.floor(1000 + Math.random() * 9000)
 		});
 
 		await this._ordersNotificationService.createOrderEvent(savedOrder.id);
@@ -251,7 +251,7 @@ export class OrdersService {
 				});
 			});
 
-		await this._ordersNotificationService.cancelOrderEvent(order);
+		await this._ordersNotificationService.cancelOrderEvent(order.id);
 		return this.archiveOrder({ ...order, status: OrderStatusEnum.CANCEL });
 	}
 
@@ -269,7 +269,7 @@ export class OrdersService {
 				});
 			});
 
-		await this._ordersNotificationService.closeOrderEvent(orderId);
+		await this._ordersNotificationService.closeOrderEvent(order);
 		return this.archiveOrder({ ...order, status: OrderStatusEnum.CLOSED });
 	}
 

@@ -164,8 +164,6 @@ export class ProductToOrderService {
 			]
 		});
 
-		console.log("x", this.calculateTotalPrice(order.productsToOrders));
-
 		return this._ordersRepository.save({
 			...order,
 			totalPrice: this.calculateTotalPrice(order.productsToOrders)
@@ -207,7 +205,7 @@ export class ProductToOrderService {
 		});
 
 		const updatedPtos = pTos.map((el) => ({ ...el, paidStatus: ProductToOrderPaidStatusEnum.WAITING }));
-		await this._ordersNotificationService.waitingForManualPayOrderEvent(pTos[0].order.id);
+		await this._ordersNotificationService.waitingForManualPayOrderEvent(pTos[0].order.id, updatedPtos);
 		return this.productToOrderRepository.save(updatedPtos);
 	}
 
@@ -220,7 +218,7 @@ export class ProductToOrderService {
 		});
 
 		const updatedPtos = pTos.map((el) => ({ ...el, paidStatus: ProductToOrderPaidStatusEnum.PAID }));
-		await this._ordersNotificationService.waitingForManualPayOrderEvent(pTos[0].order.id);
+		await this._ordersNotificationService.manualPaymentSuccessEvent(pTos[0].order);
 		return this.productToOrderRepository.save(updatedPtos);
 	}
 
