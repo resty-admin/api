@@ -26,7 +26,7 @@ export class CommandsService {
 
 	async emitCommand(commandId: string, orderId: string) {
 		const command = await this._commandsRepository.findOne({ where: { id: commandId } });
-		const waiters = this._ordersNotifications.buildEmployeesList(orderId);
+		const waiters = await this._ordersNotifications.buildEmployeesList(orderId);
 
 		const order = await this._ordersRepository.findOne({
 			where: { id: orderId },
