@@ -163,6 +163,7 @@ export class OrdersService {
 			...order,
 			waiters,
 			users: [{ id: user.id }],
+			status: order.type === OrderTypeEnum.IN_PLACE ? OrderStatusEnum.CREATED : OrderStatusEnum.REQUEST_TO_CONFIRM,
 			...(order.productsToOrder?.length
 				? {
 						productsToOrders: order.productsToOrder.map((el) => ({
