@@ -24,6 +24,10 @@ spec:
           ports:
             - containerPort: 3000
             - containerPort: 8081
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/bash", "-c", "sleep 20"]
 
 ---
 apiVersion: v1
