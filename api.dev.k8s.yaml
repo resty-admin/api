@@ -24,12 +24,6 @@ spec:
           ports:
             - containerPort: 3000
             - containerPort: 8081
-          readinessProbe:
-            httpGet:
-              path: /graphql
-              port: 3000
-            initialDelaySeconds: 60
-            periodSeconds: 60
 
 ---
 apiVersion: v1
