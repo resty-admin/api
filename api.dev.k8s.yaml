@@ -30,12 +30,6 @@ spec:
               port: 3000
             initialDelaySeconds: 3
             periodSeconds: 3
-          livenessProbe:
-            httpGet:
-              path: /api/health/check
-              port: 3000
-            initialDelaySeconds: 3
-            periodSeconds: 3
           lifecycle:
             preStop:
               exec:
