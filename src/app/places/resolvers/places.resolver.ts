@@ -7,10 +7,8 @@ import { RolesGuard, UserGql } from "../../shared";
 import { FiltersArgsDto, PaginationArgsDto } from "../../shared/dtos";
 import { IUser } from "../../shared/interfaces";
 import { CreatePlaceInput, UpdatePlaceInput, UserToPlaceInput } from "../dtos";
-import { AddEmployeeInput } from "../dtos/add-employee.dto";
 import { PaginatedPlace, PaginatedUserToPlace, PlaceEntity, UserToPlaceEntity } from "../entities";
 import { PlaceGuard } from "../guards";
-import { PlaceEmployeeGuard } from "../guards/place-employee.guard";
 import { PlacesService } from "../services";
 
 @Resolver(() => PlaceEntity)
@@ -119,11 +117,11 @@ export class PlacesResolver {
 		return this._placesService.addWaiterToPlace(code, user);
 	}
 
-	@Mutation(() => PlaceEntity)
-	@UseGuards(GqlJwtGuard, PlaceEmployeeGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
-	async removeEmployeeFromPlace(@Args("employeeData") employee: AddEmployeeInput) {
-		return this._placesService.removeEmployeeFromPlace(employee);
-	}
+	// @Mutation(() => PlaceEntity)
+	// @UseGuards(GqlJwtGuard, PlaceEmployeeGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
+	// async removeEmployeeFromPlace(@Args("employeeData") employee: AddEmployeeInput) {
+	// 	return this._placesService.removeEmployeeFromPlace(employee);
+	// }
 
 	@Mutation(() => PlaceEntity)
 	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))

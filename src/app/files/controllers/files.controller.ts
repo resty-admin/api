@@ -1,9 +1,12 @@
 // import "multer";
 
-import { Controller, Post, UploadedFile, UploadedFiles, UseInterceptors } from "@nestjs/common";
+import { Controller, Post, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor, FilesInterceptor } from "@nestjs/platform-express";
 import { ApiBody, ApiConsumes } from "@nestjs/swagger";
 
+import { JwtGuard } from "../../auth";
+import { User } from "../../shared";
+import { IUser } from "../../shared/interfaces";
 import { FILES_ENDPOINTS } from "../constants";
 import { FilesUploadDto, FileUploadDto } from "../dtos";
 import { FilesService } from "../services";
@@ -19,8 +22,9 @@ export class FilesController {
 		description: "List of files",
 		type: FileUploadDto
 	})
-	async uploadOne(@UploadedFile() media: any) {
-		return this._filesService.uploadOne(media);
+	@UseGuards(JwtGuard)
+	async uploadOne(@UploadedFile() media: any, @User() user: IUser) {
+		return this._filesService.uploadOne(media, user);
 	}
 
 	@Post(FILES_ENDPOINTS.UPLOAD_MANY)
@@ -30,7 +34,8 @@ export class FilesController {
 		description: "List of files",
 		type: FilesUploadDto
 	})
-	async uploadMany(@UploadedFiles() files: any) {
-		return this._filesService.uploadMany(files);
+	@UseGuards(JwtGuard)
+	async uploadMany(@UploadedFiles() files: any, @User() user: IUser) {
+		return this._filesService.uploadMany(files, user);
 	}
 }

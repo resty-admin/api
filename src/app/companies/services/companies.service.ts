@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 
 import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
@@ -13,7 +14,7 @@ export class CompaniesService {
 	private findRelations = ["owner", "places", "places.usersToPlaces", "logo"];
 	private findOneRelations = ["owner", "places", "places.usersToPlaces", "logo"];
 
-	constructor(@InjectRepository(CompanyEntity) private readonly _companiesRepository) {}
+	constructor(@InjectRepository(CompanyEntity) private readonly _companiesRepository: Repository<CompanyEntity>) {}
 
 	async getCompany(id: string) {
 		return this._companiesRepository.findOne({

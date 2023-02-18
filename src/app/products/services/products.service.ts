@@ -1,5 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import type { DeepPartial } from "typeorm";
+import { Repository } from "typeorm";
 
 import { ActiveOrderEntity } from "../../orders/entities";
 import { getFindOptionsByFilters } from "../../shared";
@@ -14,8 +16,8 @@ export class ProductsService {
 	private findOneRelations = ["file", "category", "attrsGroups", "attrsGroups.attributes"];
 
 	constructor(
-		@InjectRepository(ProductEntity) private readonly _productsRepository,
-		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository
+		@InjectRepository(ProductEntity) private readonly _productsRepository: Repository<ProductEntity>,
+		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository: Repository<ActiveOrderEntity>
 	) {}
 
 	async getProduct(id: string) {
@@ -55,7 +57,7 @@ export class ProductsService {
 	}
 
 	async updateProduct(id: string, user: UpdateProductInput): Promise<ProductEntity> {
-		await this._productsRepository.save({ id, ...user });
+		await this._productsRepository.save({ id, ...user } as DeepPartial<ProductEntity>);
 
 		return this._productsRepository.findOne({ where: { id }, relations: this.findOneRelations });
 	}

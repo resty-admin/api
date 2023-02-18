@@ -3,6 +3,7 @@ import { Transform } from "class-transformer";
 import { IsUUID } from "class-validator";
 
 import { IsNotEmpty, IsOptional, IsString } from "../../shared";
+import { InputEntity } from "../../shared/interfaces";
 
 @InputType()
 export class UpdateHallInput {
@@ -19,5 +20,5 @@ export class UpdateHallInput {
 	@Field(() => String, { nullable: true })
 	@IsOptional()
 	@Transform(({ value }) => ({ id: value }))
-	file?: string;
+	file?: InputEntity;
 }

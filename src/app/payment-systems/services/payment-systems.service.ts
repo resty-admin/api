@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 
 import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
@@ -11,8 +12,9 @@ import { PlaceToPaymentSystemEntity } from "../entities/place-to-payment-system.
 @Injectable()
 export class PaymentSystemsService {
 	constructor(
-		@InjectRepository(PaymentSystemEntity) private readonly _paymentSystemRepository,
-		@InjectRepository(PlaceToPaymentSystemEntity) private readonly _paymentSystemToPlaceRepository
+		@InjectRepository(PaymentSystemEntity) private readonly _paymentSystemRepository: Repository<PaymentSystemEntity>,
+		@InjectRepository(PlaceToPaymentSystemEntity)
+		private readonly _paymentSystemToPlaceRepository: Repository<PlaceToPaymentSystemEntity>
 	) {}
 
 	async getPaymentSystem(id: string) {

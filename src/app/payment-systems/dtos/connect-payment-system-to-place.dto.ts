@@ -3,16 +3,17 @@ import { Transform } from "class-transformer";
 import { GraphQLJSONObject } from "graphql-type-json";
 
 import { IsObject } from "../../shared";
+import { InputEntity } from "../../shared/interfaces";
 
 @InputType()
 export class ConnectPaymentSystemToPlaceInput {
 	@Field(() => String)
 	@Transform(({ value }) => ({ id: value }))
-	place: string;
+	place: InputEntity;
 
 	@Field(() => String)
 	@Transform(({ value }) => ({ id: value }))
-	paymentSystem: string;
+	paymentSystem: InputEntity;
 
 	@Field(() => GraphQLJSONObject)
 	@IsObject()

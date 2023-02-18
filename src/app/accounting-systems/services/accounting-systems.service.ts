@@ -15,7 +15,7 @@ export class AccountingSystemsService {
 		@InjectRepository(AccountingSystemEntity)
 		private readonly _accountingSystemRepository: Repository<AccountingSystemEntity>,
 		@InjectRepository(PlaceToAccountingSystemEntity)
-		private readonly _pTa
+		private readonly _pTa: Repository<PlaceToAccountingSystemEntity>
 	) {}
 
 	async getAccountingSystem(id: string) {

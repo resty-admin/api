@@ -77,7 +77,7 @@ export class TablesResolver {
 			UserRoleEnum.CLIENT
 		])
 	)
-	async getTableByCode(@Args("code") code: string, @Args("placeId") placeId: string) {
+	async getTableByCode(@Args("code") code: number, @Args("placeId") placeId: string) {
 		return this._tablesService.getTableByCode(code, placeId);
 	}
 

@@ -1,6 +1,8 @@
 import { Field, InputType } from "@nestjs/graphql";
+import { Transform } from "class-transformer";
 
 import { IsOptional, IsString } from "../../shared";
+import { InputEntity } from "../../shared/interfaces";
 
 @InputType()
 export class UpdateCommandInput {
@@ -13,8 +15,9 @@ export class UpdateCommandInput {
 	name?: string;
 
 	@Field(() => String, { nullable: true })
+	@Transform(({ value }) => ({ id: value }))
 	@IsOptional()
-	place?: string;
+	place?: InputEntity;
 
 	@Field(() => String, { nullable: true })
 	@IsOptional()

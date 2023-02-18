@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as console from "console";
 import { GraphQLError } from "graphql/error";
-import { In } from "typeorm";
+import { In, Repository } from "typeorm";
 
 import { PlaceEntity, UserToPlaceEntity } from "../../places/entities";
 import { getFindOptionsByFilters } from "../../shared";
@@ -45,13 +45,13 @@ export class OrdersService {
 	];
 
 	constructor(
-		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository,
-		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository,
-		@InjectRepository(ProductToOrderEntity) private readonly productToOrderRepository,
-		@InjectRepository(HistoryOrderEntity) private readonly _historyOrderRepository,
-		@InjectRepository(UserToPlaceEntity) private readonly _uTpRepository,
-		@InjectRepository(PlaceEntity) private readonly _placeRepository,
-		@InjectRepository(UserEntity) private readonly _userRepository,
+		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository: Repository<ActiveOrderEntity>,
+		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository: Repository<ActiveShiftEntity>,
+		@InjectRepository(ProductToOrderEntity) private readonly productToOrderRepository: Repository<ProductToOrderEntity>,
+		@InjectRepository(HistoryOrderEntity) private readonly _historyOrderRepository: Repository<HistoryOrderEntity>,
+		@InjectRepository(UserToPlaceEntity) private readonly _uTpRepository: Repository<UserToPlaceEntity>,
+		@InjectRepository(PlaceEntity) private readonly _placeRepository: Repository<PlaceEntity>,
+		@InjectRepository(UserEntity) private readonly _userRepository: Repository<UserEntity>,
 		@Inject(forwardRef(() => OrdersNotificationsService))
 		private readonly _ordersNotificationService: OrdersNotificationsService,
 		private readonly _orderGateway: OrdersGateway
@@ -159,7 +159,7 @@ export class OrdersService {
 
 		const waiters = await this.createWaitersForInPlaceOrder(order);
 
-		const savedOrder: ActiveOrderEntity = await this._ordersRepository.save({
+		const savedOrder = await this._ordersRepository.save({
 			...order,
 			waiters,
 			users: [{ id: user.id }],
@@ -176,7 +176,7 @@ export class OrdersService {
 								(el.attributesIds || []).reduce(
 									(pre, curr) => ({
 										...pre,
-										[curr]: pre[curr] ? pre[curr] + 1 : 1
+										[curr.id]: pre[curr.id] ? pre[curr.id] + 1 : 1
 									}),
 									{}
 								)
@@ -188,7 +188,7 @@ export class OrdersService {
 			createdAt: date,
 			startDate: date,
 			code: Math.floor(1000 + Math.random() * 9000)
-		});
+		} as ActiveOrderEntity);
 
 		await this._ordersNotificationService.createOrderEvent(savedOrder.id);
 
@@ -253,7 +253,7 @@ export class OrdersService {
 			});
 
 		await this._ordersNotificationService.cancelOrderEvent(order.id);
-		return this.archiveOrder({ ...order, status: OrderStatusEnum.CANCEL });
+		return this.archiveOrder({ ...order, status: OrderStatusEnum.CANCEL } as ActiveOrderEntity);
 	}
 
 	async closeOrder(orderId: string) {
@@ -271,7 +271,7 @@ export class OrdersService {
 			});
 
 		await this._ordersNotificationService.closeOrderEvent(order);
-		return this.archiveOrder({ ...order, status: OrderStatusEnum.CLOSED });
+		return this.archiveOrder({ ...order, status: OrderStatusEnum.CLOSED } as ActiveOrderEntity);
 	}
 
 	// async confirmOrder(orderId, user) {
@@ -323,7 +323,7 @@ export class OrdersService {
 
 				await (userExist
 					? this._uTpRepository.save({ ...userExist, visits: userExist.visits++ })
-					: this._uTpRepository.save({ place: order.place.id, user, role: UserRoleEnum.CLIENT, visits: 0 }));
+					: this._uTpRepository.save({ place: { id: order.place.id }, user, role: UserRoleEnum.CLIENT, visits: 0 }));
 			}
 
 			await this._historyOrderRepository.save({ ...order, place: { id: order.place.id } });

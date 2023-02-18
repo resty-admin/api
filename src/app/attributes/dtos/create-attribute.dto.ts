@@ -2,6 +2,7 @@ import { Field, InputType, Int } from "@nestjs/graphql";
 import { Transform } from "class-transformer";
 
 import { IsArray, IsNotEmpty, IsNumber, IsString } from "../../shared";
+import type { InputEntity } from "../../shared/interfaces";
 
 @InputType()
 export class CreateAttributeInput {
@@ -24,5 +25,5 @@ export class CreateAttributeInput {
 	@Transform(({ value }) => value.map((id) => ({ id })))
 	@IsArray()
 	@IsNotEmpty()
-	attributesGroup: string[];
+	attributesGroup: InputEntity[];
 }

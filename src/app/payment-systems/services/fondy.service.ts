@@ -20,8 +20,9 @@ export class FondyService {
 	// orderId: string;
 
 	constructor(
-		@InjectRepository(PaymentSystemEntity) private readonly _paymentSystemRepository,
-		@InjectRepository(PlaceToPaymentSystemEntity) private readonly _paymentPlaceRepository,
+		@InjectRepository(PaymentSystemEntity) private readonly _paymentSystemRepository: Repository<PaymentSystemEntity>,
+		@InjectRepository(PlaceToPaymentSystemEntity)
+		private readonly _paymentPlaceRepository: Repository<PlaceToPaymentSystemEntity>,
 		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository: Repository<ActiveOrderEntity>,
 		@InjectRepository(ProductToOrderEntity) private readonly productToOrderRepository: Repository<ProductToOrderEntity>,
 		private readonly _apiService: ApiService,

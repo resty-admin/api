@@ -4,6 +4,7 @@ export * from "./auth";
 export * from "./categories";
 export * from "./commands";
 export * from "./companies";
+export * from "./dto";
 export * from "./errors";
 export * from "./files";
 export * from "./halls";

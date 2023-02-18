@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { GraphQLError } from "graphql/error";
+import type { DeepPartial } from "typeorm";
 import { Between, Repository } from "typeorm";
 
 import { ActiveOrderEntity } from "../../orders/entities";
@@ -20,8 +21,8 @@ export class ShiftsService {
 	private findOneRelations = ["tables", "tables.hall", "waiter", "place"];
 
 	constructor(
-		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository,
-		@InjectRepository(HistoryShiftEntity) private readonly _historyShiftsRepository,
+		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository: Repository<ActiveShiftEntity>,
+		@InjectRepository(HistoryShiftEntity) private readonly _historyShiftsRepository: Repository<HistoryShiftEntity>,
 		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository: Repository<ActiveOrderEntity>,
 		private readonly _ordersNotificationService: OrdersNotificationsService
 	) {}
@@ -81,7 +82,7 @@ export class ShiftsService {
 		const savedShift = await this._shiftsRepository.save({
 			...shift,
 			waiter: { id: user.id }
-		});
+		} as DeepPartial<ActiveShiftEntity>);
 
 		const startDate = new Date(new Date().setHours(6, 0, 0));
 		const endDate = new Date(new Date().setHours(24, 0, 0));
@@ -119,7 +120,7 @@ export class ShiftsService {
 		});
 
 		try {
-			await this._historyShiftsRepository.save({ ...shift, shiftDateStart: shift.shiftDate });
+			await this._historyShiftsRepository.save({ ...shift, shiftDateStart: shift.shiftDate } as any);
 			await this._shiftsRepository.delete(id);
 
 			return "ARCHIVED";

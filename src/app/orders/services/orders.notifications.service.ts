@@ -1,6 +1,6 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Not } from "typeorm";
+import { Not, Repository } from "typeorm";
 
 import { COMMAND_EMITTED } from "../../gateways/events";
 import { UserToPlaceEntity } from "../../places/entities";
@@ -19,9 +19,9 @@ import { OrdersService } from "./orders.service";
 @Injectable()
 export class OrdersNotificationsService {
 	constructor(
-		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository,
-		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository,
-		@InjectRepository(UserToPlaceEntity) private readonly _uTpRepository,
+		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository: Repository<ActiveShiftEntity>,
+		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository: Repository<ActiveOrderEntity>,
+		@InjectRepository(UserToPlaceEntity) private readonly _uTpRepository: Repository<UserToPlaceEntity>,
 		private readonly _orderGateway: OrdersGateway,
 		@Inject(forwardRef(() => OrdersService)) private readonly _orderService: OrdersService,
 		private readonly _productService: ProductsService,

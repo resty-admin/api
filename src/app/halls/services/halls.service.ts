@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 
 import { ActiveOrderEntity } from "../../orders/entities";
 import { getFindOptionsByFilters } from "../../shared";
@@ -14,8 +15,8 @@ export class HallsService {
 	private findOneRelations = ["place", "tables", "file"];
 
 	constructor(
-		@InjectRepository(HallEntity) private readonly _hallsRepository,
-		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository
+		@InjectRepository(HallEntity) private readonly _hallsRepository: Repository<HallEntity>,
+		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository: Repository<ActiveOrderEntity>
 	) {}
 
 	async getHall(id: string) {

@@ -6,6 +6,7 @@ import { PlaceEntity } from "../../places/entities";
 import { BaseEntity } from "../../shared";
 import { Pagination } from "../../shared/entities/pagination.type";
 import { IFile } from "../../shared/interfaces";
+import { adminRoleFieldMiddleware } from "../../shared/middleware";
 import { UserEntity } from "../../users/entities";
 import { COMPANIES } from "../constant";
 import { CompanyStatusEnum } from "../enums";
@@ -15,7 +16,7 @@ import { CompanyStatusEnum } from "../enums";
 @Entity({ name: COMPANIES })
 export class CompanyEntity extends BaseEntity {
 	@Column()
-	@Field(() => String)
+	@Field(() => String, { middleware: [adminRoleFieldMiddleware] })
 	name: string;
 
 	@ManyToOne(() => UserEntity, { onDelete: "CASCADE" })
