@@ -34,6 +34,7 @@ spec:
             preStop:
               exec:
                 command: ["/bin/bash", "-c", "sleep 30"]
+      terminationGracePeriodSeconds: 60
 
 ---
 apiVersion: v1
