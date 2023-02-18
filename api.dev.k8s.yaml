@@ -28,8 +28,8 @@ spec:
             httpGet:
               path: /graphql
               port: 3000
-            initialDelaySeconds: 5
-            periodSeconds: 10
+            initialDelaySeconds: 60
+            periodSeconds: 60
 
 ---
 apiVersion: v1
