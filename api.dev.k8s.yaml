@@ -10,7 +10,7 @@ spec:
   replicas: 3
   strategy:
     rollingUpdate:
-      maxSurge: 1
+      maxSurge: 0
       maxUnavailable: 1
     type: RollingUpdate
   template:
@@ -24,10 +24,16 @@ spec:
           ports:
             - containerPort: 3000
             - containerPort: 8081
+          readinessProbe:
+            httpGet:
+              path: /api/health/check
+              port: 3000
+            initialDelaySeconds: 3
+            periodSeconds: 3
           lifecycle:
             preStop:
               exec:
-                command: ["/bin/bash", "-c", "sleep 20"]
+                command: ["/bin/bash", "-c", "sleep 30"]
 
 ---
 apiVersion: v1
