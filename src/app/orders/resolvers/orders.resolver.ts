@@ -124,6 +124,12 @@ export class OrdersResolver {
 		return this._ordersService.clientHistoryOrders(user, args);
 	}
 
+	@Query(() => Boolean)
+	@UseGuards(GqlJwtGuard)
+	async isTimeAvailable(@Args("date") date: Date, @Args("placeId") placeId: string) {
+		return this._ordersService.isTimeAvailable(date, placeId);
+	}
+
 	@Mutation(() => ActiveOrderEntity)
 	@UseGuards(
 		GqlJwtGuard,

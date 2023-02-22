@@ -389,4 +389,25 @@ export class OrdersService {
 
 		return tableShifts.map((el) => el.waiter);
 	}
+
+	async isTimeAvailable(date: Date, placeId: string) {
+		const place = await this._placeRepository.findOne({
+			where: {
+				id: placeId
+			}
+		});
+
+		const isHoliday = place.holidayDays[new Date().toISOString().split("T")[0]];
+		const orderHours = date.getHours();
+
+		if (isHoliday) {
+			return Number(isHoliday.start) <= orderHours && Number(isHoliday.end) >= orderHours;
+		}
+
+		const isWeekDay = date.getDay() <= 5;
+		const start = Number(place[isWeekDay ? "weekDays" : "weekendDays"].start);
+		const end = Number(place[isWeekDay ? "weekDays" : "weekendDays"].end);
+
+		return orderHours >= start && orderHours <= end;
+	}
 }
