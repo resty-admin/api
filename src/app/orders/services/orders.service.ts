@@ -322,8 +322,8 @@ export class OrdersService {
 				});
 
 				await (userExist
-					? this._uTpRepository.save({ ...userExist, visits: userExist.visits++ })
-					: this._uTpRepository.save({ place: { id: order.place.id }, user, role: UserRoleEnum.CLIENT, visits: 0 }));
+					? this._uTpRepository.save({ ...userExist, visits: ++userExist.visits })
+					: this._uTpRepository.save({ place: { id: order.place.id }, user, role: UserRoleEnum.CLIENT, visits: 1 }));
 			}
 
 			await this._historyOrderRepository.save({ ...order, place: { id: order.place.id } });
