@@ -21,6 +21,7 @@ export class FilesService {
 	) {}
 
 	async uploadOne(file: Express.Multer.File) {
+		console.log("media", file);
 		const url = await this._spacesService.uploadToS3(`images`, this.generateFileName(file), file.buffer, file.mimetype);
 
 		return this._mediasRepository.save({ url });

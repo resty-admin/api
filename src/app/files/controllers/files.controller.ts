@@ -7,6 +7,7 @@ import { ApiBody, ApiConsumes } from "@nestjs/swagger";
 import { JwtGuard } from "../../auth";
 import { FILES_ENDPOINTS } from "../constants";
 import { FilesUploadDto, FileUploadDto } from "../dtos";
+import { MinimizePipe } from "../pipes";
 import { FilesService } from "../services";
 
 @Controller()
@@ -21,7 +22,7 @@ export class FilesController {
 		type: FileUploadDto
 	})
 	@UseGuards(JwtGuard)
-	async uploadOne(@UploadedFile() media: any) {
+	async uploadOne(@UploadedFile(MinimizePipe) media: any) {
 		return this._filesService.uploadOne(media);
 	}
 
