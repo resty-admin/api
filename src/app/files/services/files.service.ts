@@ -20,24 +20,16 @@ export class FilesService {
 		private readonly _spacesService: SpacesService
 	) {}
 
-	async uploadOne(file: Express.Multer.File, user: IUser) {
-		const rootPath = await this.defineCompanyRootFolder(user);
-		const url = await this._spacesService.uploadToS3(
-			`${rootPath}/images`,
-			this.generateFileName(file),
-			file.buffer,
-			file.mimetype
-		);
+	async uploadOne(file: Express.Multer.File) {
+		const url = await this._spacesService.uploadToS3(`images`, this.generateFileName(file), file.buffer, file.mimetype);
 
 		return this._mediasRepository.save({ url });
 	}
 
-	async uploadMany(files: Express.Multer.File[], user: IUser) {
-		const rootPath = await this.defineCompanyRootFolder(user);
-
+	async uploadMany(files: Express.Multer.File[]) {
 		const urls = await Promise.all(
 			files.map((file) =>
-				this._spacesService.uploadToS3(`${rootPath}/images`, this.generateFileName(file), file.buffer, file.mimetype)
+				this._spacesService.uploadToS3(`images`, this.generateFileName(file), file.buffer, file.mimetype)
 			)
 		);
 

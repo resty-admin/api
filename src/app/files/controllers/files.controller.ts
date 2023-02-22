@@ -5,8 +5,6 @@ import { FileInterceptor, FilesInterceptor } from "@nestjs/platform-express";
 import { ApiBody, ApiConsumes } from "@nestjs/swagger";
 
 import { JwtGuard } from "../../auth";
-import { User } from "../../shared";
-import { IUser } from "../../shared/interfaces";
 import { FILES_ENDPOINTS } from "../constants";
 import { FilesUploadDto, FileUploadDto } from "../dtos";
 import { FilesService } from "../services";
@@ -23,8 +21,8 @@ export class FilesController {
 		type: FileUploadDto
 	})
 	@UseGuards(JwtGuard)
-	async uploadOne(@UploadedFile() media: any, @User() user: IUser) {
-		return this._filesService.uploadOne(media, user);
+	async uploadOne(@UploadedFile() media: any) {
+		return this._filesService.uploadOne(media);
 	}
 
 	@Post(FILES_ENDPOINTS.UPLOAD_MANY)
@@ -35,7 +33,7 @@ export class FilesController {
 		type: FilesUploadDto
 	})
 	@UseGuards(JwtGuard)
-	async uploadMany(@UploadedFiles() files: any, @User() user: IUser) {
-		return this._filesService.uploadMany(files, user);
+	async uploadMany(@UploadedFiles() files: any) {
+		return this._filesService.uploadMany(files);
 	}
 }
