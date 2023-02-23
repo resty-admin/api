@@ -16,7 +16,7 @@ export class MailsService {
 		return this._mailerService.sendMail({
 			to,
 			text,
-			from: "jopa@gmail.com" || this._mailsConfig.from,
+			from: this._mailsConfig.from,
 			...options
 		});
 	}
