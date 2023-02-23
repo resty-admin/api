@@ -39,7 +39,6 @@ jobs:
             docker push $(echo $REGISTRY)/$(echo $API):latest
 
             cd /home/resty/k8s
-            kubectl apply -f sematext.yaml
             kubectl apply -f cloudflared.yaml
             cd /home/resty/api
             kubectl delete -f api.dev.k8s.yaml
