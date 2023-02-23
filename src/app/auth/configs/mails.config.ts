@@ -5,5 +5,5 @@ import { environment } from "../../../environments/environment";
 export const MAILS_CONFIG: IMailsConfig = {
 	gmailUser: environment.gmailUser,
 	gmailPassword: environment.gmailPassword,
-	from: environment.gmailUser
+	from: "asd@asd.com" || environment.gmailUser
 };
