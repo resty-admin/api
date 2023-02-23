@@ -18,6 +18,7 @@ spec:
       labels:
         app: dev-nest-api-k8s
     spec:
+      serviceAccountName: spm-agent-nodejs
       containers:
         - name: dev-nest-api-k8s
           image: registry.digitalocean.com/resty-registry/dev-nest-api:latest
