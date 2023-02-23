@@ -1,3 +1,44 @@
+# Cluster Role bindings for Agent
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: spm-agent-nodejs
+  labels:
+    app: spm-agent-nodejs
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: spm-agent-nodejs
+subjects:
+  - kind: ServiceAccount
+    name: spm-agent-nodejs
+    namespace: default
+---
+# Cluster Role for Agent
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: spm-agent-nodejs
+  labels:
+    app: spm-agent-nodejs
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - list
+      - get
+      - watch
+---
+# Service Account for Agent
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: spm-agent-nodejs
+  labels:
+    app: spm-agent-nodejs
+
 ---
 apiVersion: apps/v1
 kind: Deployment
