@@ -122,11 +122,11 @@ export class AuthService {
 		const createdUser = await this._usersService.createUser({ ...body, verificationCode });
 
 		if ("email" in body) {
-			// await this._mailsService.send(body.email, verificationCode.toString());
+			await this._mailsService.send(body.email, verificationCode.toString());
 		}
 
 		if ("tel" in body) {
-			// await this._messagesService.send(body.tel, verificationCode.toString());
+			await this._messagesService.send(body.tel, verificationCode.toString());
 		}
 
 		return this._jwtService.getAccessToken(createdUser);
