@@ -1,6 +1,7 @@
 import { Logger, ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import * as requestIp from "request-ip";
+import { stMonitor } from "sematext-agent-express";
 
 import { AppModule } from "./app/app.module";
 import { initGraphql } from "./app/core/graphql";
@@ -23,6 +24,8 @@ async function bootstrap() {
 	initGraphql();
 
 	app.enableCors();
+
+	stMonitor.start();
 
 	await app.listen(environment.port);
 
