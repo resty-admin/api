@@ -1,7 +1,6 @@
 import { Logger, ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import * as requestIp from "request-ip";
-import { stMonitor } from "sematext-agent-express";
 
 import { AppModule } from "./app/app.module";
 import { initGraphql } from "./app/core/graphql";
@@ -25,10 +24,10 @@ async function bootstrap() {
 
 	app.enableCors();
 
-	stMonitor.start();
-
 	await app.listen(environment.port);
 
+	console.log("HELLO");
+	console.error("HELLO ERROR");
 	Logger.log(`🚀 Application  is running on: http://192.168.68.101:${environment.port}/api`, "Bootstrap");
 	Logger.log(`🚀 Swagger is running on: http://192.168.68.101:${environment.port}/api/swagger`, "Bootstrap");
 	Logger.log(`🚀 Graphql playground is running on: http://192.168.68.101:${environment.port}/graphql`, "Bootstrap");
