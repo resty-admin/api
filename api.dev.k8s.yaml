@@ -26,6 +26,14 @@ spec:
             - containerPort: 3000
             - containerPort: 8081
           env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
             - name: MONITORING_TOKEN
               value: "0f7fa2db-cd12-4a54-acd9-0aaafa0513b7"
             - name: SPM_RECEIVER_URL
