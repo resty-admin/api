@@ -11,15 +11,12 @@ export class MessagesService {
 	) {}
 
 	async send(to: string, body: string, options?: any): Promise<any> {
-		const x = await this._twilioService.client.messages.create({
+		return this._twilioService.client.messages.create({
 			to,
 			body,
 			messagingServiceSid: this._messagesConfig.twilioServiceSid,
 			...options
 		});
-
-		console.log("x", x);
-		return x;
 	}
 
 	// async send(to: string, body: string, options?: any) {

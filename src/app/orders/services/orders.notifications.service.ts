@@ -32,7 +32,7 @@ export class OrdersNotificationsService {
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.CREATED, { order, pTos: order.productsToOrders, employees });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.CREATED, { ...order, pTos: order.productsToOrders, employees });
 	}
 
 	async cancelOrderEvent(orderId: string) {
@@ -60,18 +60,19 @@ export class OrdersNotificationsService {
 	}
 
 	async rejectOrderPtosEvent(order: ActiveOrderEntity, pTos: ProductToOrderEntity[]) {
-		this._orderGateway.emitEvent(ORDERS_EVENTS.PTO_REJECTED, { order, pTos });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.PTO_REJECTED, { ...order, pTos });
 	}
 
 	async approveOrderPtosEvent(order: ActiveOrderEntity, pTos: ProductToOrderEntity[]) {
-		this._orderGateway.emitEvent(ORDERS_EVENTS.PTO_APPROVED, { order, pTos });
+		console.log("order", order);
+		this._orderGateway.emitEvent(ORDERS_EVENTS.PTO_APPROVED, { ...order, pTos });
 	}
 
 	async waitingForManualPayOrderEvent(orderId: string, pTos: ProductToOrderEntity[]) {
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.WAITING_FOR_MANUAL_PAY, { order, pTos, employees });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.WAITING_FOR_MANUAL_PAY, { ...order, pTos, employees });
 	}
 
 	async manualPaymentSuccessEvent(order: ActiveOrderEntity) {
@@ -91,7 +92,7 @@ export class OrdersNotificationsService {
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.PAYMENT_SUCCESS, { order, pTos, employees });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.PAYMENT_SUCCESS, { ...order, pTos, employees });
 	}
 
 	async addUserToOrderEvent(orderId: string, user: IUser) {

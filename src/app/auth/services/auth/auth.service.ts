@@ -17,7 +17,6 @@ import type {
 import { JwtService } from "src/app/shared/jwt";
 import { MailsService } from "src/app/shared/mails";
 import { MessagesService } from "src/app/shared/messages";
-import { removeFirstSlash } from "src/app/shared/utils";
 
 import { environment } from "../../../../environments/environment";
 // import { ActiveOrderEntity } from "../../../commands/entities";
@@ -268,14 +267,9 @@ export class AuthService {
 	}
 
 	getGoogleRedirectUrl(user: IUser, domain: string) {
-		console.log("USER", user);
-
 		const { accessToken } = this._jwtService.getAccessToken(user);
 
-		const { adminUrl } = environment.frontEnd;
-
-		console.log("JOPA", `${domain}${removeFirstSlash("ADMIN_ROUTES.GOOGLE.absolutePath")}/${accessToken}`);
-		return `${adminUrl}/auth/google/${accessToken}`;
+		return `${domain}auth/google/${accessToken}`;
 	}
 
 	async telegram({ id, first_name, last_name, role }: ITelegramUser) {
