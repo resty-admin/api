@@ -105,6 +105,34 @@ export class OrdersService {
 			skip
 		});
 
+		if (data.length === 0 && user.role === UserRoleEnum.WAITER) {
+			const uTp = await this._uTpRepository.findOne({
+				where: {
+					user: {
+						id: user.id
+					}
+				},
+				relations: ["place"]
+			});
+
+			const [data, count] = await this._ordersRepository.findAndCount({
+				where: {
+					place: {
+						id: uTp.place.id
+					}
+				},
+				take,
+				skip,
+				relations: this.findRelations
+			});
+
+			return {
+				data,
+				totalCount: count,
+				page: skip / take + 1
+			};
+		}
+
 		return {
 			data,
 			totalCount: count,

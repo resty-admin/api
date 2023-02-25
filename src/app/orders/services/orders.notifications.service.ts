@@ -64,7 +64,6 @@ export class OrdersNotificationsService {
 	}
 
 	async approveOrderPtosEvent(order: ActiveOrderEntity, pTos: ProductToOrderEntity[]) {
-		console.log("order", order);
 		this._orderGateway.emitEvent(ORDERS_EVENTS.PTO_APPROVED, { ...order, pTos });
 	}
 
