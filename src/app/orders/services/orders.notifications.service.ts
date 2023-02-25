@@ -5,7 +5,7 @@ import { Not, Repository } from "typeorm";
 import { COMMAND_EMITTED } from "../../gateways/events";
 import { UserToPlaceEntity } from "../../places/entities";
 import { ProductsService } from "../../products/services";
-import { UserRoleEnum } from "../../shared/enums";
+import { ProductToOrderStatusEnum, UserRoleEnum } from "../../shared/enums";
 import type { IUser } from "../../shared/interfaces";
 import { ActiveShiftEntity } from "../../shifts/entities";
 import { TablesService } from "../../tables/services";
@@ -32,7 +32,7 @@ export class OrdersNotificationsService {
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.CREATED, { order, employees });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.CREATED, { order, pTos: order.productsToOrders, employees });
 	}
 
 	async cancelOrderEvent(orderId: string) {
@@ -80,9 +80,11 @@ export class OrdersNotificationsService {
 
 	async confirmOrderEvent(orderId: string) {
 		const order = await this._orderService.getOrder(orderId);
+
 		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.CONFIRM, { order, employees });
+		const pTos = order.productsToOrders.filter((el) => el.status === ProductToOrderStatusEnum.WAITING_FOR_APPROVE);
+		this._orderGateway.emitEvent(ORDERS_EVENTS.CONFIRM, { ...order, pTos, employees });
 	}
 
 	async paymentSuccessOrderEvent(orderId: string, pTos: ProductToOrderEntity[]) {
