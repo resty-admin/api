@@ -30,5 +30,6 @@ export enum ErrorsEnum {
 	PosterTokenNotExist = 1028,
 	InvalidWaiterCode = 1029,
 	AlreadyArchived = 1031,
-	Forbidden = 1032
+	Forbidden = 1032,
+	TimeNotAvailable = 1033
 }

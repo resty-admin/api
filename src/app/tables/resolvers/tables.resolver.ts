@@ -6,7 +6,6 @@ import { RolesGuard } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
 import { UserRoleEnum } from "../../shared/enums";
 import { CreateTableInput, UpdateTableInput } from "../dtos";
-import { IsTableAvailableInput } from "../dtos/is-table-available.dto";
 import { PaginatedTable, TableEntity } from "../entities";
 import { TablesGuard } from "../guards/tables.guard";
 import { TablesService } from "../services";
@@ -93,7 +92,7 @@ export class TablesResolver {
 			UserRoleEnum.CLIENT
 		])
 	)
-	async isTableAvailableForReserve(@Args("body") body: IsTableAvailableInput) {
-		return this._tablesService.isTableAvailableForReserve(body.tableId, body.date);
+	async isTableAvailableForReserve(@Args("tableId") tableId: string, @Args("date") date: Date) {
+		return this._tablesService.isTableAvailableForReserve(tableId, date);
 	}
 }

@@ -440,6 +440,15 @@ export class OrdersService {
 		const start = Number(place[isWeekDay ? "weekDays" : "weekendDays"].start);
 		const end = Number(place[isWeekDay ? "weekDays" : "weekendDays"].end);
 
-		return orderHours >= start && orderHours <= end;
+		const isAvaiable = orderHours >= start && orderHours <= end;
+
+		if (!isAvaiable) {
+			throw new GraphQLError(ErrorsEnum.TimeNotAvailable.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
+		return isAvaiable;
 	}
 }
