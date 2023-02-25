@@ -27,6 +27,7 @@ export class OrdersService {
 		"table",
 		"table.hall",
 		"place",
+		"place.company",
 		"place.paymentSystems",
 		"waiters",
 		"users"
@@ -41,6 +42,7 @@ export class OrdersService {
 		"table",
 		"table.hall",
 		"place",
+		"place.company",
 		"place.paymentSystems",
 		"waiters",
 		"users"

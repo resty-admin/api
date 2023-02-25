@@ -19,7 +19,8 @@ export class UserSubscriber implements EntitySubscriberInterface {
 	async beforeInsert(event: InsertEvent<UserEntity>) {
 		if (event.entity.password) {
 			try {
-				event.entity.password = await this._cryptoService.hash(event.entity.password);
+				const plainPass = this._cryptoService.decrypt(event.entity.password);
+				event.entity.password = await this._cryptoService.hash(plainPass);
 			} catch (error) {
 				console.error(error);
 				throw new InternalServerErrorException();

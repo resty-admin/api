@@ -156,7 +156,10 @@ export class AuthService {
 			});
 		}
 
-		const isPasswordCompared = this._cryptoService.compare(body.password, existedUser.password);
+		const isPasswordCompared = await this._cryptoService.compare(
+			this._cryptoService.decrypt(body.password),
+			existedUser.password
+		);
 
 		if (!isPasswordCompared) {
 			throw new GraphQLError(ErrorsEnum.InvalidPassword.toString(), {
