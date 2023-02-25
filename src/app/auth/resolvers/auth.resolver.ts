@@ -1,5 +1,5 @@
 import { UseGuards } from "@nestjs/common";
-import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Args, Context, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
 
 import { UserGql } from "../../shared";
 import { IUser } from "../../shared/interfaces";
@@ -44,8 +44,8 @@ export class AuthResolver {
 	}
 
 	@Mutation(() => String)
-	async forgotPassword(@Args("body") body: ForgotPasswordInput) {
-		return this._authService.forgotPassword(body);
+	async forgotPassword(@Args("body") body: ForgotPasswordInput, @Context() context: any) {
+		return this._authService.forgotPassword(body, context);
 	}
 
 	@Mutation(() => AccessToken)

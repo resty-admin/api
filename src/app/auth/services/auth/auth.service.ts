@@ -18,8 +18,6 @@ import { JwtService } from "src/app/shared/jwt";
 import { MailsService } from "src/app/shared/mails";
 import { MessagesService } from "src/app/shared/messages";
 
-import { environment } from "../../../../environments/environment";
-// import { ActiveOrderEntity } from "../../../commands/entities";
 import { UsersService } from "../../../users";
 import { UserEntity } from "../../../users/entities";
 
@@ -204,7 +202,7 @@ export class AuthService {
 		return this._jwtService.getAccessToken(existedUser);
 	}
 
-	async forgotPassword(body: IForgotPassword) {
+	async forgotPassword(body: IForgotPassword, context) {
 		const existedUser = await this._usersService.getUser({
 			...("email" in body ? { email: body.email } : {}),
 			...("tel" in body ? { tel: body.tel } : {})
@@ -219,8 +217,11 @@ export class AuthService {
 		}
 
 		const { accessToken } = this._jwtService.getAccessToken(existedUser);
-		const { adminUrl } = environment.frontEnd;
-		const resetPasswordLink = `${adminUrl}/auth/reset-password/${accessToken}`;
+		// const { adminUrl } = environment.frontEnd;
+
+		const headerIdx = context.req.rawHeaders.indexOf("Origin");
+		const originUrl = context.req.rawHeaders[headerIdx + 1];
+		const resetPasswordLink = `${originUrl}/auth/reset-password/${accessToken}`;
 
 		if ("email" in body) {
 			await this._mailsService.send(body.email, resetPasswordLink);
