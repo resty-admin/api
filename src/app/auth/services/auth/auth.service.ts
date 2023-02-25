@@ -220,8 +220,8 @@ export class AuthService {
 		}
 
 		const { accessToken } = this._jwtService.getAccessToken(existedUser);
-		const { baseUrl } = environment.fondy;
-		const resetPasswordLink = `${baseUrl}/auth/reset-password/${accessToken}`;
+		const { adminUrl } = environment.frontEnd;
+		const resetPasswordLink = `${adminUrl}/auth/reset-password/${accessToken}`;
 
 		if ("email" in body) {
 			await this._mailsService.send(body.email, resetPasswordLink);
@@ -259,18 +259,23 @@ export class AuthService {
 			return findedUser;
 		}
 
-		return this._usersService.updateUser(id, {
+		return this._usersService.createUser({
 			googleId: id,
 			name: displayName,
-			email: emails[0].value,
-			status: UserStatusEnum.VERIFIED
+			status: UserStatusEnum.VERIFIED,
+			email: emails[0].value
 		});
 	}
 
 	getGoogleRedirectUrl(user: IUser, domain: string) {
+		console.log("USER", user);
+
 		const { accessToken } = this._jwtService.getAccessToken(user);
 
-		return `${domain}${removeFirstSlash("ADMIN_ROUTES.GOOGLE.absolutePath")}/${accessToken}`;
+		const { adminUrl } = environment.frontEnd;
+
+		console.log("JOPA", `${domain}${removeFirstSlash("ADMIN_ROUTES.GOOGLE.absolutePath")}/${accessToken}`);
+		return `${adminUrl}/auth/google/${accessToken}`;
 	}
 
 	async telegram({ id, first_name, last_name, role }: ITelegramUser) {
