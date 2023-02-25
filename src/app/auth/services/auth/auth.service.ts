@@ -19,6 +19,7 @@ import { MailsService } from "src/app/shared/mails";
 import { MessagesService } from "src/app/shared/messages";
 import { removeFirstSlash } from "src/app/shared/utils";
 
+import { environment } from "../../../../environments/environment";
 // import { ActiveOrderEntity } from "../../../commands/entities";
 import { UsersService } from "../../../users";
 import { UserEntity } from "../../../users/entities";
@@ -132,6 +133,28 @@ export class AuthService {
 		return this._jwtService.getAccessToken(createdUser);
 	}
 
+	async sendAgain(user: IUser) {
+		const existedUser = await this._usersService.getUser({ id: user.id });
+
+		if (!existedUser) {
+			throw new GraphQLError(ErrorsEnum.UserNotExist.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
+
+		if (existedUser.email !== null) {
+			await this._mailsService.send(existedUser.email, existedUser.verificationCode.toString());
+		}
+
+		if (existedUser.tel !== null) {
+			await this._messagesService.send(existedUser.tel, existedUser.verificationCode.toString());
+		}
+
+		return "success";
+	}
+
 	async signIn(body: ISignIn): Promise<IAccessToken> {
 		const existedUser = await this._usersService.getUser({
 			...("email" in body ? { email: body.email } : {}),
@@ -196,8 +219,9 @@ export class AuthService {
 			});
 		}
 
-		const token = this._jwtService.getAccessToken(existedUser);
-		const resetPasswordLink = `http://192.168.68.101:4200/auth/reset-password/${token}`;
+		const { accessToken } = this._jwtService.getAccessToken(existedUser);
+		const { baseUrl } = environment.fondy;
+		const resetPasswordLink = `${baseUrl}/auth/reset-password/${accessToken}`;
 
 		if ("email" in body) {
 			await this._mailsService.send(body.email, resetPasswordLink);
@@ -219,7 +243,9 @@ export class AuthService {
 			});
 		}
 
-		const updatedUser = await this._usersService.updateUser(user.id, body);
+		const plainPass = this._cryptoService.decrypt(body.password);
+		const updatePass = await this._cryptoService.hash(plainPass);
+		const updatedUser = await this._usersService.updateUser(user.id, { ...body, password: updatePass });
 
 		return this._jwtService.getAccessToken(updatedUser);
 	}

@@ -2,8 +2,8 @@
 import { Logger, ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import * as requestIp from "request-ip";
-import { stHttpLoggerMiddleware } from "sematext-agent-express";
 
+// import { stHttpLoggerMiddleware } from "sematext-agent-express";
 import { AppModule } from "./app/app.module";
 import { initGraphql } from "./app/core/graphql";
 import { swagger } from "./app/core/swagger";
@@ -20,7 +20,7 @@ async function bootstrap() {
 
 	app.setGlobalPrefix("api");
 	app.use(requestIp.mw());
-	app.use(stHttpLoggerMiddleware);
+	// app.use(stHttpLoggerMiddleware);
 
 	swagger(app);
 	initGraphql();

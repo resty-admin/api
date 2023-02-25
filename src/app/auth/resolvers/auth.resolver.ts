@@ -54,6 +54,12 @@ export class AuthResolver {
 		return this._authService.resetPassword(user, body);
 	}
 
+	@Mutation(() => String)
+	@UseGuards(GqlJwtGuard)
+	async sendAgain(@UserGql() user: IUser) {
+		return this._authService.sendAgain(user);
+	}
+
 	@Mutation(() => AccessToken)
 	async telegram(@Args("telegramUser") telegramUser: TelegramUserInput) {
 		return this._authService.telegram(telegramUser);

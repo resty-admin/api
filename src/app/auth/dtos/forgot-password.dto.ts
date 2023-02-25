@@ -1,7 +1,7 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { ValidateIf } from "class-validator";
 
-import { IsNotEmpty, IsString } from "../../shared";
+import { IsNotEmpty, IsOptional, IsString } from "../../shared";
 
 export class ForgotPasswordDto {
 	@ValidateIf(({ email }: ForgotPasswordDto) => !email)
@@ -17,13 +17,15 @@ export class ForgotPasswordDto {
 
 @InputType()
 export class ForgotPasswordInput {
-	@Field(() => String)
+	@Field(() => String, { nullable: true })
 	@ValidateIf(({ email }: ForgotPasswordDto) => !email)
 	@IsString()
+	@IsOptional()
 	tel: string;
 
-	@Field(() => String)
+	@Field(() => String, { nullable: true })
 	@ValidateIf(({ tel }: ForgotPasswordDto) => !tel)
 	@IsString()
+	@IsOptional()
 	email: string;
 }
