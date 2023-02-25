@@ -56,7 +56,7 @@ export class OrdersNotificationsService {
 	async closeOrderEvent(order: ActiveOrderEntity) {
 		const currOrder = await this._orderService.getOrder(order.id);
 		const employees = await this.buildEmployeesList(order.id);
-		this._orderGateway.emitEvent(ORDERS_EVENTS.CLOSED, { order: currOrder, employees });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.CLOSED, { ...currOrder, employees });
 	}
 
 	async rejectOrderPtosEvent(order: ActiveOrderEntity, pTos: ProductToOrderEntity[]) {
