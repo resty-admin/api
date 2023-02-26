@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { GraphQLError } from "graphql/error";
 import { Random } from "random-js";
 import { CryptoService } from "src/app/shared/crypto";
-import { ErrorsEnum, UserStatusEnum } from "src/app/shared/enums";
+import { ErrorsEnum, UserRoleEnum, UserStatusEnum } from "src/app/shared/enums";
 import type {
 	IAccessToken,
 	IForgotPassword,
@@ -53,6 +53,14 @@ export class AuthService {
 	}
 
 	async updateMe(updatedUser: any, userGql) {
+		if (updatedUser.role && updatedUser.role === UserRoleEnum.ADMIN) {
+			throw new GraphQLError(ErrorsEnum.Forbidden.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
+
 		return this._usersService.updateUser(userGql.id, updatedUser);
 	}
 
