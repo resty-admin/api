@@ -4,8 +4,7 @@ import { DataSource } from "typeorm";
 
 import { environment } from "../../../environments/environment";
 import { Admin1675617506058 } from "../../../migrations/1675617506058-admin";
-import { FondyPaymentSystem1675677687530 } from "../../../migrations/1675677687530-fondy";
-import { PosterAccountSystem1675677996962 } from "../../../migrations/1675677996962-poster";
+import { InitDb1677448816647 } from "../../../migrations/1677448816647-migration_name";
 import { ACCOUNTING_SYSTEMS_ENTITIES } from "../../accounting-systems/entities";
 import { ATTRIBUTES_ENTITIES } from "../../attributes/entities";
 import { CATEGORIES_ENITITES } from "../../categories/entities";
@@ -48,7 +47,8 @@ export const TYPEORM_CONFIG: TypeOrmModuleOptions = {
 	],
 	synchronize: environment.production,
 	migrationsTableName: "resty-api-migrations",
-	migrations: [Admin1675617506058, FondyPaymentSystem1675677687530, PosterAccountSystem1675677996962],
+	// migrations: [InitDb1677448816647, Admin1675617506058, FondyPaymentSystem1675677687530, PosterAccountSystem1675677996962],
+	migrations: [InitDb1677448816647, Admin1675617506058],
 	migrationsRun: environment.production,
 	...(environment.production
 		? {
@@ -61,5 +61,21 @@ export const TYPEORM_CONFIG: TypeOrmModuleOptions = {
 
 export default new DataSource({
 	...TYPEORM_CONFIG,
-	entities: ["/src/app/**/entities/index.ts"]
+	entities: [
+		...USERS_ENITITES,
+		...FILES_ENTITIES,
+		...COMMANDS_ENITITES,
+		...CATEGORIES_ENITITES,
+		...COMPANIES_ENTITIES,
+		...PLACES_ENTITIES,
+		...HALLS_ENTITIES,
+		...TABLES_ENTITIES,
+		...PRODUCTS_ENTITIES,
+		...ORDERS_ENTITIES,
+		...LANGUAGES_ENTITIES,
+		...PAYMENT_SYSTEMS_ENTITIES,
+		...ACCOUNTING_SYSTEMS_ENTITIES,
+		...ATTRIBUTES_ENTITIES,
+		...SHIFTS_ENITITES
+	]
 } as any);
