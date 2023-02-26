@@ -5,6 +5,7 @@ import { DataSource } from "typeorm";
 import { environment } from "../../../environments/environment";
 import { Admin1675617506058 } from "../../../migrations/1675617506058-admin";
 import { FondyPaymentSystem1675677687530 } from "../../../migrations/1675677687530-fondy";
+import { PosterAccountSystem1675677996962 } from "../../../migrations/1675677996962-poster";
 import { ACCOUNTING_SYSTEMS_ENTITIES } from "../../accounting-systems/entities";
 import { ATTRIBUTES_ENTITIES } from "../../attributes/entities";
 import { CATEGORIES_ENITITES } from "../../categories/entities";
@@ -45,10 +46,10 @@ export const TYPEORM_CONFIG: TypeOrmModuleOptions = {
 		...ATTRIBUTES_ENTITIES,
 		...SHIFTS_ENITITES
 	],
-	synchronize: true,
+	synchronize: environment.production,
 	migrationsTableName: "resty-api-migrations",
-	migrations: [Admin1675617506058, FondyPaymentSystem1675677687530],
-	migrationsRun: false,
+	migrations: [Admin1675617506058, FondyPaymentSystem1675677687530, PosterAccountSystem1675677996962],
+	migrationsRun: environment.production,
 	...(environment.production
 		? {
 				ssl: {
