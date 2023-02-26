@@ -99,45 +99,6 @@ export class AuthService {
 		return this._jwtService.getAccessToken(verifiedUser);
 	}
 
-	async signUp(body: ISignUp) {
-		const existedUser = await this._usersService.getUser({
-			...("email" in body ? { email: body.email } : {}),
-			...("tel" in body ? { tel: body.tel } : {})
-		});
-
-		if (existedUser) {
-			throw new GraphQLError(ErrorsEnum.UserAlreadyExist.toString(), {
-				extensions: {
-					code: 500
-				}
-			});
-		}
-
-		const isPasswordEncrypted = this._cryptoService.check(body.password);
-
-		if (!isPasswordEncrypted) {
-			throw new GraphQLError(ErrorsEnum.InvalidEncryption.toString(), {
-				extensions: {
-					code: 500
-				}
-			});
-		}
-
-		const verificationCode = this._random.integer(1000, 9000);
-
-		const createdUser = await this._usersService.createUser({ ...body, verificationCode });
-
-		if ("email" in body) {
-			await this._mailsService.send(body.email, verificationCode.toString());
-		}
-
-		if ("tel" in body) {
-			await this._messagesService.send(body.tel, verificationCode.toString());
-		}
-
-		return this._jwtService.getAccessToken(createdUser);
-	}
-
 	async sendAgain(user: IUser) {
 		const existedUser = await this._usersService.getUser({ id: user.id });
 
@@ -208,6 +169,45 @@ export class AuthService {
 		}
 
 		return this._jwtService.getAccessToken(existedUser);
+	}
+
+	async signUp(body: ISignUp) {
+		const existedUser = await this._usersService.getUser({
+			...("email" in body ? { email: body.email } : {}),
+			...("tel" in body ? { tel: body.tel } : {})
+		});
+
+		if (existedUser) {
+			throw new GraphQLError(ErrorsEnum.UserAlreadyExist.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
+
+		const isPasswordEncrypted = this._cryptoService.check(body.password);
+
+		if (!isPasswordEncrypted) {
+			throw new GraphQLError(ErrorsEnum.InvalidEncryption.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
+
+		const verificationCode = this._random.integer(1000, 9000);
+
+		const createdUser = await this._usersService.createUser({ ...body, verificationCode });
+
+		if ("email" in body) {
+			await this._mailsService.send(body.email, verificationCode.toString());
+		}
+
+		if ("tel" in body) {
+			await this._messagesService.send(body.tel, verificationCode.toString());
+		}
+
+		return this._jwtService.getAccessToken(createdUser);
 	}
 
 	async forgotPassword(body: IForgotPassword, context) {

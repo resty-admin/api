@@ -18,8 +18,4 @@ export class MessagesService {
 			...options
 		});
 	}
-
-	// async send(to: string, body: string, options?: any) {
-	// 	console.log(to, body, options);
-	// }
 }

@@ -9,7 +9,7 @@ export class CryptoJs {
 	}
 
 	encrypt(data: string) {
-		return CryptoJS.AES.encrypt(JSON.stringify(data), this._secret).toString();
+		return CryptoJS.AES.encrypt(JSON.stringify(data), this._secret, { mode: CryptoJS.mode.ECB }).toString();
 	}
 
 	decrypt(data: string) {
