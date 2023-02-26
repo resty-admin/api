@@ -3,6 +3,7 @@ import { Transform } from "class-transformer";
 import { IsUUID } from "class-validator";
 
 import { IsNotEmpty, IsOptional, IsString } from "../../shared";
+import type { InputEntity } from "../../shared/interfaces";
 
 @InputType()
 export class UpdateAttributeInput {
@@ -23,5 +24,5 @@ export class UpdateAttributeInput {
 	@Field(() => [String], { nullable: true })
 	@IsOptional()
 	@Transform(({ value }) => value.map((id) => ({ id })))
-	attributesGroup?: string[];
+	attributesGroup?: InputEntity[];
 }

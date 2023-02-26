@@ -1,5 +1,6 @@
 import type { DynamicModule } from "@nestjs/common";
 import { Module } from "@nestjs/common";
+import { TwilioModule } from "nestjs-twilio";
 import type { Observable } from "rxjs";
 import { first, interval, lastValueFrom, map, race, Subject } from "rxjs";
 
@@ -19,10 +20,10 @@ export class MessagesModule {
 		const dynamicModule: DynamicModule = {
 			module: MessagesModule,
 			imports: [
-				// TwilioModule.forRoot({
-				// 	accountSid: messagesConfig.twilioAccountSid,
-				// 	authToken: messagesConfig.twilioAuthToken
-				// })
+				TwilioModule.forRoot({
+					accountSid: messagesConfig.twilioAccountSid,
+					authToken: messagesConfig.twilioAuthToken
+				})
 			],
 			providers: [
 				{

@@ -20,8 +20,9 @@ export class FondyService {
 	// orderId: string;
 
 	constructor(
-		@InjectRepository(PaymentSystemEntity) private readonly _paymentSystemRepository,
-		@InjectRepository(PlaceToPaymentSystemEntity) private readonly _paymentPlaceRepository,
+		@InjectRepository(PaymentSystemEntity) private readonly _paymentSystemRepository: Repository<PaymentSystemEntity>,
+		@InjectRepository(PlaceToPaymentSystemEntity)
+		private readonly _paymentPlaceRepository: Repository<PlaceToPaymentSystemEntity>,
 		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository: Repository<ActiveOrderEntity>,
 		@InjectRepository(ProductToOrderEntity) private readonly productToOrderRepository: Repository<ProductToOrderEntity>,
 		private readonly _apiService: ApiService,
@@ -51,7 +52,7 @@ export class FondyService {
 			]
 		});
 
-		// const baseUrl = environment.production ? `http://192.168.0.6:3000` : `http://192.168.68.101:3000`;
+		// const baseUrl = environment.production ? `http://192.168.0.6:3000` : `http://192.168.68.105:3000`;
 		const { baseUrl } = environment.fondy;
 
 		const totalPrice =

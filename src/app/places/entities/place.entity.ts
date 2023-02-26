@@ -1,4 +1,5 @@
 import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
+import { GraphQLJSONObject } from "graphql-type-json";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 
 import { PlaceToAccountingSystemEntity } from "../../accounting-systems/entities";
@@ -55,28 +56,28 @@ export class PlaceEntity extends BaseEntity {
 	@JoinColumn()
 	file?: IFile;
 
-	@Field(() => String)
+	@Field(() => GraphQLJSONObject)
 	@Column({
 		type: "json",
 		default: () => `('${JSON.stringify({ delivery: false, takeaway: true, booking: true, order: true })}')`
 	})
 	a11y: any;
 
-	@Field(() => String)
+	@Field(() => GraphQLJSONObject)
 	@Column({
 		type: "json",
 		default: () => `('${JSON.stringify({ start: null, end: null })}')`
 	})
 	weekDays: WorkingHoursDto;
 
-	@Field(() => String)
+	@Field(() => GraphQLJSONObject)
 	@Column({
 		type: "json",
 		default: () => `('${JSON.stringify({ start: null, end: null })}')`
 	})
 	weekendDays: WorkingHoursDto;
 
-	@Field(() => String)
+	@Field(() => GraphQLJSONObject)
 	@Column({
 		type: "json",
 		default: () => `('${JSON.stringify({})}')`

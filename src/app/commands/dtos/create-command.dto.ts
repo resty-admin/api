@@ -1,6 +1,8 @@
 import { Field, InputType } from "@nestjs/graphql";
+import { Transform } from "class-transformer";
 
-import { IsString } from "../../shared";
+import { IsNotEmpty, IsString } from "../../shared";
+import { InputEntity } from "../../shared/interfaces";
 
 @InputType()
 export class CreateCommandInput {
@@ -10,7 +12,9 @@ export class CreateCommandInput {
 
 	@Field(() => String)
 	@IsString()
-	place: string;
+	@Transform(({ value }) => ({ id: value }))
+	@IsNotEmpty()
+	place: InputEntity;
 
 	@Field(() => String)
 	@IsString()

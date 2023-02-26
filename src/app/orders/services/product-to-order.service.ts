@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { GraphQLError } from "graphql/error";
-import { In } from "typeorm";
+import { In, Repository } from "typeorm";
 
 import { ErrorsEnum, ProductToOrderPaidStatusEnum, ProductToOrderStatusEnum } from "../../shared/enums";
 import type { IUser } from "../../shared/interfaces";
@@ -14,124 +14,37 @@ import { OrdersService } from "./orders.service";
 export class ProductToOrderService {
 	constructor(
 		private readonly _ordersService: OrdersService,
-		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository,
-		@InjectRepository(ProductToOrderEntity) private readonly productToOrderRepository,
+		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository: Repository<ActiveOrderEntity>,
+		@InjectRepository(ProductToOrderEntity) private readonly productToOrderRepository: Repository<ProductToOrderEntity>,
 		private readonly _ordersNotificationService: OrdersNotificationsService
 	) {}
 
-	// async addProductToOrder(productToOrder: AddProductToOrderInput, user: IUser) {
-	// 	const order: ActiveOrderEntity = await this._ordersRepository.findOne({
-	// 		where: {
-	// 			id: productToOrder.orderId
-	// 		},
-	// 		relations: [
-	// 			"productsToOrders",
-	// 			"productsToOrders.product",
-	// 			"productsToOrders.attributes",
-	// 			"productsToOrders.user"
-	// 		]
-	// 	});
-	//
-	// 	const currProduct = order.productsToOrders.find((userToOrder) => {
-	// 		const isUserSame = userToOrder.user.id === user.id;
-	// 		const isProductSame = userToOrder.product.id === productToOrder.productId;
-	// 		const isStatusAdded = userToOrder.status === ProductToOrderStatusEnum.ADDED;
-	// 		const isAttributesLengthSame = (userToOrder.attributes || []).length === (productToOrder.attrs || []).length;
-	// 		const isAttributesSame = (userToOrder.attributes || []).every((attribute) =>
-	// 			(productToOrder.attrs || []).includes(attribute.id)
-	// 		);
-	//
-	// 		return isUserSame && isStatusAdded && isProductSame && isAttributesLengthSame && isAttributesSame;
-	// 	});
-	//
-	// 	if (currProduct) {
-	// 		await this.productToOrderRepository.save({ ...currProduct, count: currProduct.count + 1 });
-	// 		return this.updateOrderTotalPrice(order.id);
-	// 	}
-	//
-	// 	await this.productToOrderRepository.save({
-	// 		order: {
-	// 			id: productToOrder.orderId
-	// 		},
-	// 		product: {
-	// 			id: productToOrder.productId
-	// 		},
-	// 		user: {
-	// 			id: user.id
-	// 		},
-	// 		status: ProductToOrderStatusEnum.WAITING_FOR_APPROVE,
-	// 		count: 1,
-	// 		...(productToOrder.attrs?.length > 0 ? { attributes: productToOrder.attrs.map((id) => ({ id })) } : {})
-	// 	});
-	//
-	// 	return this.updateOrderTotalPrice(order.id);
-	// }
-	//
-	// async removeProductFromOrder(productFromOrder: RemoveProductFromOrderInput, user: IUser) {
-	// 	const order: ActiveOrderEntity = await this._ordersRepository.findOne({
-	// 		where: {
-	// 			id: productFromOrder.orderId,
-	// 			productsToOrders: {
-	// 				user: {
-	// 					id: user.id
-	// 				}
-	// 			}
-	// 		},
-	// 		relations: [
-	// 			"productsToOrders",
-	// 			"productsToOrders.product",
-	// 			"productsToOrders.attributes",
-	// 			"productsToOrders.user"
-	// 		]
-	// 	});
-	//
-	// 	const deleteProduct = order.productsToOrders.find((userToOrder) => {
-	// 		const isUserSame = userToOrder.user.id === user.id;
-	// 		const isProductSame = userToOrder.product.id === productFromOrder.productId;
-	// 		const isAttributesLengthSame = (userToOrder.attributes || []).length === (productFromOrder.attrs || []).length;
-	// 		const isAttributesSame = (userToOrder.attributes || []).every((attribute) =>
-	// 			(productFromOrder.attrs || []).includes(attribute.id)
-	// 		);
-	//
-	// 		return isUserSame && isProductSame && isAttributesLengthSame && isAttributesSame;
-	// 	});
-	//
-	// 	if (deleteProduct.count === 1) {
-	// 		await this.productToOrderRepository.delete(deleteProduct.id);
-	//
-	// 		return this.updateOrderTotalPrice(order.id);
-	// 	}
-	// 	await this.productToOrderRepository.save({
-	// 		...deleteProduct,
-	// 		count: deleteProduct.count - 1
-	// 	});
-	//
-	// 	return this.updateOrderTotalPrice(order.id);
-	// }
-
 	async confirmProductsToOrders(addProductsToOrders: ConfirmProductToOrderInput[], user: IUser) {
 		await this.productToOrderRepository.save(
-			addProductsToOrders.map((productToOrder) => ({
-				order: {
-					id: productToOrder.orderId
-				},
-				product: {
-					id: productToOrder.productId
-				},
-				user: {
-					id: user.id
-				},
-				attributesToProduct: Object.entries(
-					(productToOrder.attributesIds || []).reduce(
-						(pre, curr) => ({
-							...pre,
-							[curr]: pre[curr] ? pre[curr] + 1 : 1
-						}),
-						{}
-					)
-				).map(([id, count]) => ({ attribute: { id }, count })),
-				count: productToOrder.count
-			}))
+			addProductsToOrders.map(
+				(productToOrder) =>
+					({
+						order: {
+							id: productToOrder.orderId
+						},
+						product: {
+							id: productToOrder.productId
+						},
+						user: {
+							id: user.id
+						},
+						attributesToProduct: Object.entries(
+							(productToOrder.attributesIds || []).reduce(
+								(pre, curr) => ({
+									...pre,
+									[curr]: pre[curr] ? pre[curr] + 1 : 1
+								}),
+								{}
+							)
+						).map(([id, count]) => ({ attribute: { id }, count })),
+						count: productToOrder.count
+					} as any)
+			)
 		);
 
 		if (addProductsToOrders.length === 0) {
@@ -175,10 +88,12 @@ export class ProductToOrderService {
 			where: {
 				id: In(productToOrderIds)
 			},
-			relations: ["order", "order.table", "product", "order.users"]
+			relations: ["order", "order.table", "product", "order.users", "order.place"]
 		});
 
-		const updatedPtos = pTos.map((el) => ({ ...el, status: ProductToOrderStatusEnum.REJECTED }));
+		const updatedPtos = pTos.map(
+			(el) => ({ ...el, status: ProductToOrderStatusEnum.REJECTED } as ProductToOrderEntity)
+		);
 		await this._ordersNotificationService.rejectOrderPtosEvent(pTos[0].order, updatedPtos);
 		return this.productToOrderRepository.save(updatedPtos);
 	}
@@ -188,10 +103,12 @@ export class ProductToOrderService {
 			where: {
 				id: In(productToOrderIds)
 			},
-			relations: ["order", "order.table", "product", "order.users"]
+			relations: ["order", "order.table", "product", "order.users", "order.place"]
 		});
 
-		const updatedPtos = pTos.map((el) => ({ ...el, status: ProductToOrderStatusEnum.APPROVED }));
+		const updatedPtos = pTos.map(
+			(el) => ({ ...el, status: ProductToOrderStatusEnum.APPROVED } as ProductToOrderEntity)
+		);
 		await this._ordersNotificationService.approveOrderPtosEvent(pTos[0].order, updatedPtos);
 		return this.productToOrderRepository.save(updatedPtos);
 	}
@@ -204,7 +121,13 @@ export class ProductToOrderService {
 			relations: ["order", "order.table", "product", "order.users"]
 		});
 
-		const updatedPtos = pTos.map((el) => ({ ...el, paidStatus: ProductToOrderPaidStatusEnum.WAITING }));
+		const updatedPtos = pTos.map(
+			(el) =>
+				({
+					...el,
+					paidStatus: ProductToOrderPaidStatusEnum.WAITING
+				} as ProductToOrderEntity)
+		);
 		await this._ordersNotificationService.waitingForManualPayOrderEvent(pTos[0].order.id, updatedPtos);
 		return this.productToOrderRepository.save(updatedPtos);
 	}
@@ -214,7 +137,7 @@ export class ProductToOrderService {
 			where: {
 				id: In(productToOrderIds)
 			},
-			relations: ["order", "order.table", "product", "order.users"]
+			relations: ["order", "order.table", "product", "order.users", "order.place"]
 		});
 
 		const updatedPtos = pTos.map((el) => ({ ...el, paidStatus: ProductToOrderPaidStatusEnum.PAID }));

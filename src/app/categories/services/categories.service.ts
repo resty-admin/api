@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 
 import { ActiveOrderEntity } from "../../orders/entities";
 import { getFindOptionsByFilters } from "../../shared";
@@ -14,8 +15,8 @@ export class CategoriesService {
 	private findOneRelations = ["file", "products", "products.attrsGroups"];
 
 	constructor(
-		@InjectRepository(CategoryEntity) private readonly _categoriesRepository,
-		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository
+		@InjectRepository(CategoryEntity) private readonly _categoriesRepository: Repository<CategoryEntity>,
+		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository: Repository<ActiveOrderEntity>
 	) {}
 
 	async getCategory(id: string) {

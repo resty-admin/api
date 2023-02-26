@@ -23,7 +23,7 @@ export class MailsModule {
 				MailerModule.forRoot({
 					transport: {
 						host: "smtp.gmail.com",
-						secure: false,
+						secure: true,
 						auth: {
 							user: mailsConfig.gmailUser,
 							pass: mailsConfig.gmailPassword

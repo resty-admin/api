@@ -3,6 +3,7 @@ import { Transform } from "class-transformer";
 import { OrderTypeEnum } from "src/app/shared/enums";
 
 import { IsEnum, IsOptional } from "../../shared";
+import { InputEntity } from "../../shared/interfaces";
 import { CreateProductToOrderInput } from "./create-product-to-order.dto";
 
 @InputType()
@@ -13,12 +14,12 @@ export class CreateOrderInput {
 
 	@Field(() => String)
 	@Transform(({ value }) => ({ id: value }))
-	place: string;
+	place: InputEntity;
 
 	@Field(() => String, { nullable: true })
 	@IsOptional()
 	@Transform(({ value }) => ({ id: value }))
-	table?: string;
+	table?: InputEntity;
 
 	@Field(() => [CreateProductToOrderInput], { nullable: true })
 	productsToOrder?: CreateProductToOrderInput[];

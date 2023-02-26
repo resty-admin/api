@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 
 import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
@@ -8,7 +9,9 @@ import { AttributesEntity } from "../entities";
 
 @Injectable()
 export class AttributesService {
-	constructor(@InjectRepository(AttributesEntity) private readonly _attributesRepository) {}
+	constructor(
+		@InjectRepository(AttributesEntity) private readonly _attributesRepository: Repository<AttributesEntity>
+	) {}
 
 	async getAttribute(id: string) {
 		return this._attributesRepository.findOne({

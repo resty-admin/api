@@ -41,3 +41,5 @@ ca-certificate.crt
 **/*/environments/environment.dev.ts
 
 schema.gql
+
+.env

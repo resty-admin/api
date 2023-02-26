@@ -2,6 +2,7 @@ import { Field, InputType } from "@nestjs/graphql";
 import { Transform } from "class-transformer";
 
 import { IsNotEmpty, IsOptional, IsString } from "../../shared";
+import { InputEntity } from "../../shared/interfaces";
 
 @InputType()
 export class CreateProductInput {
@@ -26,7 +27,7 @@ export class CreateProductInput {
 	@Field(() => String, { nullable: true })
 	@IsOptional()
 	@Transform(({ value }) => ({ id: value }))
-	file?: string;
+	file?: InputEntity;
 
 	@Field(() => [String], { nullable: true })
 	@IsOptional()

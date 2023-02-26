@@ -1,6 +1,7 @@
 import { HttpService } from "@nestjs/axios";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 
 import { GatewaysService } from "../../gateways/services";
 import { ActiveOrderEntity } from "../../orders/entities";
@@ -15,9 +16,9 @@ import { CommandEntity } from "../entities";
 @Injectable()
 export class CommandsService {
 	constructor(
-		@InjectRepository(CommandEntity) private readonly _commandsRepository,
-		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository,
-		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository,
+		@InjectRepository(CommandEntity) private readonly _commandsRepository: Repository<CommandEntity>,
+		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository: Repository<ActiveOrderEntity>,
+		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository: Repository<ActiveShiftEntity>,
 		private readonly _ordersNotifications: OrdersNotificationsService,
 		private readonly _tablesService: TablesService,
 		private readonly _httpService: HttpService,

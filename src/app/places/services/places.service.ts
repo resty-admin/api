@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { GraphQLError } from "graphql/error";
+import { Repository } from "typeorm";
 
 import { CompanyEntity } from "../../companies/entities";
 import { getFindOptionsByFilters } from "../../shared";
@@ -10,7 +11,6 @@ import { ErrorsEnum, OrderStatusEnum, UserRoleEnum } from "../../shared/enums";
 import type { IUser } from "../../shared/interfaces";
 import { UserEntity } from "../../users/entities";
 import type { CreatePlaceInput, UpdatePlaceInput, UserToPlaceInput } from "../dtos";
-import type { AddEmployeeInput } from "../dtos/add-employee.dto";
 import { PlaceEntity, UserToPlaceEntity } from "../entities";
 
 @Injectable()
@@ -40,10 +40,10 @@ export class PlacesService {
 	];
 
 	constructor(
-		@InjectRepository(PlaceEntity) private readonly _placesRepository,
-		@InjectRepository(CompanyEntity) private readonly _companiesRepository,
-		@InjectRepository(UserEntity) private readonly _usersRepository,
-		@InjectRepository(UserToPlaceEntity) private readonly _uTpRepository
+		@InjectRepository(PlaceEntity) private readonly _placesRepository: Repository<PlaceEntity>,
+		@InjectRepository(CompanyEntity) private readonly _companiesRepository: Repository<CompanyEntity>,
+		@InjectRepository(UserEntity) private readonly _usersRepository: Repository<UserEntity>,
+		@InjectRepository(UserToPlaceEntity) private readonly _uTpRepository: Repository<UserToPlaceEntity>
 	) {}
 
 	async getPlace(id: string, filtersArgs?: FiltersArgsDto[]) {
@@ -230,19 +230,19 @@ export class PlacesService {
 		return this._uTpRepository.save({ user: userEntity, place, role: UserRoleEnum.WAITER });
 	}
 
-	async removeEmployeeFromPlace(employee: AddEmployeeInput) {
-		const place = await this._placesRepository.findOne({
-			where: {
-				id: employee.placeId
-			},
-			relations: ["employees"]
-		});
-
-		return this._placesRepository.save({
-			...place,
-			employees: place.employees.filter((el) => el.id !== employee.userId)
-		});
-	}
+	// async removeEmployeeFromPlace(employee: AddEmployeeInput) {
+	// 	const place = await this._placesRepository.findOne({
+	// 		where: {
+	// 			id: employee.placeId
+	// 		},
+	// 		relations: ["employees"]
+	// 	});
+	//
+	// 	return this._placesRepository.save({
+	// 		...place,
+	// 		employees: place.employees.filter((el) => el.id !== employee.userId)
+	// 	});
+	// }
 
 	async updatePlaceVerification(placeId: string, status: PlaceVerificationStatusEnum) {
 		const place: PlaceEntity = await this._placesRepository.findOne({

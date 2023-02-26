@@ -3,6 +3,7 @@ import { Transform } from "class-transformer";
 import { IsUUID } from "class-validator";
 
 import { IsNotEmpty, IsOptional } from "../../shared";
+import { InputEntity } from "../../shared/interfaces";
 
 @InputType()
 export class UpdateCategoryInput {
@@ -17,10 +18,6 @@ export class UpdateCategoryInput {
 
 	@Field(() => String, { nullable: true })
 	@IsOptional()
-	place?: string;
-
-	@Field(() => String, { nullable: true })
-	@IsOptional()
 	@Transform(({ value }) => ({ id: value }))
-	file?: string;
+	file?: InputEntity;
 }

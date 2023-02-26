@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as console from "console";
 import { GraphQLError } from "graphql/error";
-import { In } from "typeorm";
+import { In, Repository } from "typeorm";
 
 import { PlaceEntity, UserToPlaceEntity } from "../../places/entities";
 import { getFindOptionsByFilters } from "../../shared";
@@ -27,6 +27,8 @@ export class OrdersService {
 		"table",
 		"table.hall",
 		"place",
+		"place.company",
+		"place.paymentSystems",
 		"waiters",
 		"users"
 	];
@@ -40,18 +42,20 @@ export class OrdersService {
 		"table",
 		"table.hall",
 		"place",
+		"place.company",
+		"place.paymentSystems",
 		"waiters",
 		"users"
 	];
 
 	constructor(
-		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository,
-		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository,
-		@InjectRepository(ProductToOrderEntity) private readonly productToOrderRepository,
-		@InjectRepository(HistoryOrderEntity) private readonly _historyOrderRepository,
-		@InjectRepository(UserToPlaceEntity) private readonly _uTpRepository,
-		@InjectRepository(PlaceEntity) private readonly _placeRepository,
-		@InjectRepository(UserEntity) private readonly _userRepository,
+		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository: Repository<ActiveOrderEntity>,
+		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository: Repository<ActiveShiftEntity>,
+		@InjectRepository(ProductToOrderEntity) private readonly productToOrderRepository: Repository<ProductToOrderEntity>,
+		@InjectRepository(HistoryOrderEntity) private readonly _historyOrderRepository: Repository<HistoryOrderEntity>,
+		@InjectRepository(UserToPlaceEntity) private readonly _uTpRepository: Repository<UserToPlaceEntity>,
+		@InjectRepository(PlaceEntity) private readonly _placeRepository: Repository<PlaceEntity>,
+		@InjectRepository(UserEntity) private readonly _userRepository: Repository<UserEntity>,
 		@Inject(forwardRef(() => OrdersNotificationsService))
 		private readonly _ordersNotificationService: OrdersNotificationsService,
 		private readonly _orderGateway: OrdersGateway
@@ -100,6 +104,34 @@ export class OrdersService {
 			take,
 			skip
 		});
+
+		if (data.length === 0 && user.role === UserRoleEnum.WAITER) {
+			const uTp = await this._uTpRepository.findOne({
+				where: {
+					user: {
+						id: user.id
+					}
+				},
+				relations: ["place"]
+			});
+
+			const [data, count] = await this._ordersRepository.findAndCount({
+				where: {
+					place: {
+						id: uTp.place.id
+					}
+				},
+				take,
+				skip,
+				relations: this.findRelations
+			});
+
+			return {
+				data,
+				totalCount: count,
+				page: skip / take + 1
+			};
+		}
 
 		return {
 			data,
@@ -159,10 +191,11 @@ export class OrdersService {
 
 		const waiters = await this.createWaitersForInPlaceOrder(order);
 
-		const savedOrder: ActiveOrderEntity = await this._ordersRepository.save({
+		const savedOrder = await this._ordersRepository.save({
 			...order,
 			waiters,
 			users: [{ id: user.id }],
+			status: order.type === OrderTypeEnum.IN_PLACE ? OrderStatusEnum.CREATED : OrderStatusEnum.REQUEST_TO_CONFIRM,
 			...(order.productsToOrder?.length
 				? {
 						productsToOrders: order.productsToOrder.map((el) => ({
@@ -175,7 +208,7 @@ export class OrdersService {
 								(el.attributesIds || []).reduce(
 									(pre, curr) => ({
 										...pre,
-										[curr]: pre[curr] ? pre[curr] + 1 : 1
+										[curr.id]: pre[curr.id] ? pre[curr.id] + 1 : 1
 									}),
 									{}
 								)
@@ -187,7 +220,7 @@ export class OrdersService {
 			createdAt: date,
 			startDate: date,
 			code: Math.floor(1000 + Math.random() * 9000)
-		});
+		} as ActiveOrderEntity);
 
 		await this._ordersNotificationService.createOrderEvent(savedOrder.id);
 
@@ -252,7 +285,7 @@ export class OrdersService {
 			});
 
 		await this._ordersNotificationService.cancelOrderEvent(order.id);
-		return this.archiveOrder({ ...order, status: OrderStatusEnum.CANCEL });
+		return this.archiveOrder({ ...order, status: OrderStatusEnum.CANCEL } as ActiveOrderEntity);
 	}
 
 	async closeOrder(orderId: string) {
@@ -270,7 +303,7 @@ export class OrdersService {
 			});
 
 		await this._ordersNotificationService.closeOrderEvent(order);
-		return this.archiveOrder({ ...order, status: OrderStatusEnum.CLOSED });
+		return this.archiveOrder({ ...order, status: OrderStatusEnum.CLOSED } as ActiveOrderEntity);
 	}
 
 	// async confirmOrder(orderId, user) {
@@ -321,8 +354,8 @@ export class OrdersService {
 				});
 
 				await (userExist
-					? this._uTpRepository.save({ ...userExist, visits: userExist.visits++ })
-					: this._uTpRepository.save({ place: order.place.id, user, role: UserRoleEnum.CLIENT, visits: 0 }));
+					? this._uTpRepository.save({ ...userExist, visits: ++userExist.visits })
+					: this._uTpRepository.save({ place: { id: order.place.id }, user, role: UserRoleEnum.CLIENT, visits: 1 }));
 			}
 
 			await this._historyOrderRepository.save({ ...order, place: { id: order.place.id } });
@@ -387,5 +420,35 @@ export class OrdersService {
 		});
 
 		return tableShifts.map((el) => el.waiter);
+	}
+
+	async isTimeAvailable(date: Date, placeId: string) {
+		const place = await this._placeRepository.findOne({
+			where: {
+				id: placeId
+			}
+		});
+
+		const isHoliday = place.holidayDays[new Date().toISOString().split("T")[0]];
+		const orderHours = date.getHours();
+
+		if (isHoliday) {
+			return Number(isHoliday.start) <= orderHours && Number(isHoliday.end) >= orderHours;
+		}
+
+		const isWeekDay = date.getDay() <= 5;
+		const start = Number(place[isWeekDay ? "weekDays" : "weekendDays"].start);
+		const end = Number(place[isWeekDay ? "weekDays" : "weekendDays"].end);
+
+		const isAvaiable = orderHours >= start && orderHours <= end;
+
+		if (!isAvaiable) {
+			throw new GraphQLError(ErrorsEnum.TimeNotAvailable.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
+		return isAvaiable;
 	}
 }

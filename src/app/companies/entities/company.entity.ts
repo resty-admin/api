@@ -15,6 +15,7 @@ import { CompanyStatusEnum } from "../enums";
 @Entity({ name: COMPANIES })
 export class CompanyEntity extends BaseEntity {
 	@Column()
+	// @Field(() => String, { middleware: [adminRoleFieldMiddleware] })
 	@Field(() => String)
 	name: string;
 

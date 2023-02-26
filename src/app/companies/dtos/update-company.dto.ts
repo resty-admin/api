@@ -3,6 +3,7 @@ import { Transform } from "class-transformer";
 import { IsUUID } from "class-validator";
 
 import { IsNotEmpty, IsOptional } from "../../shared";
+import { InputEntity } from "../../shared/interfaces";
 
 @InputType()
 export class UpdateCompanyInput {
@@ -18,7 +19,7 @@ export class UpdateCompanyInput {
 	@Field(() => String, { nullable: true })
 	@IsOptional()
 	@Transform(({ value }) => ({ id: value }))
-	logo?: string;
+	logo?: InputEntity;
 
 	@Field(() => [String], { nullable: true })
 	@IsOptional()

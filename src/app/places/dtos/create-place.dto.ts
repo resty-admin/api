@@ -3,6 +3,7 @@ import { Transform, Type } from "class-transformer";
 import { isISO8601, ValidateNested } from "class-validator";
 
 import { IsNotEmpty, IsObject, IsOptional, IsString } from "../../shared";
+import { InputEntity } from "../../shared/interfaces";
 import { IsMap } from "../../shared/validators/is-map.validator";
 import { WorkingHoursDto, WorkingHoursInput } from "./date-types.dto";
 
@@ -24,7 +25,7 @@ export class CreatePlaceInput {
 	@Field(() => String, { nullable: true })
 	@IsOptional()
 	@Transform(({ value }) => ({ id: value }))
-	file?: string;
+	file?: InputEntity;
 
 	@Field(() => WorkingHoursInput, { nullable: true })
 	@IsOptional()

@@ -1,11 +1,11 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Not } from "typeorm";
+import { Not, Repository } from "typeorm";
 
 import { COMMAND_EMITTED } from "../../gateways/events";
 import { UserToPlaceEntity } from "../../places/entities";
 import { ProductsService } from "../../products/services";
-import { UserRoleEnum } from "../../shared/enums";
+import { ProductToOrderStatusEnum, UserRoleEnum } from "../../shared/enums";
 import type { IUser } from "../../shared/interfaces";
 import { ActiveShiftEntity } from "../../shifts/entities";
 import { TablesService } from "../../tables/services";
@@ -19,9 +19,9 @@ import { OrdersService } from "./orders.service";
 @Injectable()
 export class OrdersNotificationsService {
 	constructor(
-		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository,
-		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository,
-		@InjectRepository(UserToPlaceEntity) private readonly _uTpRepository,
+		@InjectRepository(ActiveShiftEntity) private readonly _shiftsRepository: Repository<ActiveShiftEntity>,
+		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository: Repository<ActiveOrderEntity>,
+		@InjectRepository(UserToPlaceEntity) private readonly _uTpRepository: Repository<UserToPlaceEntity>,
 		private readonly _orderGateway: OrdersGateway,
 		@Inject(forwardRef(() => OrdersService)) private readonly _orderService: OrdersService,
 		private readonly _productService: ProductsService,
@@ -32,21 +32,21 @@ export class OrdersNotificationsService {
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.CREATED, { order, employees });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.CREATED, { ...order, pTos: order.productsToOrders, employees });
 	}
 
 	async cancelOrderEvent(orderId: string) {
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.CANCELED, { order, employees });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.CANCELED, { ...order, employees });
 	}
 
 	async requestToConfirmOrderEvent(orderId) {
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.REQUEST_TO_CONFIRM, { order, employees });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.REQUEST_TO_CONFIRM, { ...order, employees });
 	}
 
 	async emitOrderCommand(orderId, command) {
@@ -56,47 +56,49 @@ export class OrdersNotificationsService {
 	async closeOrderEvent(order: ActiveOrderEntity) {
 		const currOrder = await this._orderService.getOrder(order.id);
 		const employees = await this.buildEmployeesList(order.id);
-		this._orderGateway.emitEvent(ORDERS_EVENTS.CLOSED, { order: currOrder, employees });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.CLOSED, { ...currOrder, employees });
 	}
 
 	async rejectOrderPtosEvent(order: ActiveOrderEntity, pTos: ProductToOrderEntity[]) {
-		this._orderGateway.emitEvent(ORDERS_EVENTS.PTO_REJECTED, { order, pTos });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.PTO_REJECTED, { ...order, pTos });
 	}
 
 	async approveOrderPtosEvent(order: ActiveOrderEntity, pTos: ProductToOrderEntity[]) {
-		this._orderGateway.emitEvent(ORDERS_EVENTS.PTO_APPROVED, { order, pTos });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.PTO_APPROVED, { ...order, pTos });
 	}
 
 	async waitingForManualPayOrderEvent(orderId: string, pTos: ProductToOrderEntity[]) {
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.WAITING_FOR_MANUAL_PAY, { order, pTos, employees });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.WAITING_FOR_MANUAL_PAY, { ...order, pTos, employees });
 	}
 
 	async manualPaymentSuccessEvent(order: ActiveOrderEntity) {
-		this._orderGateway.emitEvent(ORDERS_EVENTS.MANUAL_PAYMENT_SUCCESS, { order });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.MANUAL_PAYMENT_SUCCESS, { ...order });
 	}
 
 	async confirmOrderEvent(orderId: string) {
 		const order = await this._orderService.getOrder(orderId);
+
 		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.CONFIRM, { order, employees });
+		const pTos = order.productsToOrders.filter((el) => el.status === ProductToOrderStatusEnum.WAITING_FOR_APPROVE);
+		this._orderGateway.emitEvent(ORDERS_EVENTS.CONFIRM, { ...order, pTos, employees });
 	}
 
 	async paymentSuccessOrderEvent(orderId: string, pTos: ProductToOrderEntity[]) {
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.PAYMENT_SUCCESS, { order, pTos, employees });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.PAYMENT_SUCCESS, { ...order, pTos, employees });
 	}
 
 	async addUserToOrderEvent(orderId: string, user: IUser) {
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.USER_ADDED, { order, employees, user });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.USER_ADDED, { ...order, employees, user });
 	}
 
 	async addTableToOrderEvent(orderId: string, tableId: string) {
@@ -104,24 +106,24 @@ export class OrdersNotificationsService {
 		const table = await this._tableService.getTable(tableId);
 		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.TABLE_ADDED, { order, employees, table });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.TABLE_ADDED, { ...order, employees, table });
 	}
 
 	async approveOrderEvent(orderId) {
 		const order = await this._orderService.getOrder(orderId);
-		this._orderGateway.emitEvent(ORDERS_EVENTS.APPROVED, { order });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.APPROVED, { ...order });
 	}
 
 	async rejectOrderEvent(orderId) {
 		const order = await this._orderService.getOrder(orderId);
-		this._orderGateway.emitEvent(ORDERS_EVENTS.REJECTED, { order });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.REJECTED, { ...order });
 	}
 
 	async removeTableFromOrderEvent(orderId: string) {
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.TABLE_REMOVED, { order, employees });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.TABLE_REMOVED, { ...order, employees });
 	}
 
 	async buildEmployeesList(orderId: string): Promise<UserEntity[]> {

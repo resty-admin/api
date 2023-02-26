@@ -4,6 +4,7 @@ import { IsUUID } from "class-validator";
 
 import { FileUploadInput } from "../../files/dtos";
 import { IsNotEmpty, IsOptional } from "../../shared";
+import type { InputEntity } from "../../shared/interfaces";
 
 @InputType()
 export class UpdateProductInput {
@@ -36,5 +37,5 @@ export class UpdateProductInput {
 	@Field(() => [String], { nullable: true })
 	@Transform(({ value }) => value.map((id) => ({ id })))
 	@IsOptional()
-	attrsGroups?: string[];
+	attrsGroups?: InputEntity[];
 }

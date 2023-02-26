@@ -8,7 +8,7 @@ export class Admin1675617506058 implements MigrationInterface {
 			VALUES ('ADMIN',
 							'ADMIN',
 							'admin@resty.od.ua',
-							'$2a$10$aOi31kAD6xD45rZh90/pmOAyjMcn1VBr3qfwHbtLfef5bUQ/EXASO',
+							'$2a$10$4RYNY0IZJVb6pquKe3hPx.UN7/ix5vjG9soU90MLvPoSWtGL6c6ru',
 							'VERIFIED');
 		`);
 	}

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { GraphQLError } from "graphql/error";
-import { Between, In } from "typeorm";
+import { Between, In, Repository } from "typeorm";
 
 import { ActiveOrderEntity } from "../../orders/entities";
 import { getFindOptionsByFilters } from "../../shared";
@@ -16,8 +16,8 @@ export class TablesService {
 	private findOneRelations = ["hall", "orders", "file"];
 
 	constructor(
-		@InjectRepository(TableEntity) private readonly _tablesRepository,
-		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository
+		@InjectRepository(TableEntity) private readonly _tablesRepository: Repository<TableEntity>,
+		@InjectRepository(ActiveOrderEntity) private readonly _ordersRepository: Repository<ActiveOrderEntity>
 	) {}
 
 	async getTable(id: string) {
@@ -81,7 +81,7 @@ export class TablesService {
 		return `${id} deleted`;
 	}
 
-	async getTableByCode(code: string, placeId: string) {
+	async getTableByCode(code: number, placeId: string) {
 		const table = await this._tablesRepository.findOne({
 			where: {
 				code,

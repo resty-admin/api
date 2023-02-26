@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { GraphQLError } from "graphql/error";
 import { Random } from "random-js";
 import { CryptoService } from "src/app/shared/crypto";
-import { ErrorsEnum, UserStatusEnum } from "src/app/shared/enums";
+import { ErrorsEnum, UserRoleEnum, UserStatusEnum } from "src/app/shared/enums";
 import type {
 	IAccessToken,
 	IForgotPassword,
@@ -17,9 +17,7 @@ import type {
 import { JwtService } from "src/app/shared/jwt";
 import { MailsService } from "src/app/shared/mails";
 import { MessagesService } from "src/app/shared/messages";
-import { removeFirstSlash } from "src/app/shared/utils";
 
-// import { ActiveOrderEntity } from "../../../commands/entities";
 import { UsersService } from "../../../users";
 import { UserEntity } from "../../../users/entities";
 
@@ -55,6 +53,14 @@ export class AuthService {
 	}
 
 	async updateMe(updatedUser: any, userGql) {
+		if (updatedUser.role && updatedUser.role === UserRoleEnum.ADMIN) {
+			throw new GraphQLError(ErrorsEnum.Forbidden.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
+
 		return this._usersService.updateUser(userGql.id, updatedUser);
 	}
 
@@ -93,6 +99,78 @@ export class AuthService {
 		return this._jwtService.getAccessToken(verifiedUser);
 	}
 
+	async sendAgain(user: IUser) {
+		const existedUser = await this._usersService.getUser({ id: user.id });
+
+		if (!existedUser) {
+			throw new GraphQLError(ErrorsEnum.UserNotExist.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
+
+		if (existedUser.email !== null) {
+			await this._mailsService.send(existedUser.email, existedUser.verificationCode.toString());
+		}
+
+		if (existedUser.tel !== null) {
+			await this._messagesService.send(existedUser.tel, existedUser.verificationCode.toString());
+		}
+
+		return "success";
+	}
+
+	async signIn(body: ISignIn): Promise<IAccessToken> {
+		const existedUser = await this._usersService.getUser({
+			...("email" in body ? { email: body.email } : {}),
+			...("tel" in body ? { tel: body.tel } : {})
+		});
+
+		if (!existedUser) {
+			throw new GraphQLError(ErrorsEnum.UserNotExist.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
+
+		const isPasswordEncrypted = this._cryptoService.check(body.password);
+
+		if (!isPasswordEncrypted) {
+			throw new GraphQLError(ErrorsEnum.InvalidEncryption.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
+
+		const isPasswordCompared = await this._cryptoService.compare(
+			this._cryptoService.decrypt(body.password),
+			existedUser.password
+		);
+
+		if (!isPasswordCompared) {
+			throw new GraphQLError(ErrorsEnum.InvalidPassword.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
+
+		const isUserVerified = existedUser.status === UserStatusEnum.NOT_VERIFIED;
+
+		if (isUserVerified) {
+			throw new GraphQLError(ErrorsEnum.UserNotVerified.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
+
+		return this._jwtService.getAccessToken(existedUser);
+	}
+
 	async signUp(body: ISignUp) {
 		const existedUser = await this._usersService.getUser({
 			...("email" in body ? { email: body.email } : {}),
@@ -122,17 +200,17 @@ export class AuthService {
 		const createdUser = await this._usersService.createUser({ ...body, verificationCode });
 
 		if ("email" in body) {
-			// await this._mailsService.send(body.email, verificationCode.toString());
+			await this._mailsService.send(body.email, verificationCode.toString());
 		}
 
 		if ("tel" in body) {
-			// await this._messagesService.send(body.tel, verificationCode.toString());
+			await this._messagesService.send(body.tel, verificationCode.toString());
 		}
 
 		return this._jwtService.getAccessToken(createdUser);
 	}
 
-	async signIn(body: ISignIn): Promise<IAccessToken> {
+	async forgotPassword(body: IForgotPassword, context) {
 		const existedUser = await this._usersService.getUser({
 			...("email" in body ? { email: body.email } : {}),
 			...("tel" in body ? { tel: body.tel } : {})
@@ -146,55 +224,12 @@ export class AuthService {
 			});
 		}
 
-		const isPasswordEncrypted = this._cryptoService.check(body.password);
+		const { accessToken } = this._jwtService.getAccessToken(existedUser);
+		// const { adminUrl } = environment.frontEnd;
 
-		if (!isPasswordEncrypted) {
-			throw new GraphQLError(ErrorsEnum.InvalidEncryption.toString(), {
-				extensions: {
-					code: 500
-				}
-			});
-		}
-
-		const isPasswordCompared = this._cryptoService.compare(body.password, existedUser.password);
-
-		if (!isPasswordCompared) {
-			throw new GraphQLError(ErrorsEnum.InvalidPassword.toString(), {
-				extensions: {
-					code: 500
-				}
-			});
-		}
-
-		const isUserVerified = existedUser.status === UserStatusEnum.NOT_VERIFIED;
-
-		if (isUserVerified) {
-			throw new GraphQLError(ErrorsEnum.UserNotVerified.toString(), {
-				extensions: {
-					code: 500
-				}
-			});
-		}
-
-		return this._jwtService.getAccessToken(existedUser);
-	}
-
-	async forgotPassword(body: IForgotPassword) {
-		const existedUser = await this._usersService.getUser({
-			...("email" in body ? { email: body.email } : {}),
-			...("tel" in body ? { tel: body.tel } : {})
-		});
-
-		if (!existedUser) {
-			throw new GraphQLError(ErrorsEnum.UserNotExist.toString(), {
-				extensions: {
-					code: 500
-				}
-			});
-		}
-
-		const token = this._jwtService.getAccessToken(existedUser);
-		const resetPasswordLink = `http://192.168.68.101:4200/auth/reset-password/${token}`;
+		const headerIdx = context.req.rawHeaders.indexOf("Origin");
+		const originUrl = context.req.rawHeaders[headerIdx + 1];
+		const resetPasswordLink = `${originUrl}/auth/reset-password/${accessToken}`;
 
 		if ("email" in body) {
 			await this._mailsService.send(body.email, resetPasswordLink);
@@ -216,7 +251,9 @@ export class AuthService {
 			});
 		}
 
-		const updatedUser = await this._usersService.updateUser(user.id, body);
+		const plainPass = this._cryptoService.decrypt(body.password);
+		const updatePass = await this._cryptoService.hash(plainPass);
+		const updatedUser = await this._usersService.updateUser(user.id, { ...body, password: updatePass });
 
 		return this._jwtService.getAccessToken(updatedUser);
 	}
@@ -230,18 +267,18 @@ export class AuthService {
 			return findedUser;
 		}
 
-		return this._usersService.updateUser(id, {
+		return this._usersService.createUser({
 			googleId: id,
 			name: displayName,
-			email: emails[0].value,
-			status: UserStatusEnum.VERIFIED
+			status: UserStatusEnum.VERIFIED,
+			email: emails[0].value
 		});
 	}
 
 	getGoogleRedirectUrl(user: IUser, domain: string) {
 		const { accessToken } = this._jwtService.getAccessToken(user);
 
-		return `${domain}${removeFirstSlash("ADMIN_ROUTES.GOOGLE.absolutePath")}/${accessToken}`;
+		return `${domain}auth/google/${accessToken}`;
 	}
 
 	async telegram({ id, first_name, last_name, role }: ITelegramUser) {
