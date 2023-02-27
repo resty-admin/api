@@ -18,7 +18,6 @@ spec:
       labels:
         app: dev-nest-api-k8s
     spec:
-      sessionAffinity: ClientIP
       containers:
         - name: dev-nest-api-k8s
           image: registry.digitalocean.com/resty-registry/dev-nest-api:latest
@@ -48,6 +47,7 @@ kind: Service
 metadata:
   name: dev-nest-api-service
 spec:
+  sessionAffinity: ClientIP
   selector:
     app: dev-nest-api-k8s
   ports:
