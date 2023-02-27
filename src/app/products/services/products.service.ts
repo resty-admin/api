@@ -33,6 +33,9 @@ export class ProductsService {
 		const [data, count] = await this._productsRepository.findAndCount({
 			where: findOptions.where,
 			relations: this.findRelations,
+			order: {
+				orderNumber: "ASC"
+			},
 			take,
 			skip
 		});

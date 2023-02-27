@@ -32,6 +32,9 @@ export class HallsService {
 		const [data, count] = await this._hallsRepository.findAndCount({
 			where: findOptions.where,
 			relations: this.findRelations,
+			order: {
+				orderNumber: "ASC"
+			},
 			take,
 			skip
 		});

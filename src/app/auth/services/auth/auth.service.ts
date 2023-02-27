@@ -111,7 +111,9 @@ export class AuthService {
 		}
 
 		if (existedUser.email !== null) {
-			await this._mailsService.send(existedUser.email, existedUser.verificationCode.toString());
+			await this._mailsService.send(existedUser.email, existedUser.verificationCode.toString(), {
+				subject: "Account verification"
+			});
 		}
 
 		if (existedUser.tel !== null) {
@@ -200,7 +202,7 @@ export class AuthService {
 		const createdUser = await this._usersService.createUser({ ...body, verificationCode });
 
 		if ("email" in body) {
-			await this._mailsService.send(body.email, verificationCode.toString());
+			await this._mailsService.send(body.email, verificationCode.toString(), { subject: "Account verification" });
 		}
 
 		if ("tel" in body) {
@@ -232,7 +234,7 @@ export class AuthService {
 		const resetPasswordLink = `${originUrl}/auth/reset-password/${accessToken}`;
 
 		if ("email" in body) {
-			await this._mailsService.send(body.email, resetPasswordLink);
+			await this._mailsService.send(body.email, resetPasswordLink, { subject: "Password reset" });
 		} else if ("tel" in body) {
 			await this._messagesService.send(body.tel, resetPasswordLink);
 		}

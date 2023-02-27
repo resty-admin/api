@@ -55,6 +55,7 @@ export class CommandsResolver {
 	@Mutation(() => CommandEntity)
 	@UseGuards(GqlJwtGuard, CommandsGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
 	async createCommand(@Args("command") command: CreateCommandInput) {
+		console.log("2");
 		return this._commandsService.createCommand(command);
 	}
 
