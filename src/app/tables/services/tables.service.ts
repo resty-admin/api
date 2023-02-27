@@ -33,6 +33,9 @@ export class TablesService {
 		const [data, count] = await this._tablesRepository.findAndCount({
 			where: findOptions.where,
 			relations: this.findRelations,
+			order: {
+				orderNumber: "ASC"
+			},
 			take,
 			skip
 		});

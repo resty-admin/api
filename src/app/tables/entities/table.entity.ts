@@ -1,6 +1,6 @@
 import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { GraphQLJSONObject } from "graphql-type-json";
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
+import { Column, Entity, Generated, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 
 import { FileEntity } from "../../files/entities";
 import { HallEntity } from "../../halls/entities";
@@ -45,6 +45,11 @@ export class TableEntity extends BaseEntity {
 		nullable: true
 	})
 	accountingSystemsFields?: object;
+
+	@Generated("increment")
+	@Column("int", { unique: true })
+	@Field(() => Int)
+	orderNumber: number;
 }
 
 @ObjectType()
