@@ -62,6 +62,7 @@ export class CommandsService {
 	}
 
 	async createCommand(command: CreateCommandInput): Promise<CommandEntity> {
+		console.log("comand", command);
 		const savedCommand = await this._commandsRepository.save(command);
 
 		return this._commandsRepository.findOne({
