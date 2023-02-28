@@ -48,6 +48,7 @@ metadata:
   name: dev-nest-api-service
 spec:
   sessionAffinity: ClientIP
+  type: LoadBalancer
   selector:
     app: dev-nest-api-k8s
   ports:
