@@ -47,8 +47,7 @@ kind: Service
 metadata:
   name: dev-nest-api-service
 spec:
-  #  sessionAffinity: ClientIP
-  #  type: LoadBalancer
+  sessionAffinity: ClientIP
   selector:
     app: dev-nest-api-k8s
   ports:
