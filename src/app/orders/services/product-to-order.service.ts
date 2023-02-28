@@ -88,7 +88,7 @@ export class ProductToOrderService {
 			where: {
 				id: In(productToOrderIds)
 			},
-			relations: ["order", "order.table", "product", "order.users", "order.place"]
+			relations: ["order", "user", "order.table", "product", "order.users", "order.place"]
 		});
 
 		const updatedPtos = pTos.map(
@@ -113,7 +113,7 @@ export class ProductToOrderService {
 			where: {
 				id: In(productToOrderIds)
 			},
-			relations: ["order", "order.table", "product", "order.users", "order.place"]
+			relations: ["order", "user", "order.table", "product", "order.users", "order.place"]
 		});
 
 		const updatedPtos = pTos.map(
