@@ -47,7 +47,20 @@ export class CategoriesService {
 	}
 
 	async createCategory(category: CreateCategoryInput): Promise<CategoryEntity> {
-		const savedCategory = await this._categoriesRepository.save({ ...category, place: { id: category.place } });
+		const categories = await this._categoriesRepository.find({
+			where: {
+				place: {
+					id: category.place
+				}
+			}
+		});
+		const orderNumber = ++categories.sort((a, b) => a.orderNumber - b.orderNumber)[categories.length - 1].orderNumber;
+
+		const savedCategory = await this._categoriesRepository.save({
+			...category,
+			orderNumber,
+			place: { id: category.place }
+		});
 
 		return this._categoriesRepository.findOne({
 			where: { id: savedCategory.id }

@@ -1,7 +1,7 @@
 import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
 import { GraphQLJSONObject } from "graphql-type-json";
-import { Column, Entity, Generated, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne } from "typeorm";
 
 import { AttributesGroupEntity } from "../../attributes/entities";
 import { CategoryEntity } from "../../categories/entities";
@@ -58,8 +58,7 @@ export class ProductEntity extends BaseEntity {
 	})
 	accountingSystemsFields?: object;
 
-	@Generated("increment")
-	@Column("int", { unique: true })
+	@Column("int", { default: 0 })
 	@Field(() => Int)
 	orderNumber: number;
 }

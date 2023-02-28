@@ -48,7 +48,16 @@ export class TablesService {
 	}
 
 	async createTable(table: CreateTableInput): Promise<TableEntity> {
-		const savedTable = await this._tablesRepository.save({ ...table, hall: { id: table.hall } });
+		const tables = await this._tablesRepository.find({
+			where: {
+				hall: {
+					id: table.hall
+				}
+			}
+		});
+		const orderNumber = ++tables.sort((a, b) => a.orderNumber - b.orderNumber)[tables.length - 1].orderNumber;
+
+		const savedTable = await this._tablesRepository.save({ ...table, orderNumber, hall: { id: table.hall } });
 
 		return this._tablesRepository.findOne({
 			where: { id: savedTable.id }

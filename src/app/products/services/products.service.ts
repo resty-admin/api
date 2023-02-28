@@ -48,8 +48,18 @@ export class ProductsService {
 	}
 
 	async createProduct(product: CreateProductInput): Promise<ProductEntity> {
+		const products = await this._productsRepository.find({
+			where: {
+				category: {
+					id: product.category
+				}
+			}
+		});
+		const orderNumber = ++products.sort((a, b) => a.orderNumber - b.orderNumber)[products.length - 1].orderNumber;
+
 		const savedProduct = await this._productsRepository.save({
 			...product,
+			orderNumber,
 			category: { id: product.category },
 			attrsGroups: product.attrsGroups?.map((id) => ({ id }))
 		});

@@ -47,7 +47,16 @@ export class HallsService {
 	}
 
 	async createHall(hall: CreateHallInput): Promise<HallEntity> {
-		const savedHall = await this._hallsRepository.save({ ...hall, place: { id: hall.place } });
+		const halls = await this._hallsRepository.find({
+			where: {
+				place: {
+					id: hall.place
+				}
+			}
+		});
+		const orderNumber = ++halls.sort((a, b) => a.orderNumber - b.orderNumber)[halls.length - 1].orderNumber;
+
+		const savedHall = await this._hallsRepository.save({ ...hall, orderNumber, place: { id: hall.place } });
 
 		return this._hallsRepository.findOne({
 			where: { id: savedHall.id }
