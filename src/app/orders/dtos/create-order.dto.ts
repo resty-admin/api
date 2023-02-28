@@ -2,7 +2,7 @@ import { Field, InputType } from "@nestjs/graphql";
 import { Transform } from "class-transformer";
 import { OrderTypeEnum } from "src/app/shared/enums";
 
-import { IsEnum, IsOptional } from "../../shared";
+import { IsDate, IsEnum, IsOptional } from "../../shared";
 import { InputEntity } from "../../shared/interfaces";
 import { CreateProductToOrderInput } from "./create-product-to-order.dto";
 
@@ -23,6 +23,11 @@ export class CreateOrderInput {
 
 	@Field(() => [CreateProductToOrderInput], { nullable: true })
 	productsToOrder?: CreateProductToOrderInput[];
+
+	@Field(() => Date, { nullable: true })
+	@IsOptional()
+	@IsDate()
+	startDate?: string;
 
 	@Field(() => String, { nullable: true })
 	@IsOptional()

@@ -88,13 +88,23 @@ export class ProductToOrderService {
 			where: {
 				id: In(productToOrderIds)
 			},
-			relations: ["order", "order.table", "product", "order.users", "order.place"]
+			relations: ["order", "user", "order.table", "product", "order.users", "order.place"]
 		});
 
 		const updatedPtos = pTos.map(
 			(el) => ({ ...el, status: ProductToOrderStatusEnum.REJECTED } as ProductToOrderEntity)
 		);
-		await this._ordersNotificationService.rejectOrderPtosEvent(pTos[0].order, updatedPtos);
+
+		const usersIds = [...new Set(updatedPtos.map((el) => el.user.id))];
+		const users = usersIds.map((id) => updatedPtos.find((el) => el.user.id === id).user);
+
+		await this._ordersNotificationService.rejectOrderPtosEvent(
+			{
+				...pTos[0].order,
+				users
+			} as ActiveOrderEntity,
+			updatedPtos
+		);
 		return this.productToOrderRepository.save(updatedPtos);
 	}
 
@@ -103,13 +113,22 @@ export class ProductToOrderService {
 			where: {
 				id: In(productToOrderIds)
 			},
-			relations: ["order", "order.table", "product", "order.users", "order.place"]
+			relations: ["order", "user", "order.table", "product", "order.users", "order.place"]
 		});
 
 		const updatedPtos = pTos.map(
 			(el) => ({ ...el, status: ProductToOrderStatusEnum.APPROVED } as ProductToOrderEntity)
 		);
-		await this._ordersNotificationService.approveOrderPtosEvent(pTos[0].order, updatedPtos);
+
+		const usersIds = [...new Set(updatedPtos.map((el) => el.user.id))];
+		const users = usersIds.map((id) => updatedPtos.find((el) => el.user.id === id).user);
+		await this._ordersNotificationService.approveOrderPtosEvent(
+			{
+				...pTos[0].order,
+				users
+			} as ActiveOrderEntity,
+			updatedPtos
+		);
 		return this.productToOrderRepository.save(updatedPtos);
 	}
 
