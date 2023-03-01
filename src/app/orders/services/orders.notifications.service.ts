@@ -29,6 +29,7 @@ export class OrdersNotificationsService {
 	) {}
 
 	async createOrderEvent(orderId: string) {
+		console.log("createOrderEvent", orderId);
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);
 
@@ -36,6 +37,8 @@ export class OrdersNotificationsService {
 	}
 
 	async cancelOrderEvent(orderId: string) {
+		console.log("cancelOrderEvent", orderId);
+
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);
 
@@ -43,6 +46,8 @@ export class OrdersNotificationsService {
 	}
 
 	async requestToConfirmOrderEvent(orderId) {
+		console.log("requestToConfirmOrderEvent", orderId);
+
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);
 
@@ -50,24 +55,34 @@ export class OrdersNotificationsService {
 	}
 
 	async emitOrderCommand(orderId, command) {
+		console.log("emitOrderCommand", orderId, command);
+
 		this._orderGateway.emitEvent(COMMAND_EMITTED, command);
 	}
 
 	async closeOrderEvent(order: ActiveOrderEntity) {
+		console.log("closeOrderEvent", order);
+
 		const currOrder = await this._orderService.getOrder(order.id);
 		const employees = await this.buildEmployeesList(order.id);
 		this._orderGateway.emitEvent(ORDERS_EVENTS.CLOSED, { ...currOrder, employees });
 	}
 
 	async rejectOrderPtosEvent(order: ActiveOrderEntity, pTos: ProductToOrderEntity[]) {
+		console.log("rejectOrderPtosEvent", order, pTos);
+
 		this._orderGateway.emitEvent(ORDERS_EVENTS.PTO_REJECTED, { ...order, pTos });
 	}
 
 	async approveOrderPtosEvent(order: ActiveOrderEntity, pTos: ProductToOrderEntity[]) {
+		console.log("approveOrderPtosEvent", order, pTos);
+
 		this._orderGateway.emitEvent(ORDERS_EVENTS.PTO_APPROVED, { ...order, pTos });
 	}
 
 	async waitingForManualPayOrderEvent(orderId: string, pTos: ProductToOrderEntity[]) {
+		console.log("waitingForManualPayOrderEvent", orderId, pTos);
+
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);
 
@@ -75,10 +90,14 @@ export class OrdersNotificationsService {
 	}
 
 	async manualPaymentSuccessEvent(order: ActiveOrderEntity) {
+		console.log("manualPaymentSuccessEvent", order);
+
 		this._orderGateway.emitEvent(ORDERS_EVENTS.MANUAL_PAYMENT_SUCCESS, { ...order });
 	}
 
 	async confirmOrderEvent(orderId: string) {
+		console.log("confirmOrderEvent", orderId);
+
 		const order = await this._orderService.getOrder(orderId);
 
 		const employees = await this.buildEmployeesList(orderId);
@@ -88,6 +107,8 @@ export class OrdersNotificationsService {
 	}
 
 	async paymentSuccessOrderEvent(orderId: string, pTos: ProductToOrderEntity[]) {
+		console.log("paymentSuccessOrderEvent", orderId);
+
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);
 
@@ -95,6 +116,8 @@ export class OrdersNotificationsService {
 	}
 
 	async addUserToOrderEvent(orderId: string, user: IUser) {
+		console.log("addUserToOrderEvent", orderId, user.id);
+
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);
 
@@ -102,6 +125,8 @@ export class OrdersNotificationsService {
 	}
 
 	async addTableToOrderEvent(orderId: string, tableId: string) {
+		console.log("addTableToOrderEvent", orderId, tableId);
+
 		const order = await this._orderService.getOrder(orderId);
 		const table = await this._tableService.getTable(tableId);
 		const employees = await this.buildEmployeesList(orderId);
@@ -110,16 +135,22 @@ export class OrdersNotificationsService {
 	}
 
 	async approveOrderEvent(orderId) {
+		console.log("approveOrderEvent", orderId);
+
 		const order = await this._orderService.getOrder(orderId);
 		this._orderGateway.emitEvent(ORDERS_EVENTS.APPROVED, { ...order });
 	}
 
 	async rejectOrderEvent(orderId) {
+		console.log("rejectOrderEvent", orderId);
+
 		const order = await this._orderService.getOrder(orderId);
 		this._orderGateway.emitEvent(ORDERS_EVENTS.REJECTED, { ...order });
 	}
 
 	async removeTableFromOrderEvent(orderId: string) {
+		console.log("removeTableFromOrderEvent", orderId);
+
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);
 
@@ -127,6 +158,8 @@ export class OrdersNotificationsService {
 	}
 
 	async buildEmployeesList(orderId: string): Promise<UserEntity[]> {
+		console.log("buildEmployeesList", orderId);
+
 		const order: ActiveOrderEntity = await this._orderService.getOrder(orderId);
 
 		if (order.waiters.length > 0) {
