@@ -1,6 +1,7 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { Transform, Type } from "class-transformer";
 import { isISO8601, ValidateNested } from "class-validator";
+import { GraphQLJSONObject } from "graphql-type-json";
 
 import { IsObject, IsOptional } from "../../shared";
 import { InputEntity } from "../../shared/interfaces";
@@ -44,4 +45,9 @@ export class UpdatePlaceInput {
 	@ValidateNested()
 	@Type(() => WorkingHoursInput)
 	holidayDays?: Map<Date, WorkingHoursInput>;
+
+	@Field(() => GraphQLJSONObject, { nullable: true })
+	@IsObject()
+	@IsOptional()
+	a11y?: object;
 }

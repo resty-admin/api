@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Post, Query } from "@nestjs/common";
+import { Controller, Get, Post, Query, UploadedFile, UseInterceptors } from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
 
 @Controller()
 export class PosterController {
@@ -8,8 +9,13 @@ export class PosterController {
 	}
 
 	@Post("poster/webhook")
-	async posterWebHook(@Body("body") body: any) {
-		console.log("body", body);
+	@UseInterceptors(FileInterceptor("input"))
+	@UseInterceptors(FileInterceptor("data"))
+	async posterWebHook(
+		@UploadedFile("input") file: Express.Multer.File,
+		@UploadedFile("data") data: Express.Multer.File
+	) {
+		console.log("body", file, data);
 		return true;
 	}
 }
