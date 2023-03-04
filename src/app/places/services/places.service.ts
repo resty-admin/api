@@ -6,8 +6,7 @@ import { Repository } from "typeorm";
 import { CompanyEntity } from "../../companies/entities";
 import { getFindOptionsByFilters } from "../../shared";
 import type { FiltersArgsDto, PaginationArgsDto } from "../../shared/dtos";
-import { PlaceVerificationStatusEnum } from "../../shared/enums";
-import { ErrorsEnum, OrderStatusEnum, UserRoleEnum } from "../../shared/enums";
+import { ErrorsEnum, OrderStatusEnum, PlaceVerificationStatusEnum, UserRoleEnum } from "../../shared/enums";
 import type { IUser } from "../../shared/interfaces";
 import { UserEntity } from "../../users/entities";
 import type { CreatePlaceInput, UpdatePlaceInput, UserToPlaceInput } from "../dtos";
@@ -244,7 +243,14 @@ export class PlacesService {
 	// 	});
 	// }
 
-	async updatePlaceVerification(placeId: string, status: PlaceVerificationStatusEnum) {
+	async updatePlaceVerification(placeId: string, status: PlaceVerificationStatusEnum, user: IUser) {
+		if (user.role === UserRoleEnum.MANAGER && status === PlaceVerificationStatusEnum.VERIFIED) {
+			throw new GraphQLError(ErrorsEnum.Forbidden.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
 		const place: PlaceEntity = await this._placesRepository.findOne({
 			where: {
 				id: placeId
