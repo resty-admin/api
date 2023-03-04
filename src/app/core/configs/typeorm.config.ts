@@ -47,7 +47,7 @@ export const TYPEORM_CONFIG: TypeOrmModuleOptions = {
 		...ATTRIBUTES_ENTITIES,
 		...SHIFTS_ENITITES
 	],
-	synchronize: environment.production,
+	synchronize: !environment.production,
 	migrationsTableName: "resty-api-migrations",
 	// migrations: [InitDb1677448816647, Admin1675617506058, FondyPaymentSystem1675677687530, PosterAccountSystem1675677996962],
 	migrations: [InitDb1677448816647, Admin1675617506058, OrderNumber1677538266844, UpdateOrderNumber1677609137157],
