@@ -187,10 +187,14 @@ export class OrdersService {
 	}
 
 	async createOrder(order: CreateOrderInput, user: IUser): Promise<ActiveOrderEntity> {
-		let date = new Date();
-		if ("startDate" in order && order.type === OrderTypeEnum.IN_PLACE) {
-			const isDateAvailable = this.isTimeAvailable(new Date(order.startDate), order.place.id);
-			date = isDateAvailable ? new Date(order.startDate) : new Date();
+		const date = "startDate" in order ? new Date(order.startDate) : new Date();
+
+		if (order.type !== OrderTypeEnum.IN_PLACE && !(await this.isTimeAvailable(date, order.place.id))) {
+			throw new GraphQLError(ErrorsEnum.InvalidOrderDate.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
 		}
 
 		const waiters = await this.createWaitersForInPlaceOrder(order);
