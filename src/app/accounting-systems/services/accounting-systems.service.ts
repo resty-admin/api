@@ -58,6 +58,21 @@ export class AccountingSystemsService {
 	}
 
 	async connectAccountingSystemToPlace(body: ConnectAccountingSystemToPlaceInput) {
+		const currPta = await this._pTa.findOne({
+			where: {
+				place: {
+					id: body.place.id
+				},
+				accountingSystem: {
+					id: body.accountingSystem.id
+				}
+			}
+		});
+
+		if (currPta) {
+			return currPta;
+		}
+
 		return this._pTa.save({ ...body });
 	}
 }

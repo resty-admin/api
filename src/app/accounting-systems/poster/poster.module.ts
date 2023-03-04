@@ -6,10 +6,12 @@ import { HallsModule } from "../../halls/halls.module";
 import { ProductsModule } from "../../products/products.module";
 import { TablesModule } from "../../tables/tables.module";
 import { AccountingSystemsModule } from "../accounting-systems.module";
+import { POSTER_CONTROLLERS } from "./controller";
 import { POSTER_RESOLVERS } from "./resolvers";
 import { POSTER_SERVICES } from "./services";
 
 @Module({
+	controllers: POSTER_CONTROLLERS,
 	imports: [
 		HttpModule,
 		forwardRef(() => AccountingSystemsModule),

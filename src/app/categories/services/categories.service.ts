@@ -54,7 +54,10 @@ export class CategoriesService {
 				}
 			}
 		});
-		const orderNumber = ++categories.sort((a, b) => a.orderNumber - b.orderNumber)[categories.length - 1].orderNumber;
+		const orderNumber =
+			categories.length > 0
+				? ++categories.sort((a, b) => a.orderNumber - b.orderNumber)[categories.length - 1].orderNumber
+				: 0;
 
 		const savedCategory = await this._categoriesRepository.save({
 			...category,

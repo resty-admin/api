@@ -1,7 +1,7 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { GraphQLJSONObject } from "graphql-type-json";
 
-import { IsNotEmpty, IsObject, IsString } from "../../shared";
+import { IsNotEmpty, IsObject, IsOptional, IsString } from "../../shared";
 
 @InputType()
 export class CreateAccountingSystemInput {
@@ -12,5 +12,6 @@ export class CreateAccountingSystemInput {
 
 	@Field(() => GraphQLJSONObject, { nullable: true })
 	@IsObject()
+	@IsOptional()
 	configFields?: object;
 }

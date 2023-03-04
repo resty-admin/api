@@ -55,7 +55,10 @@ export class ProductsService {
 				}
 			}
 		});
-		const orderNumber = ++products.sort((a, b) => a.orderNumber - b.orderNumber)[products.length - 1].orderNumber;
+		const orderNumber =
+			products.length > 0
+				? ++products.sort((a, b) => a.orderNumber - b.orderNumber)[products.length - 1].orderNumber
+				: 0;
 
 		const savedProduct = await this._productsRepository.save({
 			...product,
