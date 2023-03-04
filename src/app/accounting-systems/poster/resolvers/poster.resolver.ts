@@ -51,13 +51,13 @@ export class PosterResolver {
 		return this._posterService.syncProducts(placeId);
 	}
 
-	@Mutation(() => String)
-	async syncOrders(@Args("placeId") placeId: string) {
-		return this._posterOrdersService.syncOrders(placeId);
-	}
-
-	@Mutation(() => String)
-	async syncClients(@Args("placeId") placeId: string) {
-		return this._posterOrdersService.syncClients(placeId);
-	}
+	// @Mutation(() => String)
+	// async syncOrders(@Args("placeId") placeId: string) {
+	// 	return this._posterOrdersService.syncOrders(placeId);
+	// }
+	//
+	// @Mutation(() => String)
+	// async syncClients(@Args("placeId") placeId: string) {
+	// 	return this._posterOrdersService.syncClients(placeId);
+	// }
 }
