@@ -28,18 +28,18 @@ export class CreatePlaceInput {
 	@Transform(({ value }) => ({ id: value }))
 	file?: InputEntity;
 
-	@Field(() => WorkingHoursInput, { nullable: true })
+	@Field(() => WorkingHoursDto, { nullable: true })
 	@IsOptional()
 	@ValidateNested()
-	@Type(() => WorkingHoursInput)
+	@Type(() => WorkingHoursDto)
 	weekDays?: WorkingHoursDto;
 
-	@Field(() => WorkingHoursInput, { nullable: true })
+	@Field(() => WorkingHoursDto, { nullable: true })
 	@IsOptional()
 	@IsObject()
 	@ValidateNested()
-	@Type(() => WorkingHoursInput)
-	weekendDays?: WorkingHoursInput;
+	@Type(() => WorkingHoursDto)
+	weekendDays?: WorkingHoursDto;
 
 	@Field(() => WorkingHoursInput, { nullable: true })
 	@IsOptional()

@@ -18,4 +18,15 @@ export class PosterController {
 		console.log("body", file, data);
 		return true;
 	}
+
+	@Get("poster/webhook")
+	@UseInterceptors(FileInterceptor("input"))
+	@UseInterceptors(FileInterceptor("data"))
+	async getPosterWebHook(
+		@UploadedFile("input") file: Express.Multer.File,
+		@UploadedFile("data") data: Express.Multer.File
+	) {
+		console.log("get", file, data);
+		return true;
+	}
 }
