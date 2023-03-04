@@ -6,7 +6,7 @@ import { GraphQLJSONObject } from "graphql-type-json";
 import { IsObject, IsOptional } from "../../shared";
 import { InputEntity } from "../../shared/interfaces";
 import { IsMap } from "../../shared/validators/is-map.validator";
-import { WorkingHoursInput } from "./date-types.dto";
+import { WorkingHoursDto, WorkingHoursInput } from "./date-types.dto";
 
 @InputType()
 export class UpdatePlaceInput {
@@ -26,18 +26,18 @@ export class UpdatePlaceInput {
 	@Transform(({ value }) => ({ id: value }))
 	file?: InputEntity;
 
-	@Field(() => WorkingHoursInput, { nullable: true })
+	@Field(() => WorkingHoursDto, { nullable: true })
 	@IsOptional()
 	@ValidateNested()
-	@Type(() => WorkingHoursInput)
-	weekDays?: WorkingHoursInput;
+	@Type(() => WorkingHoursDto)
+	weekDays?: WorkingHoursDto;
 
-	@Field(() => WorkingHoursInput, { nullable: true })
+	@Field(() => WorkingHoursDto, { nullable: true })
 	@IsOptional()
 	@IsObject()
 	@ValidateNested()
-	@Type(() => WorkingHoursInput)
-	weekendDays?: WorkingHoursInput;
+	@Type(() => WorkingHoursDto)
+	weekendDays?: WorkingHoursDto;
 
 	@Field(() => WorkingHoursInput, { nullable: true })
 	@IsOptional()
