@@ -162,6 +162,13 @@ export class OrdersService {
 		};
 	}
 
+	async getHistoryOrder(id: string) {
+		return this._historyOrderRepository.findOne({
+			where: { id },
+			relations: this.findOneRelations
+		});
+	}
+
 	async clientHistoryOrders(user: IUser, { take, skip }: PaginationArgsDto) {
 		const repoBuilder = this._historyOrderRepository
 			.createQueryBuilder("order")

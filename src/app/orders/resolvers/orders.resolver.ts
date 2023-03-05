@@ -76,6 +76,22 @@ export class OrdersResolver {
 		return ORDERS_EVENTS;
 	}
 
+	@Query(() => HistoryOrderEntity)
+	@UseGuards(
+		GqlJwtGuard,
+		RolesGuard([
+			UserRoleEnum.ADMIN,
+			UserRoleEnum.MANAGER,
+			UserRoleEnum.WAITER,
+			UserRoleEnum.HOSTESS,
+			UserRoleEnum.HOOKAH,
+			UserRoleEnum.CLIENT
+		])
+	)
+	async hall(@Args("id", { type: () => String }) id: string) {
+		return this._ordersService.getHistoryOrder(id);
+	}
+
 	@Query(() => PaginatedHistoryOrder)
 	@UseGuards(
 		GqlJwtGuard,
