@@ -26,8 +26,6 @@ async function bootstrap() {
 
 	app.enableCors();
 
-	console.log("SUPER NEW UPDATE");
-
 	await app.listen(environment.port);
 
 	Logger.log(`🚀 Application  is running on: http://192.168.68.105:${environment.port}/api`, "Bootstrap");

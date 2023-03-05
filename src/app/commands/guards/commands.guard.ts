@@ -17,12 +17,10 @@ export class CommandsGuard implements CanActivate {
 		const ctx = GqlExecutionContext.create(context);
 		const request = ctx.getContext().req;
 
-		console.log("here");
 		const { commandId = null } = request.body.variables;
 		const { place = null, id = null } = request.body.variables.command || {};
 
 		if (request.user.role === UserRoleEnum.ADMIN) {
-			console.log("1");
 			return true;
 		}
 
