@@ -165,7 +165,7 @@ export class OrdersService {
 	async getHistoryOrder(id: string) {
 		return this._historyOrderRepository.findOne({
 			where: { id },
-			relations: ["users", "place"]
+			relations: ["place"]
 		});
 	}
 
