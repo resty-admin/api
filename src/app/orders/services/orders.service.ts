@@ -451,7 +451,7 @@ export class OrdersService {
 			return Number(isHoliday.start) <= orderHours && Number(isHoliday.end) >= orderHours;
 		}
 
-		const isWeekDay = date.getDay() <= 5;
+		const isWeekDay = date.getDay() <= 5 && date.getDay() !== 0;
 		const start = Number(place[isWeekDay ? "weekDays" : "weekendDays"].start);
 		const end = Number(place[isWeekDay ? "weekDays" : "weekendDays"].end);
 
