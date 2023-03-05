@@ -88,7 +88,7 @@ export class OrdersResolver {
 			UserRoleEnum.CLIENT
 		])
 	)
-	async hall(@Args("id", { type: () => String }) id: string) {
+	async historyOrder(@Args("id", { type: () => String }) id: string) {
 		return this._ordersService.getHistoryOrder(id);
 	}
 
