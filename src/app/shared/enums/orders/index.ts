@@ -1,3 +1,4 @@
+export * from "./manual-payment.enum";
 export * from "./order-status.enum";
 export * from "./order-type.enum";
 export * from "./orders-events.enum";
