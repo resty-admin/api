@@ -4,6 +4,7 @@ import { DataSource } from "typeorm";
 
 import { environment } from "../../../environments/environment";
 import { Admin1675617506058 } from "../../../migrations/1675617506058-admin";
+import { FondyPaymentSystem1675677687530 } from "../../../migrations/1675677687530-fondy";
 import { InitDb1677448816647 } from "../../../migrations/1677448816647-migration_name";
 import { OrderNumber1677538266844 } from "../../../migrations/1677538266844-migration_name";
 import { UpdateOrderNumber1677609137157 } from "../../../migrations/1677609137157-migration_name";
@@ -56,7 +57,8 @@ export const TYPEORM_CONFIG: TypeOrmModuleOptions = {
 		Admin1675617506058,
 		OrderNumber1677538266844,
 		UpdateOrderNumber1677609137157,
-		historyOrderDate1678048152060
+		historyOrderDate1678048152060,
+		FondyPaymentSystem1675677687530
 	],
 	migrationsRun: environment.production,
 	...(environment.production
