@@ -444,6 +444,7 @@ export class OrdersService {
 
 	async isTimeAvailable(date: Date, placeId: string) {
 		if (date <= new Date()) {
+			console.log("1");
 			throw new GraphQLError(ErrorsEnum.TimeNotAvailable.toString(), {
 				extensions: {
 					code: 500
@@ -460,12 +461,15 @@ export class OrdersService {
 		const orderHours = date.getHours();
 
 		if (isHoliday) {
+			console.log("2");
 			return Number(isHoliday.start) <= orderHours && Number(isHoliday.end) >= orderHours;
 		}
 
 		const isWeekDay = date.getDay() <= 5 && date.getDay() !== 0;
 		const start = Number(place[isWeekDay ? "weekDays" : "weekendDays"].start);
 		const end = Number(place[isWeekDay ? "weekDays" : "weekendDays"].end);
+
+		console.log("3", start, end);
 
 		const isAvailable = orderHours >= start && orderHours <= end;
 
