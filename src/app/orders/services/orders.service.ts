@@ -117,9 +117,14 @@ export class OrdersService {
 
 			const [data, count] = await this._ordersRepository.findAndCount({
 				where: {
-					place: {
-						id: uTp.place.id
-					}
+					...findOptions.where,
+					...("place" in findOptions.where
+						? {}
+						: {
+								place: {
+									id: uTp.place.id
+								}
+						  })
 				},
 				take,
 				skip,
