@@ -72,7 +72,7 @@ export class OrdersNotificationsService {
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.WAITING_FOR_MANUAL_PAY, { ...order, pTos, employees, type });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.WAITING_FOR_MANUAL_PAY, { ...order, pTos, employees, manualType: type });
 	}
 
 	async manualPaymentSuccessEvent(order: ActiveOrderEntity) {
