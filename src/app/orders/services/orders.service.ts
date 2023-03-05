@@ -458,7 +458,7 @@ export class OrdersService {
 		});
 
 		const isHoliday = place.holidayDays[new Date().toISOString().split("T")[0]];
-		const orderHours = date.getHours();
+		const orderHours = date.getUTCHours() + 2;
 
 		if (isHoliday) {
 			console.log("2");
