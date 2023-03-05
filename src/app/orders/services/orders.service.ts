@@ -431,6 +431,13 @@ export class OrdersService {
 	}
 
 	async isTimeAvailable(date: Date, placeId: string) {
+		if (date <= new Date()) {
+			throw new GraphQLError(ErrorsEnum.TimeNotAvailable.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
 		const place = await this._placeRepository.findOne({
 			where: {
 				id: placeId
@@ -448,15 +455,15 @@ export class OrdersService {
 		const start = Number(place[isWeekDay ? "weekDays" : "weekendDays"].start);
 		const end = Number(place[isWeekDay ? "weekDays" : "weekendDays"].end);
 
-		const isAvaiable = orderHours >= start && orderHours <= end;
+		const isAvailable = orderHours >= start && orderHours <= end;
 
-		if (!isAvaiable) {
+		if (!isAvailable) {
 			throw new GraphQLError(ErrorsEnum.TimeNotAvailable.toString(), {
 				extensions: {
 					code: 500
 				}
 			});
 		}
-		return isAvaiable;
+		return isAvailable;
 	}
 }
