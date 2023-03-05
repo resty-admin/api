@@ -471,9 +471,11 @@ export class OrdersService {
 
 		console.log("3", start, end);
 
+		console.log("orderedHours", orderHours);
 		const isAvailable = orderHours >= start && orderHours <= end;
 
 		if (!isAvailable) {
+			console.log("jopa");
 			throw new GraphQLError(ErrorsEnum.TimeNotAvailable.toString(), {
 				extensions: {
 					code: 500
