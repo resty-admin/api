@@ -8,24 +8,22 @@ import { Repository } from "typeorm";
 import { CategoryEntity } from "../../../categories/entities";
 import { HallEntity } from "../../../halls/entities";
 import { ProductEntity } from "../../../products/entities";
-import { ErrorsEnum } from "../../../shared/enums";
 import { TableEntity } from "../../../tables/entities";
-import { AccountingSystemEntity, PlaceToAccountingSystemEntity } from "../../entities";
+import { PosterCoreService } from "./poster-core.service";
 
 @Injectable()
 export class PosterService {
 	constructor(
-		@InjectRepository(PlaceToAccountingSystemEntity) private readonly _pTa: Repository<PlaceToAccountingSystemEntity>,
-		@InjectRepository(AccountingSystemEntity) private readonly _accSystem: Repository<AccountingSystemEntity>,
 		@InjectRepository(HallEntity) private readonly _hallRepo: Repository<HallEntity>,
 		@InjectRepository(TableEntity) private readonly _tableRepo: Repository<TableEntity>,
 		@InjectRepository(CategoryEntity) private readonly _categoriesRepo: Repository<CategoryEntity>,
 		@InjectRepository(ProductEntity) private readonly _productRepo: Repository<ProductEntity>,
-		private readonly _httpService: HttpService
+		private readonly _httpService: HttpService,
+		private readonly _posterCoreService: PosterCoreService
 	) {}
 
 	async syncHalls(placeId: string) {
-		const token = await this.getToken(placeId);
+		const token = await this._posterCoreService.getToken(placeId);
 		const url = `https://joinposter.com/api/spots.getSpotTablesHalls?token=${token}`;
 
 		const { response: posterHalls } = (await this._httpService.get(url).toPromise()).data;
@@ -73,7 +71,7 @@ export class PosterService {
 	}
 
 	async syncTables(placeId: string) {
-		const token = await this.getToken(placeId);
+		const token = await this._posterCoreService.getToken(placeId);
 		const url = `https://joinposter.com/api/spots.getTableHallTables?token=${token}`;
 
 		const { response: posterTables } = (await this._httpService.get(url).toPromise()).data;
@@ -148,7 +146,7 @@ export class PosterService {
 	}
 
 	async syncCategories(placeId: string) {
-		const token = await this.getToken(placeId);
+		const token = await this._posterCoreService.getToken(placeId);
 		const url = `https://joinposter.com/api/menu.getCategories?token=${token}`;
 
 		const { response: posterCategories } = (await this._httpService.get(url).toPromise()).data;
@@ -197,7 +195,7 @@ export class PosterService {
 	}
 
 	async syncProducts(placeId: string) {
-		const token = await this.getToken(placeId);
+		const token = await this._posterCoreService.getToken(placeId);
 		const categories = await this._categoriesRepo.find({
 			where: {
 				place: {
@@ -270,38 +268,5 @@ export class PosterService {
 				}
 			});
 		}
-	}
-
-	async getPosterAccSystem() {
-		return this._accSystem.findOne({
-			where: {
-				name: "POSTER"
-			}
-		});
-	}
-
-	async getToken(placeId: string) {
-		const poster = await this.getPosterAccSystem();
-		const placeConfigs = await this._pTa.findOne({
-			where: {
-				place: {
-					id: placeId
-				},
-				accountingSystem: {
-					id: poster.id
-				}
-			}
-		});
-
-		const token = (placeConfigs.placeConfigFields as any).access_token || null;
-		if (!token) {
-			throw new GraphQLError(ErrorsEnum.PosterTokenNotExist.toString(), {
-				extensions: {
-					code: 500
-				}
-			});
-		}
-
-		return token;
 	}
 }

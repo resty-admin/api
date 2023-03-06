@@ -117,9 +117,14 @@ export class OrdersService {
 
 			const [data, count] = await this._ordersRepository.findAndCount({
 				where: {
-					place: {
-						id: uTp.place.id
-					}
+					...findOptions.where,
+					...("place" in findOptions.where
+						? {}
+						: {
+								place: {
+									id: uTp.place.id
+								}
+						  })
 				},
 				take,
 				skip,
@@ -157,6 +162,13 @@ export class OrdersService {
 		};
 	}
 
+	async getHistoryOrder(id: string) {
+		return this._historyOrderRepository.findOne({
+			where: { id },
+			relations: ["place"]
+		});
+	}
+
 	async clientHistoryOrders(user: IUser, { take, skip }: PaginationArgsDto) {
 		const repoBuilder = this._historyOrderRepository
 			.createQueryBuilder("order")
@@ -187,10 +199,14 @@ export class OrdersService {
 	}
 
 	async createOrder(order: CreateOrderInput, user: IUser): Promise<ActiveOrderEntity> {
-		let date = new Date();
-		if ("startDate" in order && order.type === OrderTypeEnum.IN_PLACE) {
-			const isDateAvailable = this.isTimeAvailable(new Date(order.startDate), order.place.id);
-			date = isDateAvailable ? new Date(order.startDate) : new Date();
+		const date = "startDate" in order ? new Date(order.startDate) : new Date();
+
+		if (order.type !== OrderTypeEnum.IN_PLACE && !(await this.isTimeAvailable(date, order.place.id))) {
+			throw new GraphQLError(ErrorsEnum.InvalidOrderDate.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
 		}
 
 		const waiters = await this.createWaitersForInPlaceOrder(order);
@@ -427,6 +443,14 @@ export class OrdersService {
 	}
 
 	async isTimeAvailable(date: Date, placeId: string) {
+		if (date <= new Date()) {
+			console.log("1");
+			throw new GraphQLError(ErrorsEnum.TimeNotAvailable.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
 		const place = await this._placeRepository.findOne({
 			where: {
 				id: placeId
@@ -434,25 +458,30 @@ export class OrdersService {
 		});
 
 		const isHoliday = place.holidayDays[new Date().toISOString().split("T")[0]];
-		const orderHours = date.getHours();
+		const orderHours = date.getUTCHours() + 2;
 
 		if (isHoliday) {
+			console.log("2");
 			return Number(isHoliday.start) <= orderHours && Number(isHoliday.end) >= orderHours;
 		}
 
-		const isWeekDay = date.getDay() <= 5;
+		const isWeekDay = date.getDay() <= 5 && date.getDay() !== 0;
 		const start = Number(place[isWeekDay ? "weekDays" : "weekendDays"].start);
 		const end = Number(place[isWeekDay ? "weekDays" : "weekendDays"].end);
 
-		const isAvaiable = orderHours >= start && orderHours <= end;
+		console.log("3", start, end);
 
-		if (!isAvaiable) {
+		console.log("orderedHours", orderHours);
+		const isAvailable = orderHours >= start && orderHours <= end;
+
+		if (!isAvailable) {
+			console.log("jopa");
 			throw new GraphQLError(ErrorsEnum.TimeNotAvailable.toString(), {
 				extensions: {
 					code: 500
 				}
 			});
 		}
-		return isAvaiable;
+		return isAvailable;
 	}
 }

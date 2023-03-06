@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { GraphQLError } from "graphql/error";
 import { In, Repository } from "typeorm";
 
+import type { ManualPaymentEnum } from "../../shared/enums";
 import { ErrorsEnum, ProductToOrderPaidStatusEnum, ProductToOrderStatusEnum } from "../../shared/enums";
 import type { IUser } from "../../shared/interfaces";
 import type { ConfirmProductToOrderInput } from "../dtos";
@@ -77,6 +78,8 @@ export class ProductToOrderService {
 			]
 		});
 
+		console.log("totalPrice", this.calculateTotalPrice(order.productsToOrders));
+
 		return this._ordersRepository.save({
 			...order,
 			totalPrice: this.calculateTotalPrice(order.productsToOrders)
@@ -132,7 +135,7 @@ export class ProductToOrderService {
 		return this.productToOrderRepository.save(updatedPtos);
 	}
 
-	async setManualPayForProductsInOrder(productToOrderIds: string[]) {
+	async setManualPayForProductsInOrder(productToOrderIds: string[], type: ManualPaymentEnum) {
 		const pTos = await this.productToOrderRepository.find({
 			where: {
 				id: In(productToOrderIds)
@@ -147,7 +150,7 @@ export class ProductToOrderService {
 					paidStatus: ProductToOrderPaidStatusEnum.WAITING
 				} as ProductToOrderEntity)
 		);
-		await this._ordersNotificationService.waitingForManualPayOrderEvent(pTos[0].order.id, updatedPtos);
+		await this._ordersNotificationService.waitingForManualPayOrderEvent(pTos[0].order.id, updatedPtos, type);
 		return this.productToOrderRepository.save(updatedPtos);
 	}
 
@@ -165,16 +168,13 @@ export class ProductToOrderService {
 	}
 
 	calculateTotalPrice(productsToOrders: ProductToOrderEntity[]) {
-		return (
-			100 *
-			productsToOrders.reduce(
-				(pre, curr) =>
-					pre +
-					curr.count *
-						((curr.attributesToProduct || []).reduce((pre, curr) => pre + curr.attribute.price * curr.count, 0) +
-							curr.product.price),
-				0
-			)
+		return productsToOrders.reduce(
+			(pre, curr) =>
+				pre +
+				curr.count *
+					((curr.attributesToProduct || []).reduce((pre, curr) => pre + curr.attribute.price * curr.count, 0) +
+						curr.product.price),
+			0
 		);
 	}
 }

@@ -1,6 +1,7 @@
 import { registerEnumType } from "@nestjs/graphql";
 import {
 	AttributeGroupTypeEnum,
+	ManualPaymentEnum,
 	OrderStatusEnum,
 	OrderTypeEnum,
 	PlaceStatusEnum,
@@ -27,4 +28,5 @@ export function initGraphql() {
 	// registerEnumType(TableStatusEnum, { name: "TableStatusEnum" });
 	registerEnumType(PlaceVerificationStatusEnum, { name: "PlaceVerificationStatusEnum" });
 	registerEnumType(ORDERS_EVENTS, { name: "OrdersEvents" });
+	registerEnumType(ManualPaymentEnum, { name: "ManualPaymentEnum" });
 }

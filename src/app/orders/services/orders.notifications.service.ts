@@ -5,6 +5,7 @@ import { Not, Repository } from "typeorm";
 import { COMMAND_EMITTED } from "../../gateways/events";
 import { UserToPlaceEntity } from "../../places/entities";
 import { ProductsService } from "../../products/services";
+import type { ManualPaymentEnum } from "../../shared/enums";
 import { ProductToOrderStatusEnum, UserRoleEnum } from "../../shared/enums";
 import type { IUser } from "../../shared/interfaces";
 import { ActiveShiftEntity } from "../../shifts/entities";
@@ -67,11 +68,11 @@ export class OrdersNotificationsService {
 		this._orderGateway.emitEvent(ORDERS_EVENTS.PTO_APPROVED, { ...order, pTos });
 	}
 
-	async waitingForManualPayOrderEvent(orderId: string, pTos: ProductToOrderEntity[]) {
+	async waitingForManualPayOrderEvent(orderId: string, pTos: ProductToOrderEntity[], type: ManualPaymentEnum) {
 		const order = await this._orderService.getOrder(orderId);
 		const employees = await this.buildEmployeesList(orderId);
 
-		this._orderGateway.emitEvent(ORDERS_EVENTS.WAITING_FOR_MANUAL_PAY, { ...order, pTos, employees });
+		this._orderGateway.emitEvent(ORDERS_EVENTS.WAITING_FOR_MANUAL_PAY, { ...order, pTos, employees, manualType: type });
 	}
 
 	async manualPaymentSuccessEvent(order: ActiveOrderEntity) {

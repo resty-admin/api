@@ -54,7 +54,9 @@ export class HallsService {
 				}
 			}
 		});
-		const orderNumber = ++halls.sort((a, b) => a.orderNumber - b.orderNumber)[halls.length - 1].orderNumber;
+
+		const orderNumber =
+			halls.length > 0 ? ++halls.sort((a, b) => a.orderNumber - b.orderNumber)[halls.length - 1].orderNumber : 0;
 
 		const savedHall = await this._hallsRepository.save({ ...hall, orderNumber, place: { id: hall.place } });
 

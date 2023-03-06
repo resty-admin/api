@@ -124,11 +124,12 @@ export class PlacesResolver {
 	// }
 
 	@Mutation(() => PlaceEntity)
-	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN]))
+	@UseGuards(GqlJwtGuard, RolesGuard([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]))
 	async updatePlaceVerification(
 		@Args("placeId") placeId: string,
-		@Args("status", { type: () => PlaceVerificationStatusEnum }) status: PlaceVerificationStatusEnum
+		@Args("status", { type: () => PlaceVerificationStatusEnum }) status: PlaceVerificationStatusEnum,
+		@UserGql() user: IUser
 	) {
-		return this._placesService.updatePlaceVerification(placeId, status);
+		return this._placesService.updatePlaceVerification(placeId, status, user);
 	}
 }

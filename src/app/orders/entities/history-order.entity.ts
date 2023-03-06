@@ -57,6 +57,10 @@ export class HistoryOrderEntity extends BaseEntity {
 	})
 	@Field(() => [GraphQLJSONObject])
 	productsToOrders?: object[];
+
+	@Field(() => Date, { nullable: true })
+	@Column({ nullable: true })
+	startDate?: Date;
 }
 
 @ObjectType()

@@ -1,6 +1,6 @@
 import { UseGuards } from "@nestjs/common";
 import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { UserRoleEnum } from "src/app/shared/enums";
+import { ManualPaymentEnum, UserRoleEnum } from "src/app/shared/enums";
 
 import { GqlJwtGuard } from "../../auth";
 import { RolesGuard, UserGql } from "../../shared";
@@ -74,6 +74,22 @@ export class OrdersResolver {
 	)
 	async ordersEvents() {
 		return ORDERS_EVENTS;
+	}
+
+	@Query(() => HistoryOrderEntity)
+	@UseGuards(
+		GqlJwtGuard,
+		RolesGuard([
+			UserRoleEnum.ADMIN,
+			UserRoleEnum.MANAGER,
+			UserRoleEnum.WAITER,
+			UserRoleEnum.HOSTESS,
+			UserRoleEnum.HOOKAH,
+			UserRoleEnum.CLIENT
+		])
+	)
+	async historyOrder(@Args("id", { type: () => String }) id: string) {
+		return this._ordersService.getHistoryOrder(id);
 	}
 
 	@Query(() => PaginatedHistoryOrder)
@@ -213,9 +229,10 @@ export class OrdersResolver {
 		])
 	)
 	async setManualPayForProductsInOrder(
-		@Args("productToOrderIds", { type: () => [String] }) productToOrderIds: string[]
+		@Args("productToOrderIds", { type: () => [String] }) productToOrderIds: string[],
+		@Args("manualPaymentType", { type: () => ManualPaymentEnum }) manualPaymentType: ManualPaymentEnum
 	) {
-		return this._productToOrderService.setManualPayForProductsInOrder(productToOrderIds);
+		return this._productToOrderService.setManualPayForProductsInOrder(productToOrderIds, manualPaymentType);
 	}
 
 	@Mutation(() => [ProductToOrderEntity])

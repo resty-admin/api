@@ -40,5 +40,6 @@ jobs:
 
             cd /home/resty/k8s
             kubectl apply -f cloudflared.yaml
+            cd /home/resty/api
             kubectl apply -f api.dev.k8s.yaml
             kubectl rollout restart deployment dev-nest-api-k8s-deployment

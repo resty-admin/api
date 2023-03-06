@@ -55,7 +55,8 @@ export class TablesService {
 				}
 			}
 		});
-		const orderNumber = ++tables.sort((a, b) => a.orderNumber - b.orderNumber)[tables.length - 1].orderNumber;
+		const orderNumber =
+			tables.length > 0 ? ++tables.sort((a, b) => a.orderNumber - b.orderNumber)[tables.length - 1].orderNumber : 0;
 
 		const savedTable = await this._tablesRepository.save({ ...table, orderNumber, hall: { id: table.hall } });
 

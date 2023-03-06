@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Float, Int, ObjectType } from "@nestjs/graphql";
 
 @ObjectType()
 export class StatisticType {
@@ -14,9 +14,9 @@ export class StatisticType {
 	@Field(() => Int)
 	tables: number;
 
-	@Field(() => Int)
+	@Field(() => Float)
 	totalAmount: number;
 
-	@Field(() => Int)
+	@Field(() => Float)
 	tax: number;
 }
