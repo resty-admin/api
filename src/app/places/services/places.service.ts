@@ -229,19 +229,10 @@ export class PlacesService {
 		return this._uTpRepository.save({ user: userEntity, place, role: UserRoleEnum.WAITER });
 	}
 
-	// async removeEmployeeFromPlace(employee: AddEmployeeInput) {
-	// 	const place = await this._placesRepository.findOne({
-	// 		where: {
-	// 			id: employee.placeId
-	// 		},
-	// 		relations: ["employees"]
-	// 	});
-	//
-	// 	return this._placesRepository.save({
-	// 		...place,
-	// 		employees: place.employees.filter((el) => el.id !== employee.userId)
-	// 	});
-	// }
+	async removeUserFromPlace(utpId: string) {
+		await this._uTpRepository.delete(utpId);
+		return `${utpId} deleted`;
+	}
 
 	async updatePlaceVerification(placeId: string, status: PlaceVerificationStatusEnum, user: IUser) {
 		if (user.role === UserRoleEnum.MANAGER && status === PlaceVerificationStatusEnum.VERIFIED) {

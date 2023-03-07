@@ -55,6 +55,17 @@ export class TablesService {
 				}
 			}
 		});
+
+		const isCodeExist = tables.find((el) => el.code === table.code);
+
+		if (isCodeExist) {
+			throw new GraphQLError(ErrorsEnum.TableCodeExist.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
+
 		const orderNumber =
 			tables.length > 0 ? ++tables.sort((a, b) => a.orderNumber - b.orderNumber)[tables.length - 1].orderNumber : 0;
 
@@ -66,6 +77,24 @@ export class TablesService {
 	}
 
 	async updateTable(id: string, table: UpdateTableInput): Promise<TableEntity> {
+		if ("code" in table) {
+			const currTable = await this._tablesRepository.findOne({
+				where: {
+					id
+				}
+			});
+
+			const isCodeExist = currTable.code === table.code;
+
+			if (isCodeExist) {
+				throw new GraphQLError(ErrorsEnum.TableCodeExist.toString(), {
+					extensions: {
+						code: 500
+					}
+				});
+			}
+		}
+
 		await this._tablesRepository.save({ id, ...table });
 
 		return this._tablesRepository.findOne({

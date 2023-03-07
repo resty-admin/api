@@ -31,5 +31,6 @@ export enum ErrorsEnum {
 	InvalidWaiterCode = 1029,
 	AlreadyArchived = 1031,
 	Forbidden = 1032,
-	TimeNotAvailable = 1033
+	TimeNotAvailable = 1033,
+	TableCodeExist = 1035
 }
