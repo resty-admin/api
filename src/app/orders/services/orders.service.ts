@@ -199,9 +199,13 @@ export class OrdersService {
 	}
 
 	async createOrder(order: CreateOrderInput, user: IUser): Promise<ActiveOrderEntity> {
-		const date = "startDate" in order ? new Date(order.startDate) : new Date();
+		const startDate = "startDate" in order ? new Date(new Date(order.startDate).toISOString()) : new Date();
+		startDate.setHours(startDate.getHours() + 2);
 
-		if (order.type !== OrderTypeEnum.IN_PLACE && !(await this.isTimeAvailable(date, order.place.id))) {
+		const createdAt = new Date(new Date().toISOString());
+		createdAt.setHours(createdAt.getHours() + 2);
+
+		if (order.type !== OrderTypeEnum.IN_PLACE && !(await this.isTimeAvailable(startDate, order.place.id))) {
 			throw new GraphQLError(ErrorsEnum.InvalidOrderDate.toString(), {
 				extensions: {
 					code: 500
@@ -237,8 +241,8 @@ export class OrdersService {
 						}))
 				  }
 				: {}),
-			createdAt: date,
-			startDate: date,
+			createdAt,
+			startDate,
 			code: Math.floor(1000 + Math.random() * 9000)
 		} as ActiveOrderEntity);
 
@@ -444,7 +448,6 @@ export class OrdersService {
 
 	async isTimeAvailable(date: Date, placeId: string) {
 		if (date <= new Date()) {
-			console.log("1");
 			throw new GraphQLError(ErrorsEnum.TimeNotAvailable.toString(), {
 				extensions: {
 					code: 500
@@ -461,7 +464,6 @@ export class OrdersService {
 		const orderHours = date.getUTCHours() + 2;
 
 		if (isHoliday) {
-			console.log("2");
 			return Number(isHoliday.start) <= orderHours && Number(isHoliday.end) >= orderHours;
 		}
 
@@ -469,13 +471,9 @@ export class OrdersService {
 		const start = Number(place[isWeekDay ? "weekDays" : "weekendDays"].start);
 		const end = Number(place[isWeekDay ? "weekDays" : "weekendDays"].end);
 
-		console.log("3", start, end);
-
-		console.log("orderedHours", orderHours);
 		const isAvailable = orderHours >= start && orderHours <= end;
 
 		if (!isAvailable) {
-			console.log("jopa");
 			throw new GraphQLError(ErrorsEnum.TimeNotAvailable.toString(), {
 				extensions: {
 					code: 500
