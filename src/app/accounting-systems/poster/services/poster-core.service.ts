@@ -85,7 +85,7 @@ export class PosterCoreService {
 		});
 
 		const { adminUrl } = environment.frontEnd;
-
+		await this.syncPoster(place.id);
 		return `${adminUrl}/companies/${place.company.id}/places/${place.id}/accounting-systems?poster=success`;
 	}
 
