@@ -9,6 +9,7 @@ import { PlaceEntity } from "../../../places/entities";
 import { ErrorsEnum } from "../../../shared/enums";
 import { AccountingSystemEntity, PlaceToAccountingSystemEntity } from "../../entities";
 import { PosterService } from "./poster.service";
+import { PosterAuthService } from "./poster-auth.service";
 import { PosterOrdersService } from "./poster-orders.service";
 
 @Injectable()
@@ -16,6 +17,7 @@ export class PosterCoreService {
 	constructor(
 		private readonly _httpService: HttpService,
 		private readonly _posterService: PosterService,
+		private readonly _posterAuthService: PosterAuthService,
 		private readonly _posterOrderService: PosterOrdersService,
 		@InjectRepository(PlaceToAccountingSystemEntity) private readonly _pTa: Repository<PlaceToAccountingSystemEntity>,
 		@InjectRepository(AccountingSystemEntity) private readonly _accSystem: Repository<AccountingSystemEntity>,
@@ -64,6 +66,12 @@ export class PosterCoreService {
 			}
 		});
 
+		const posterToken = await this._posterAuthService.getAccessToken({
+			placeId,
+			login,
+			code: token
+		});
+
 		const place = await this._placeRepo.findOne({
 			where: {
 				id: placeId
@@ -80,7 +88,7 @@ export class PosterCoreService {
 			},
 			placeConfigFields: {
 				account: login,
-				access_token: token
+				access_token: posterToken
 			}
 		});
 

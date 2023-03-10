@@ -28,12 +28,14 @@ export class PosterAuthService {
 	}
 
 	async getAccessToken(body: PosterAccessCodeInput) {
-		const place = await this.getPosterPlace(body.placeId);
+		// const place = await this.getPosterPlace(body.placeId);
 		const baseUrl = "http://localhost:3000/api/poster/auth-confirm";
 
 		const bodyFormData = new FormData();
-		bodyFormData.append("application_id", (place.placeConfigFields as any).application_id);
-		bodyFormData.append("application_secret", (place.placeConfigFields as any).application_secret);
+		// bodyFormData.append("application_id", (place.placeConfigFields as any).application_id);
+		bodyFormData.append("application_id", "2811");
+		// bodyFormData.append("application_secret", (place.placeConfigFields as any).application_secret);
+		bodyFormData.append("application_secret", "b27ab4e7c25a4460c01731bd0e16b8ff");
 		bodyFormData.append("grant_type", "authorization_code");
 		bodyFormData.append("code", body.code);
 		bodyFormData.append("redirect_uri", baseUrl);
@@ -44,10 +46,11 @@ export class PosterAuthService {
 			})
 			.toPromise();
 
-		return this._pTa.save({
-			...place,
-			placeConfigFields: { ...place.placeConfigFields, access_token: res.data.access_token }
-		});
+		return res.data.access_token;
+		// return this._pTa.save({
+		// 	...place,
+		// 	placeConfigFields: { ...place.placeConfigFields, access_token: res.data.access_token }
+		// });
 	}
 
 	async getPosterPlace(placeId: string) {
