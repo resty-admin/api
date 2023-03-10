@@ -1,3 +1,4 @@
+import { HttpModule } from "@nestjs/axios";
 import { Module } from "@nestjs/common";
 import { MulterModule } from "@nestjs/platform-express";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -15,6 +16,7 @@ import { FILES_SERVICES } from "./services";
 	imports: [
 		TypeOrmModule.forFeature(FILES_ENTITIES),
 		MulterModule.register(),
+		HttpModule,
 		SpacesModule,
 		CompaniesModule,
 		PlacesModule

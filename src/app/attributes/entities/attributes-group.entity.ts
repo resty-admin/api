@@ -1,4 +1,5 @@
 import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
+import { GraphQLJSONObject } from "graphql-type-json";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from "typeorm";
 
 import { PlaceEntity } from "../../places/entities";
@@ -37,6 +38,14 @@ export class AttributesGroupEntity extends BaseEntity {
 	@Field(() => Int)
 	@Column({ default: 5 })
 	maxItemsForPick: number;
+
+	@Field(() => GraphQLJSONObject, { nullable: true })
+	@Column({
+		type: "json",
+		default: () => `('${JSON.stringify({})}')`,
+		nullable: true
+	})
+	accountingSystemsFields?: object;
 }
 
 @ObjectType()

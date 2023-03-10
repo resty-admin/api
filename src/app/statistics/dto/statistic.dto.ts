@@ -15,8 +15,8 @@ export class StatisticType {
 	tables: number;
 
 	@Field(() => Float)
-	totalAmount: number;
+	totalAmount: string;
 
 	@Field(() => Float)
-	tax: number;
+	tax: string;
 }

@@ -32,5 +32,6 @@ export enum ErrorsEnum {
 	AlreadyArchived = 1031,
 	Forbidden = 1032,
 	TimeNotAvailable = 1033,
-	TableCodeExist = 1035
+	TableCodeExist = 1035,
+	PosterAccountNotFound = 1036
 }
