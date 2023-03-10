@@ -6,6 +6,7 @@ import { CategoriesModule } from "../../categories/categories.module";
 import { FilesModule } from "../../files/files.module";
 import { HallsModule } from "../../halls/halls.module";
 import { OrdersModule } from "../../orders/orders.module";
+import { PlacesModule } from "../../places/places.module";
 import { ProductsModule } from "../../products/products.module";
 import { TablesModule } from "../../tables/tables.module";
 import { AccountingSystemsModule } from "../accounting-systems.module";
@@ -24,7 +25,8 @@ import { POSTER_SERVICES } from "./services";
 		forwardRef(() => ProductsModule),
 		forwardRef(() => OrdersModule),
 		forwardRef(() => FilesModule),
-		forwardRef(() => AttributesModule)
+		forwardRef(() => AttributesModule),
+		forwardRef(() => PlacesModule)
 	],
 	providers: [...POSTER_SERVICES, ...POSTER_RESOLVERS],
 	exports: []

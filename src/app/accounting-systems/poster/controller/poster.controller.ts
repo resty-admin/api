@@ -9,8 +9,13 @@ export class PosterController {
 	constructor(private readonly _posterCoreService: PosterCoreService) {}
 
 	@Get("poster/auth-confirm")
-	async posterAuthConfirm(@Query("code") code: string, @Query("account") account: string, @Res() response: Response) {
-		const url = await this._posterCoreService.updatePlaceConfigs(code, account);
+	async posterAuthConfirm(
+		@Query("code") code: string,
+		@Query("account") account: string,
+		@Query("placeId") placeId: string,
+		@Res() response: Response
+	) {
+		const url = await this._posterCoreService.updatePlaceConfigs(code, account, placeId);
 		return response.redirect(url);
 		// return response.redirect(this._authService.getGoogleRedirectUrl(request.user, request.query.state.toString()));
 
@@ -26,9 +31,7 @@ export class PosterController {
 	@Get("poster/webhook")
 	@UseInterceptors(FileInterceptor("input"))
 	@UseInterceptors(FileInterceptor("data"))
-	async getPosterWebHook() // @UploadedFile("input") file: Express.Multer.File,
-	// @UploadedFile("data") data: Express.Multer.File
-	{
+	async getPosterWebHook() { // @UploadedFile("data") data: Express.Multer.File // @UploadedFile("input") file: Express.Multer.File,
 		// console.log("get", file, data);
 		return true;
 	}
