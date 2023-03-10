@@ -41,7 +41,7 @@ export class FilesService {
 	async downloadOne(url: string) {
 		const splitUrl = url.split(".");
 		const type = splitUrl.at(-1);
-		const fileName = `poster.${type}`;
+		const fileName = `${this.generateFileName("poster")}.${type}`;
 		const writer = fs.createWriteStream(join(process.cwd(), fileName));
 
 		const response = await this._httpService.axiosRef({
@@ -55,9 +55,14 @@ export class FilesService {
 		return new Promise((resolve, reject) => {
 			writer.on("finish", async () => {
 				const file = readFileSync(join(process.cwd(), fileName));
-				const url = await this._spacesService.uploadToS3(`images`, this.generateFileName(fileName), file, type);
+				const url = await this._spacesService.uploadToS3(`images`, fileName, file, type);
 				const fileEntity = await this._mediasRepository.save({ url });
-
+				await fs.unlink(join(process.cwd(), fileName), (err) => {
+					if (err) {
+						console.error(err);
+						return err;
+					}
+				});
 				resolve(fileEntity);
 			});
 			writer.on("error", reject);
