@@ -158,8 +158,6 @@ export class PosterService {
 
 		const { response: posterCategories } = (await this._httpService.get(url).toPromise()).data;
 
-		// console.log('posterCategories', posterCategories);
-
 		const categories = await this._categoriesRepo.find({
 			where: {
 				place: {
@@ -254,6 +252,14 @@ export class PosterService {
 
 		const posterProducts = flattenDeep(await Promise.all(posterProductsPromises));
 
+		const productToModifications = {};
+
+		for (const product of posterProducts) {
+			productToModifications[product["product_id"]] = product["group_modifications"];
+		}
+
+		await this.syncModificationsGroup(flattenDeep(Object.values(productToModifications).filter((el) => el)), placeId);
+
 		const products = await this._productRepo.find({
 			where: {
 				category: {
@@ -265,8 +271,16 @@ export class PosterService {
 			relations: ["category", "category.place"]
 		});
 
+		const attrGroups = await this._attrGroupRepo.find({
+			where: {
+				place: {
+					id: placeId
+				}
+			}
+		});
+
 		const existedProducts = products.filter((el) => el.accountingSystemsFields.hasOwnProperty("posterId"));
-		const updatedProducts = existedProducts.map(async (product) => {
+		const updatedProducts = await existedProducts.map(async (product) => {
 			const posterProduct = posterProducts.find((el) => el.product_id === product.accountingSystemsFields["posterId"]);
 			const file =
 				posterProduct && posterProduct["photo_origin"]
@@ -282,7 +296,7 @@ export class PosterService {
 			};
 		});
 
-		const newProducts = posterProducts
+		const newProducts = await posterProducts
 			.filter((pP) => !existedProducts.some((eP) => eP.accountingSystemsFields["posterId"] === pP["product_id"]))
 			.map(async (nP) => {
 				const category = existedCategories.find(
@@ -291,15 +305,30 @@ export class PosterService {
 						el.accountingSystemsFields["childrenIds"].includes(nP["menu_category_id"])
 				);
 
+				const existedPosterAttrGroups = attrGroups.filter((el) =>
+					el.accountingSystemsFields.hasOwnProperty("posterId")
+				);
+
+				const modificationsExist = nP["group_modifications"] && nP["group_modifications"].length > 0;
+				const productModificationsIds = modificationsExist
+					? new Set(nP["group_modifications"].map((el) => el["dish_modification_group_id"]))
+					: new Set();
+
+				const productModifications = modificationsExist
+					? existedPosterAttrGroups.filter((el) => productModificationsIds.has(el.accountingSystemsFields["posterId"]))
+					: [];
+
 				const file =
 					nP && nP["photo_origin"]
 						? await this._filesService.downloadOne(`https://${account}.joinposter.com${nP["photo_origin"]}`)
 						: null;
+
 				return {
 					name: nP["product_name"],
 					price: Number(nP["price"]["1"]) / 100,
 					isHide: nP["hidden"],
 					file,
+					attrsGroups: productModifications,
 					category: {
 						id: category.id
 					},
@@ -310,11 +339,82 @@ export class PosterService {
 			});
 
 		const promisedProducts = await Promise.all([...updatedProducts, ...newProducts]);
+
 		try {
 			await this._productRepo.save(promisedProducts);
 			return "sync done!";
 		} catch (error) {
 			console.log("products", error);
+			throw new GraphQLError("jopa", {
+				extensions: {
+					code: 500
+				}
+			});
+		}
+	}
+
+	async syncModificationsGroup(posterModificationGroups: any[], placeId: string) {
+		const attrGroups = await this._attrGroupRepo.find({
+			where: {
+				place: {
+					id: placeId
+				}
+			}
+		});
+
+		const existedAttrGroups = attrGroups.filter((el) => el.accountingSystemsFields.hasOwnProperty("posterId"));
+
+		const updatedAttrGroups = existedAttrGroups.map((attrGroup) => {
+			const posterAttrGroup = posterModificationGroups.find(
+				(el) => Number(el["dish_modification_group_id"]) === Number(attrGroup.accountingSystemsFields["posterId"])
+			);
+			return {
+				...attrGroup,
+				maxItemsForPick: posterAttrGroup["num_max"],
+				name: posterAttrGroup["name"]
+			};
+		});
+
+		const newAttrGroups = await posterModificationGroups
+			.filter(
+				(pMg) =>
+					!existedAttrGroups.some(
+						(eAg) => eAg.accountingSystemsFields["posterId"] === pMg["dish_modification_group_id"]
+					)
+			)
+			.map(async (nMg) => {
+				const attributes = nMg["modifications"].map(async (el) =>
+					this._attrRepo.save({
+						name: el["name"],
+						place: { id: placeId },
+						price: el["price"],
+						accountingSystemsFields: {
+							posterId: nMg["dish_modification_id"]
+						}
+					})
+				);
+
+				const promisedAttributes = await Promise.all(attributes);
+
+				return {
+					name: nMg["name"],
+					attributes: promisedAttributes,
+					products: [],
+					place: { id: placeId },
+					type: AttributeGroupTypeEnum.ADD,
+					maxItemsForPick: nMg["num_max"],
+					accountingSystemsFields: {
+						posterId: nMg["dish_modification_group_id"]
+					}
+				};
+			});
+
+		try {
+			const promisedNewAttrGroups = await Promise.all(newAttrGroups);
+			await this._attrGroupRepo.save([...updatedAttrGroups, ...promisedNewAttrGroups]);
+			return "sync done!";
+		} catch (error) {
+			console.log("attr groups", error);
 			throw new GraphQLError("jopa", {
 				extensions: {
 					code: 500
