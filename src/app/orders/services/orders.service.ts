@@ -200,10 +200,10 @@ export class OrdersService {
 
 	async createOrder(order: CreateOrderInput, user: IUser): Promise<ActiveOrderEntity> {
 		const startDate = "startDate" in order ? new Date(new Date(order.startDate).toISOString()) : new Date();
-		startDate.setHours(startDate.getHours() + 2);
+		// startDate.setHours(startDate.getHours());
 
 		const createdAt = new Date(new Date().toISOString());
-		createdAt.setHours(createdAt.getHours() + 2);
+		// createdAt.setHours(createdAt.getHours());
 
 		if (order.type !== OrderTypeEnum.IN_PLACE && !(await this.isTimeAvailable(startDate, order.place.id))) {
 			throw new GraphQLError(ErrorsEnum.InvalidOrderDate.toString(), {
@@ -461,7 +461,7 @@ export class OrdersService {
 		});
 
 		const isHoliday = place.holidayDays[new Date().toISOString().split("T")[0]];
-		const orderHours = date.getUTCHours() + 2;
+		const orderHours = date.getHours();
 
 		if (isHoliday) {
 			return Number(isHoliday.start) <= orderHours && Number(isHoliday.end) >= orderHours;

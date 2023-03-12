@@ -55,7 +55,7 @@ export class StatisticService {
 			...ordersStatistic,
 			guests,
 			employees,
-			totalAmount: ordersStatistic.totalAmount.toString(),
+			totalAmount: ordersStatistic.totalAmount.toString() || "0",
 			tax: (ordersStatistic.totalAmount * 0.05).toString(),
 			halls: place.halls.length,
 			tables: place.halls.reduce((pre, curr) => pre + curr.tables.length, 0)

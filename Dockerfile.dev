@@ -1,4 +1,5 @@
 FROM node:16 AS builder
+ENV TZ=Europe/Kiev
 WORKDIR /home
 COPY package.json ./
 RUN yarn install
