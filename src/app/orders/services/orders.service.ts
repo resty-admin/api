@@ -199,6 +199,7 @@ export class OrdersService {
 	}
 
 	async createOrder(order: CreateOrderInput, user: IUser): Promise<ActiveOrderEntity> {
+		console.log("jopa", order);
 		const startDate = "startDate" in order ? new Date(order.startDate) : new Date();
 		// startDate.setHours(startDate.getHours());
 
