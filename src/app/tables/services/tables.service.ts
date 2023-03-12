@@ -180,7 +180,7 @@ export class TablesService {
 		const currDate = new Date();
 
 		if (date <= new Date(currDate.getTime() + 5 * 60_000)) {
-			console.log("2", date, new Date());
+			console.log("2", date, currDate);
 
 			throw new GraphQLError(ErrorsEnum.TimeNotAvailable.toString(), {
 				extensions: {
