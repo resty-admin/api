@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import console from "console";
 import { GraphQLError } from "graphql/error";
 import { Between, In, Repository } from "typeorm";
 
@@ -176,6 +177,18 @@ export class TablesService {
 	}
 
 	async isTableAvailableForReserve(tableId: string, date: Date) {
+		const currDate = new Date();
+
+		if (date <= new Date(currDate.getTime() + 5 * 60_000)) {
+			console.log("2", date, new Date());
+
+			throw new GraphQLError(ErrorsEnum.TimeNotAvailable.toString(), {
+				extensions: {
+					code: 500
+				}
+			});
+		}
+
 		const ONE_HOUR_S = 3600;
 		const minFreeDate = new Date((date.getTime() / 1000 - ONE_HOUR_S) * 1000);
 		const maxFreeDate = new Date((date.getTime() / 1000 + ONE_HOUR_S) * 1000);
