@@ -448,10 +448,9 @@ export class OrdersService {
 	}
 
 	async isTimeAvailable(date: Date, placeId: string) {
-		console.log("1", date, placeId);
-		const currDate = new Date();
+		const currDate = new Date(date);
 
-		if (date <= new Date(currDate.getTime() + 5 * 60_000)) {
+		if (new Date(currDate.getTime() + 5 * 60_000) <= new Date()) {
 			console.log("2", date, new Date());
 
 			throw new GraphQLError(ErrorsEnum.TimeNotAvailable.toString(), {
