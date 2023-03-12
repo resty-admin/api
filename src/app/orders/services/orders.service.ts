@@ -447,6 +447,8 @@ export class OrdersService {
 	}
 
 	async isTimeAvailable(date: Date, placeId: string) {
+		console.log("1", date, new Date());
+
 		if (date <= new Date()) {
 			throw new GraphQLError(ErrorsEnum.TimeNotAvailable.toString(), {
 				extensions: {

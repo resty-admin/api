@@ -66,7 +66,7 @@ export class ActiveOrderEntity extends BaseEntity {
 	createdAt: Date;
 
 	@Field(() => Date)
-	@Column()
+	@Column({ type: "timestamptz" })
 	startDate: Date;
 
 	@Field(() => String, { nullable: true })
