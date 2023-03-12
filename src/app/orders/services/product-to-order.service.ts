@@ -78,11 +78,9 @@ export class ProductToOrderService {
 			]
 		});
 
-		console.log("totalPrice", this.calculateTotalPrice(order.productsToOrders));
-
 		return this._ordersRepository.save({
 			...order,
-			totalPrice: this.calculateTotalPrice(order.productsToOrders)
+			totalPrice: this.calculateTotalPrice(order.productsToOrders).toString()
 		});
 	}
 

@@ -13,6 +13,7 @@ import {
 	UserStatusEnum
 } from "src/app/shared/enums";
 
+import { AccountingSystemsEnum } from "../../accounting-systems/enums";
 import { ORDERS_EVENTS } from "../../orders/gateways/events/order.event";
 
 export function initGraphql() {
@@ -29,4 +30,5 @@ export function initGraphql() {
 	registerEnumType(PlaceVerificationStatusEnum, { name: "PlaceVerificationStatusEnum" });
 	registerEnumType(ORDERS_EVENTS, { name: "OrdersEvents" });
 	registerEnumType(ManualPaymentEnum, { name: "ManualPaymentEnum" });
+	registerEnumType(AccountingSystemsEnum, { name: "AccountingSystemsEnum" });
 }

@@ -9,6 +9,14 @@ import { InitDb1677448816647 } from "../../../migrations/1677448816647-migration
 import { OrderNumber1677538266844 } from "../../../migrations/1677538266844-migration_name";
 import { UpdateOrderNumber1677609137157 } from "../../../migrations/1677609137157-migration_name";
 import { historyOrderDate1678048152060 } from "../../../migrations/1678048152060-migration_name";
+import { AccSysOrderEnum1678365196872 } from "../../../migrations/1678365196872-acc-sys_order-enum";
+import { OrderNumberNull1678366744741 } from "../../../migrations/1678366744741-migration_name";
+import { OrderTypeUpdate1678374700679 } from "../../../migrations/1678374700679-order_type";
+import { PriceString1678390766339 } from "../../../migrations/1678390766339-price";
+import { migrationName1678391284340 } from "../../../migrations/1678391284340-migration_name";
+import { AttrGroupPoster1678469961942 } from "../../../migrations/1678469961942-migration_name";
+import { migrationName1678470981260 } from "../../../migrations/1678470981260-migration_name";
+import { migrationName1678471701103 } from "../../../migrations/1678471701103-migration_name";
 import { ACCOUNTING_SYSTEMS_ENTITIES } from "../../accounting-systems/entities";
 import { ATTRIBUTES_ENTITIES } from "../../attributes/entities";
 import { CATEGORIES_ENITITES } from "../../categories/entities";
@@ -58,7 +66,15 @@ export const TYPEORM_CONFIG: TypeOrmModuleOptions = {
 		OrderNumber1677538266844,
 		UpdateOrderNumber1677609137157,
 		historyOrderDate1678048152060,
-		FondyPaymentSystem1675677687530
+		FondyPaymentSystem1675677687530,
+		AccSysOrderEnum1678365196872,
+		OrderNumberNull1678366744741,
+		OrderTypeUpdate1678374700679,
+		PriceString1678390766339,
+		migrationName1678391284340,
+		AttrGroupPoster1678469961942,
+		migrationName1678470981260,
+		migrationName1678471701103
 	],
 	migrationsRun: environment.production,
 	...(environment.production

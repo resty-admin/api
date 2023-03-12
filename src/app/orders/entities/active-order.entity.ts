@@ -1,4 +1,4 @@
-import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Float, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, Generated, JoinTable, ManyToMany, ManyToOne, OneToMany } from "typeorm";
 
 import { PlaceEntity } from "../../places/entities";
@@ -48,9 +48,9 @@ export class ActiveOrderEntity extends BaseEntity {
 	@ManyToOne(() => PlaceEntity, (place) => place.orders)
 	place: PlaceEntity;
 
-	@Field(() => Int, { nullable: true })
-	@Column("int", { nullable: true })
-	totalPrice?: number;
+	@Field(() => Float, { nullable: true })
+	@Column("real", { nullable: true })
+	totalPrice?: string;
 
 	@Field(() => [ProductToOrderEntity], { nullable: true })
 	@OneToMany(() => ProductToOrderEntity, (pTo) => pTo.order, { nullable: true, cascade: true })

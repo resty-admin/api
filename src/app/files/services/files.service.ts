@@ -1,13 +1,14 @@
+import { HttpService } from "@nestjs/axios";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { GraphQLError } from "graphql/error";
+import * as fs from "fs";
+import { readFileSync } from "fs";
+import { join } from "path";
 import { Repository } from "typeorm";
 import { v4 as uuidv4 } from "uuid";
 
 import { CompanyEntity } from "../../companies/entities";
 import { UserToPlaceEntity } from "../../places/entities";
-import { ErrorsEnum, UserRoleEnum } from "../../shared/enums";
-import type { IUser } from "../../shared/interfaces";
 import { SpacesService } from "../../shared/spaces";
 import { FileEntity } from "../entities";
 
@@ -17,6 +18,7 @@ export class FilesService {
 		@InjectRepository(FileEntity) private readonly _mediasRepository: Repository<FileEntity>,
 		@InjectRepository(CompanyEntity) private readonly _companyRepository: Repository<CompanyEntity>,
 		@InjectRepository(UserToPlaceEntity) private readonly _uTpRepository: Repository<UserToPlaceEntity>,
+		private readonly _httpService: HttpService,
 		private readonly _spacesService: SpacesService
 	) {}
 
@@ -36,44 +38,38 @@ export class FilesService {
 		return this._mediasRepository.save(urls.map((url) => ({ url })));
 	}
 
-	generateFileName(file) {
-		return `${uuidv4()}-${file.originalname}`;
+	async downloadOne(url: string) {
+		const splitUrl = url.split(".");
+		const type = splitUrl.at(-1);
+		const fileName = `${this.generateFileName("poster")}.${type}`;
+		const writer = fs.createWriteStream(join(process.cwd(), fileName));
+
+		const response = await this._httpService.axiosRef({
+			url,
+			method: "GET",
+			responseType: "stream"
+		});
+
+		response.data.pipe(writer);
+
+		return new Promise((resolve, reject) => {
+			writer.on("finish", async () => {
+				const file = readFileSync(join(process.cwd(), fileName));
+				const url = await this._spacesService.uploadToS3(`images`, fileName, file, type);
+				const fileEntity = await this._mediasRepository.save({ url });
+				await fs.unlink(join(process.cwd(), fileName), (err) => {
+					if (err) {
+						console.error(err);
+						return err;
+					}
+				});
+				resolve(fileEntity);
+			});
+			writer.on("error", reject);
+		});
 	}
 
-	async defineCompanyRootFolder(user: IUser) {
-		const company = await this._companyRepository.findOne({
-			where: {
-				owner: {
-					id: user.id
-				}
-			}
-		});
-
-		if (!company) {
-			throw new GraphQLError(ErrorsEnum.Forbidden.toString(), {
-				extensions: {
-					code: 500
-				}
-			});
-		}
-
-		const uTp = await this._uTpRepository.findOne({
-			where: {
-				user: {
-					id: user.id
-				}
-			},
-			relations: ["user", "place", "place.company"]
-		});
-
-		if (!uTp || uTp.user.role === UserRoleEnum.CLIENT) {
-			throw new GraphQLError(ErrorsEnum.Forbidden.toString(), {
-				extensions: {
-					code: 500
-				}
-			});
-		}
-
-		return `${company.id}_${company.name}` || `${uTp.place.company.id}_${uTp.place.company.name}`;
+	generateFileName(file) {
+		return `${uuidv4()}-${file.originalname ? file.originalname : file}`;
 	}
 }

@@ -46,7 +46,7 @@ export class StatisticService {
 		const ordersStatistic = orders.reduce(
 			(pre, curr) => ({
 				...pre,
-				totalAmount: pre.totalAmount + curr.totalPrice
+				totalAmount: Number.parseFloat(pre.totalAmount.toString()) + Number.parseFloat(curr.totalPrice)
 			}),
 			{ totalAmount: 0 }
 		);
@@ -55,7 +55,8 @@ export class StatisticService {
 			...ordersStatistic,
 			guests,
 			employees,
-			tax: ordersStatistic.totalAmount * 0.05,
+			totalAmount: ordersStatistic.totalAmount.toString() || "0",
+			tax: (ordersStatistic.totalAmount * 0.05).toString(),
 			halls: place.halls.length,
 			tables: place.halls.reduce((pre, curr) => pre + curr.tables.length, 0)
 		};

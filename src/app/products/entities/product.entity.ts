@@ -1,4 +1,4 @@
-import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Float, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
 import { GraphQLJSONObject } from "graphql-type-json";
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne } from "typeorm";
@@ -30,8 +30,8 @@ export class ProductEntity extends BaseEntity {
 	@Column({ default: "", nullable: true })
 	description?: string;
 
-	@Field(() => Int)
-	@Column({ default: 0 })
+	@Field(() => Float)
+	@Column({ default: 0, type: "real" })
 	price: number;
 
 	@ApiProperty()
