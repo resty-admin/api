@@ -199,10 +199,10 @@ export class OrdersService {
 	}
 
 	async createOrder(order: CreateOrderInput, user: IUser): Promise<ActiveOrderEntity> {
-		const startDate = "startDate" in order ? new Date(new Date(order.startDate).toISOString()) : new Date();
+		const startDate = "startDate" in order ? new Date(order.startDate) : new Date();
 		// startDate.setHours(startDate.getHours());
 
-		const createdAt = new Date(new Date().toISOString());
+		const createdAt = new Date();
 		// createdAt.setHours(createdAt.getHours());
 
 		if (order.type !== OrderTypeEnum.IN_PLACE && !(await this.isTimeAvailable(startDate, order.place.id))) {
