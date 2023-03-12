@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import console from "console";
 import { GraphQLError } from "graphql/error";
 import { Between, In, Repository } from "typeorm";
 
