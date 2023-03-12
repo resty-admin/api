@@ -2,9 +2,10 @@ import { UseGuards } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 
 import { GqlJwtGuard } from "../../auth";
-import { RolesGuard } from "../../shared";
+import { RolesGuard, UserGql } from "../../shared";
 import { PaginationArgsDto } from "../../shared/dtos";
 import { UserRoleEnum } from "../../shared/enums";
+import { IUser } from "../../shared/interfaces";
 import { CreateTableInput, UpdateTableInput } from "../dtos";
 import { PaginatedTable, TableEntity } from "../entities";
 import { TablesGuard } from "../guards/tables.guard";
@@ -92,7 +93,7 @@ export class TablesResolver {
 			UserRoleEnum.CLIENT
 		])
 	)
-	async isTableAvailableForReserve(@Args("tableId") tableId: string, @Args("date") date: Date) {
-		return this._tablesService.isTableAvailableForReserve(tableId, date);
+	async isTableAvailableForReserve(@Args("tableId") tableId: string, @Args("date") date: Date, @UserGql() user: IUser) {
+		return this._tablesService.isTableAvailableForReserve(tableId, date, user);
 	}
 }

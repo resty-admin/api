@@ -7,6 +7,7 @@ import { ActiveOrderEntity } from "../../orders/entities";
 import { getFindOptionsByFilters } from "../../shared";
 import type { PaginationArgsDto } from "../../shared/dtos";
 import { ErrorsEnum, OrderStatusEnum, OrderTypeEnum } from "../../shared/enums";
+import type { IUser } from "../../shared/interfaces";
 import type { CreateTableInput, UpdateTableInput } from "../dtos";
 import { TableEntity } from "../entities";
 
@@ -175,7 +176,7 @@ export class TablesService {
 		}
 	}
 
-	async isTableAvailableForReserve(tableId: string, date: Date) {
+	async isTableAvailableForReserve(tableId: string, date: Date, user: IUser) {
 		const currDate = new Date(date);
 
 		if (new Date(currDate.getTime() + 5 * 60_000) <= new Date()) {
@@ -200,11 +201,21 @@ export class TablesService {
 				type: In([OrderTypeEnum.IN_PLACE, OrderTypeEnum.RESERVE]),
 				startDate: Between(minFreeDate, maxFreeDate)
 			},
-			relations: ["table"]
+			relations: ["table", "users"]
 		});
 
 		if (activeOrders.length === 0) {
 			return this.getTable(tableId);
+		}
+
+		const reservedOrder = activeOrders.find((el) => el.table.id === tableId);
+
+		if (reservedOrder) {
+			const users = reservedOrder.users.map((el) => el.id);
+			const currUser = users.includes(user.id);
+			if (currUser) {
+				return this.getTable(tableId);
+			}
 		}
 
 		throw new GraphQLError(ErrorsEnum.TableAlreadyReserved.toString(), {
