@@ -176,9 +176,9 @@ export class TablesService {
 	}
 
 	async isTableAvailableForReserve(tableId: string, date: Date) {
-		const currDate = new Date();
+		const currDate = new Date(date);
 
-		if (date <= new Date(currDate.getTime() + 5 * 60_000)) {
+		if (new Date(currDate.getTime() + 5 * 60_000) <= new Date()) {
 			console.log("2", date, currDate);
 
 			throw new GraphQLError(ErrorsEnum.TimeNotAvailable.toString(), {
