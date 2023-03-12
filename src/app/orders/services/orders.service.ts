@@ -447,9 +447,11 @@ export class OrdersService {
 	}
 
 	async isTimeAvailable(date: Date, placeId: string) {
-		console.log("1", date, new Date());
+		console.log("1", date, placeId);
 
 		if (date <= new Date()) {
+			console.log("2", date, new Date());
+
 			throw new GraphQLError(ErrorsEnum.TimeNotAvailable.toString(), {
 				extensions: {
 					code: 500
@@ -476,6 +478,7 @@ export class OrdersService {
 		const isAvailable = orderHours >= start && orderHours <= end;
 
 		if (!isAvailable) {
+			console.log("3");
 			throw new GraphQLError(ErrorsEnum.TimeNotAvailable.toString(), {
 				extensions: {
 					code: 500
