@@ -60,7 +60,7 @@ export class HistoryOrderEntity extends BaseEntity {
 	productsToOrders?: object[];
 
 	@Field(() => Date, { nullable: true })
-	@Column({ nullable: true })
+	@Column({ nullable: true, type: "timestamptz" })
 	startDate?: Date;
 
 	@Field(() => AccountingSystemsEnum)

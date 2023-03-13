@@ -199,6 +199,7 @@ export class OrdersService {
 	}
 
 	async createOrder(order: CreateOrderInput, user: IUser): Promise<ActiveOrderEntity> {
+		console.log("jopa", order);
 		const startDate = "startDate" in order ? new Date(order.startDate) : new Date();
 		// startDate.setHours(startDate.getHours());
 
@@ -447,7 +448,11 @@ export class OrdersService {
 	}
 
 	async isTimeAvailable(date: Date, placeId: string) {
-		if (date <= new Date()) {
+		const currDate = new Date(date);
+
+		if (new Date(currDate.getTime() + 5 * 60_000) <= new Date()) {
+			console.log("2", date, new Date());
+
 			throw new GraphQLError(ErrorsEnum.TimeNotAvailable.toString(), {
 				extensions: {
 					code: 500
@@ -461,19 +466,28 @@ export class OrdersService {
 		});
 
 		const isHoliday = place.holidayDays[new Date().toISOString().split("T")[0]];
+		console.log("isHOliday", isHoliday);
+
 		const orderHours = date.getHours();
 
+		console.log("orderHours", orderHours);
 		if (isHoliday) {
 			return Number(isHoliday.start) <= orderHours && Number(isHoliday.end) >= orderHours;
 		}
 
 		const isWeekDay = date.getDay() <= 5 && date.getDay() !== 0;
 		const start = Number(place[isWeekDay ? "weekDays" : "weekendDays"].start);
+
+		console.log("start", start);
+
 		const end = Number(place[isWeekDay ? "weekDays" : "weekendDays"].end);
+
+		console.log("end", end);
 
 		const isAvailable = orderHours >= start && orderHours <= end;
 
 		if (!isAvailable) {
+			console.log("3");
 			throw new GraphQLError(ErrorsEnum.TimeNotAvailable.toString(), {
 				extensions: {
 					code: 500

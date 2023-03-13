@@ -143,6 +143,7 @@ export class OrdersResolver {
 	@Query(() => Boolean)
 	@UseGuards(GqlJwtGuard)
 	async isTimeAvailable(@Args("date") date: Date, @Args("placeId") placeId: string) {
+		console.log("start");
 		return this._ordersService.isTimeAvailable(date, placeId);
 	}
 
