@@ -48,8 +48,8 @@ export class ActiveOrderEntity extends BaseEntity {
 	@ManyToOne(() => PlaceEntity, (place) => place.orders)
 	place: PlaceEntity;
 
-	@Field(() => Float, { nullable: true })
-	@Column("real", { nullable: true })
+	@Field(() => Float, { defaultValue: 0 })
+	@Column("real", { default: 0 })
 	totalPrice?: string;
 
 	@Field(() => [ProductToOrderEntity], { nullable: true })

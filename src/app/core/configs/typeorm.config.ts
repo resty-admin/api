@@ -17,6 +17,7 @@ import { migrationName1678391284340 } from "../../../migrations/1678391284340-mi
 import { AttrGroupPoster1678469961942 } from "../../../migrations/1678469961942-migration_name";
 import { migrationName1678470981260 } from "../../../migrations/1678470981260-migration_name";
 import { migrationName1678471701103 } from "../../../migrations/1678471701103-migration_name";
+import { migrationName1678795456515 } from "../../../migrations/1678795456515-migration_name";
 import { ACCOUNTING_SYSTEMS_ENTITIES } from "../../accounting-systems/entities";
 import { ATTRIBUTES_ENTITIES } from "../../attributes/entities";
 import { CATEGORIES_ENITITES } from "../../categories/entities";
@@ -74,7 +75,8 @@ export const TYPEORM_CONFIG: TypeOrmModuleOptions = {
 		migrationName1678391284340,
 		AttrGroupPoster1678469961942,
 		migrationName1678470981260,
-		migrationName1678471701103
+		migrationName1678471701103,
+		migrationName1678795456515
 	],
 	migrationsRun: environment.production,
 	...(environment.production
