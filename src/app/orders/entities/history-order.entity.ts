@@ -46,8 +46,8 @@ export class HistoryOrderEntity extends BaseEntity {
 	@ManyToOne(() => PlaceEntity, (place) => place.orders)
 	place: PlaceEntity;
 
-	@Column({ nullable: true, type: "real" })
-	@Field(() => Float, { nullable: true })
+	@Column({ type: "real", default: 0 })
+	@Field(() => Float, { defaultValue: 0 })
 	totalPrice?: string;
 
 	@Column({
